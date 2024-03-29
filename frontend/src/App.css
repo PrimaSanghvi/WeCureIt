@@ -1,0 +1,15 @@
+#root {
+  max-width: 100%;
+  text-align: center;
+}
+.nebula {
+  width: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+  .nebula {
+     width: 100%;
+     overflow: hidden;
+     margin: 0 -150px 0 -150px;
+  }
+}
