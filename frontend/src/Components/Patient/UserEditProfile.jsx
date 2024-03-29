@@ -39,20 +39,30 @@ const [userData, setUserData] = useState(null);
 
 useEffect(() => {
   const fetchUserData = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/patient/${patientId}`);
-      if (response.status === 200) {
-        setUserData(response.data);
-      } else {
-        console.error("Failed to fetch data with status:", response.status);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    // try {
+    //   const response = await axios.get(`http://127.0.0.1:8000/api/patientDetail/${patientId}`);
+    //   if (response.status === 200) {
+    //     setUserData(response.data);
+    //   } else {
+    //     console.error("Failed to fetch data with status:", response.status);
+    //   }
+    // } catch (error) {
+    //   console.error("Error fetching data:", error);
+    // }
+    axios.get(`http://127.0.0.1:8000/api/patientDetail/${patientId}`)
+     .then(response => {
+         console.log(response.data);
+     })
+     .catch(error => {
+         console.error('There was an error!', error);
+     });
   };
 
   fetchUserData();
 }, [patientId]); 
+useEffect(() => {
+  console.log(userData); // This will log userData when it updates
+}, [userData]);
   return (
     
     <div className={styles["user-edit-profile"]}>
@@ -87,7 +97,7 @@ useEffect(() => {
                 <div className={styles["frame-4"]}>
                   <input className={styles["frame-5" ]}
                   type='text'
-                  value={firstname}
+                  value={"Prima"}
                   onChange={(e) => setfirstname(e.target.value)}
                   placeholder="Enter your First Name" />
                 </div>
@@ -96,7 +106,7 @@ useEffect(() => {
                 <div className={styles["input"]}>Last Name</div> 
                 <div className={styles["frame-7"]}>
                   <input className={styles["frame-8"]} 
-                  value={lastname}
+                  value={"Sanghvi"}
                   onChange={(e) => setlastname(e.target.value)}
                   placeholder="Enter your Last Name" type="text" />
                 </div>

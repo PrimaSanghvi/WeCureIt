@@ -28,4 +28,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include(router.urls)),
     path('api/patientLogin/', views.PatientLoginView.as_view(), name='patientLogin'),
+    path('api/patientDetail/<int:pk>/', views.PatientDetail.as_view(), name='patientDetail'),
 ]
