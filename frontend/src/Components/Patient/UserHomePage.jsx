@@ -3,9 +3,12 @@ import styles from './UserHomePage.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useParams, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export const UserHomePage = () => {
   const { patientId } = useParams();
+  const location = useLocation();
+  const message = location.state?.message;
     return (
         
             <div  className={styles['main-container']}>
@@ -34,16 +37,17 @@ export const UserHomePage = () => {
                     {/* <div  className={styles['unsplash-ctagwpbqg']} /> */}
                     <div className={styles['dropdown']}>
                     {/* <button className={styles['dropbtn']}> */}
-                    <FontAwesomeIcon icon={faUserCircle} />
+                    <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
 {/* </button> */}
                     <div className={styles['dropdown-content']}>
                     <Link to={`/editProfile/${patientId}`}>Edit Profile</Link>
-                    <a href="">Logout</a>
+                    <a href="/">Logout</a>
                    </div>
                   </div>
                   </div>
                 </div>
               </div>
+              {message && <div style={{ textAlign: 'center', fontWeight: 'bold', paddingTop: '5%', color: 'green', fontSize: '20px' }}>{message}</div>}
               <span  className={styles['upcoming-appointments']}>Upcoming Appointments</span>
               <div  className={styles['upcoming-appointment-table']}>
                 <div  className={styles['table']}>

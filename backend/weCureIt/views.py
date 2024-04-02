@@ -41,7 +41,6 @@ class PatientDetail(APIView):
         try:
             patient = Patient.objects.get(pk=pk)
             serializer = PatientSerializer(patient)
-            print(serializer.data)
             return Response(serializer.data)
             
         except Patient.DoesNotExist:

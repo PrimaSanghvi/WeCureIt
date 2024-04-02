@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import check_password
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        fields = ('patient_id', 'first_name','last_name','email','password','address','phone_number')
+        fields = ('patient_id', 'first_name','last_name','email','password','addressLine1','addressLine2','city','state','zipCode','phone_number')
 
 
 class PatientLoginSerializer(serializers.Serializer):
@@ -32,4 +32,4 @@ class PatientLoginSerializer(serializers.Serializer):
 class PatientCreditCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientCreditCard
-        fields = ('patient_id','card_number', 'card_holder_name', 'cvv', 'billing_address', 'expiry_date')
+        fields = ('patient_id','card_number', 'card_holder_name', 'cvv','addressLine1','addressLine2','city','state','zipCode', 'expiry_date')

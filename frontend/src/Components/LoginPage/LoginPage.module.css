@@ -521,3 +521,11 @@ button {
     background:#679745;
     border: 1px #679745;
 }
+.successmessage {
+    color: green; /* Example styling */
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 550;
+    font-family: Poppins, var(--default-font-family);
+}

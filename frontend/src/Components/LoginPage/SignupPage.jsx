@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from './SignupPage.module.css';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 export default function SignupPage() {
@@ -20,6 +21,7 @@ export default function SignupPage() {
     const navigate = useNavigate();
     const [formErrors, setFormErrors] = useState({
       addressLine1: '',
+      addressLine2: '',
       city: '',
       state: '',
       zipCode: '',
@@ -79,32 +81,21 @@ export default function SignupPage() {
          // return; // Prevent form submission if passwords do not match
        // }
         const phone_number = "1234567890";
-
-        const address = `${addressLine1} ${city} ${state}`;
         
         const formData = {
             first_name,
             last_name,
             email,
             password,
-            address,
+            addressLine1,
+            addressLine2,
+            city,
+            state,
+            zipCode,
             phone_number, // Include static phone number in the form data
         };
 
-        // Send POST request to Django backend
-        // console.log(formData)
-        // axios.post('http://127.0.0.1:8000/api/patientRegister/', formData)
-        //     .then(response => {
-        //         console.log('Form submitted successfully!', response.data);
-        //         //  history.push('/creditCardDetails', { data });
-        //         // navigate('/creditCardDetails', {formData});
-        //         // Handle successful response from the backend
-        //     })
-        //     .catch(error => {
-        //         console.error('Error submitting form:', error);
-        //         // Handle error from the backend
-        //     });
-            // navigate('/creditCardDetails');
+      
             navigate('/creditCardDetails', { state: {formData}});
           
             
@@ -214,7 +205,7 @@ export default function SignupPage() {
                 type='email'
                 value={email}
                 placeholder='Enter your Email'
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value ? e.target.value.toUpperCase() : '')}
                 onBlur={validateEmail} 
                 required
               />
@@ -232,7 +223,7 @@ export default function SignupPage() {
                 value={password}
                 placeholder='Create a new password'
                 onChange={(e) => setPassword(e.target.value)}
-                // onBlur = {validatePassword}
+                onBlur = {validatePassword}
                 required
               />
               {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
@@ -249,7 +240,7 @@ export default function SignupPage() {
                 value={reenteredPassword}
                 placeholder='Re-enter a password'
                 onChange={(e) => setReenteredPassword(e.target.value)}
-                // onBlur={validatePassword}
+                onBlur={validatePassword}
                 required
               />
                {confrimPasswordError && <div style={{ color: 'red' }}>{confrimPasswordError}</div>}
@@ -270,7 +261,8 @@ export default function SignupPage() {
             <div className={styles['box-e']}>
               <span className={styles['text-13']}>Have an Account</span>
               <span className={styles['text-14']}>? </span>
-              <span className={styles['text-15']}>Login</span>
+              <Link to="/">Login</Link>
+              {/* <span className={styles['text-15']}>Login</span> */}
             </div>
           </div>
           <div className={styles['box-f']}>

@@ -17,7 +17,11 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=254)
     email = models.EmailField(max_length = 254)
     password = models.CharField(max_length=100)
-    address = models.CharField(max_length=254)
+    addressLine1 = models.CharField(max_length=254)
+    addressLine2 = models.CharField(max_length=254, default="", null=True, blank=True)
+    city = models.CharField(max_length=254, default="")
+    state = models.CharField(max_length=254, default="")
+    zipCode = models.IntegerField(null=True, blank=True)
     phone_number = models.IntegerField()
 
 class PatientCreditCard(models.Model):
@@ -25,7 +29,11 @@ class PatientCreditCard(models.Model):
     card_number = models.CharField(max_length=19, primary_key = True)
     card_holder_name =  models.CharField(max_length=100)
     cvv =  models.IntegerField()
-    billing_address = models.CharField(max_length=254)
+    addressLine1 = models.CharField(max_length=254)
+    addressLine2 = models.CharField(max_length=254, default="", null=True, blank=True)
+    city = models.CharField(max_length=254, default="")
+    state = models.CharField(max_length=254, default="")
+    zipCode = models.IntegerField(null=True, blank=True)
     expiry_date = models.CharField(max_length=254)
     
 

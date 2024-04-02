@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import  styles from './SignupPage2.module.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios'; 
+import { useNavigate } from 'react-router-dom';
 
 export default function Main() {
     const [card_number, setCardNumber] = useState('');
@@ -16,36 +17,43 @@ export default function Main() {
     const [expMonth, setExpMonth] = useState('');
     const [expYear, setExpYear] = useState('');
     const location = useLocation();
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         // Here you can handle the form submission, such as sending the data to your backend
         
         const formData = location.state.formData;
-        const billing_address = `${addressLine1} ${city} ${state}`;
         const expiry_date = expMonth + "/" + expYear;
 
         const cardDetails = {
             card_number,
             card_holder_name,
-            billing_address,
+            addressLine1,
+            addressLine2,
+            city,
+            state,
+            zipCode,
             cvv,
             expiry_date,
         };
 
         if(Object.keys(formData).length !== 0)
         {
+            console.log(JSON.stringify(formData))
         axios.post('http://127.0.0.1:8000/api/patientRegister/', formData)
         .then(response => {
             console.log('Form submitted successfully!', response.data);
             const patientId = response.data.patient_id;
             cardDetails.patient_id = patientId; 
  
-                return axios.post('http://127.0.0.1:8000/api/patientCardDetails/', cardDetails);
+               return axios.post('http://127.0.0.1:8000/api/patientCardDetails/', cardDetails);
+                
             })
             .then(response => {
                 console.log('Credit card form submitted successfully!', response.data);
                 // Handle any post-submission logic here, like redirecting to another page
+                navigate('/', { state: { message: 'Account created Successfully! Please Login to the system.' } });
             })
         .catch(error => {
             console.error('Error submitting form:', error);

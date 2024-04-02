@@ -4,20 +4,25 @@ import axios from 'axios';
 //import Image from './LoginImg.png';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
 
 export default function Main() {
 
     const [email, setEmail] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
+    const location = useLocation(); 
+    const message = location.state?.message;
     const handleLogin =async () => {
         
         try {
             const payload = {
-                email: email,
+                email: email.toUpperCase(),
                 password: password,
             };
-            console.log('email', payload)
+
             const response = await axios.post('http://127.0.0.1:8000/api/patientLogin/', payload);
     
             if (response.status === 200) {
@@ -30,12 +35,13 @@ export default function Main() {
         } catch (error) {
             if (error.response) {
                 console.error("Login Failed:", error.response.data);
-            } else if (error.request) {
-                
+                setErrorMessage(error.response.data.detail || "Invalid credentials. Please try again.");
+            } else if (error.request) {               
                 console.error("No response received:", error.request);
-            } else {
-                
+                setErrorMessage("The server did not respond. Please try again later.");
+            } else {                
                 console.error("Error:", error.message);
+                setErrorMessage("An unexpected error occurred. Please try again.");
             }
         }
     };
@@ -64,6 +70,8 @@ export default function Main() {
     </div>
     <div className={styles['box-2']}>
         <div className={styles['section-3']}>
+        {message && <div className={styles['successmessage']}>{message}</div>}
+        {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
             <div className={styles['box-3']}>
                 <span className={styles['text-3']}>Welcome back!</span>
             </div>
