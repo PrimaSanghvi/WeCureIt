@@ -33,3 +33,9 @@ class PatientCreditCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientCreditCard
         fields = ('patient_id','card_number', 'card_holder_name', 'cvv','addressLine1','addressLine2','city','state','zipCode', 'expiry_date')
+
+
+class SpecialitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Speciality
+        fields = ('speciality_id','name')

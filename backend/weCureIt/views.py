@@ -45,5 +45,18 @@ class PatientDetail(APIView):
             
         except Patient.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+class SpecialityView(viewsets.ModelViewSet):
+    model = Speciality
+    serializers_class = SpecialitySerializer
+    queryset = Speciality.objects.all()
+
+class SpecialtyListView(APIView):
+    def get(self, request, format=None):
+        specialties = Speciality.objects.all()
+        serializer = SpecialitySerializer(specialties, many=True)
+        return Response(serializer.data)
+
+
        
 
