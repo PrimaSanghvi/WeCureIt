@@ -1,9 +1,8 @@
 # Populate the database for each table
 # Requirements:
-# 1. Need pandas & psycopg2 installed
+# 1. Need psycopg2 installed
 
 import psycopg2
-import pandas as pd
 
 # Define the database connection parameters:
 db_params = {
