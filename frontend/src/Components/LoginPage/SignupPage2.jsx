@@ -18,14 +18,45 @@ export default function Main() {
     const [expYear, setExpYear] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
+    // const [expDateError, setExpDateError] = useState('');
+    const[cardNumError, setCardNumError] = useState('');
+    // const validateExpDat = () =>
+    // {
+    //     setExpMonth(expMonth.trim());
+    //  const   expYear_new = expYear.trim();
 
+    //     if (expYear_new.length === 4) {
+    //         setExpYear(expYear.substring(2))
+    //     }
+
+    //     const expMonth_new = parseInt(expMonth, 10);
+    //     if (expMonth_new < 1 || expMonth_new > 12) {
+    //         setExpDateError("Invalid expiry month.");
+    //         return false;
+    //     }
+    //     else{
+    //         setExpDateError("")
+    //     }
+    // return true
+    // }
+
+    const validateCardNumber = () =>
+    {
+       const card_number_1 = card_number.replace(/\s+/g, ''); // Remove spaces if any
+        if (card_number_1.length > 16 || card_number_1.length  < 8) {
+            setCardNumError("Card number must not exceed 16 digits.");
+        }
+    }
     const handleSubmit = (e) => {
         e.preventDefault();
         // Here you can handle the form submission, such as sending the data to your backend
         
         const formData = location.state.formData;
-        const expiry_date = expMonth + "/" + expYear;
 
+        const expiry_date  = expMonth + "/" + expYear;
+        
+
+       
         const cardDetails = {
             card_number,
             card_holder_name,
@@ -89,6 +120,7 @@ export default function Main() {
             <div className={styles['group-3']}>
                 <div className={styles['box-3']}>
                     <div className={styles['box-4']}>
+                    {/* {expDateError && <div style={{ color: 'red' }}>{expDateError}</div>} */}
                         <span className={styles['text-3']}>
                             Enter the Following to Create Your Account
                         </span>
@@ -106,7 +138,9 @@ export default function Main() {
                                     value={card_number}
                                     onChange={(e) => setCardNumber(e.target.value)}
                                     placeholder='Enter Card Number'
+                                    onBlur={validateCardNumber}
                                 />
+                                 {cardNumError && <div style={{ color: 'red' }}>{cardNumError}</div>}
                             </div>
                         </div>
                     </div>

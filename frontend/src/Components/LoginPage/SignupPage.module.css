@@ -549,6 +549,7 @@ button {
     position: relative;
     width: 100px;
     z-index: 19;
+    margin-top: 5%
 }
 .text-c {
     flex-shrink: 0;
@@ -1089,4 +1090,14 @@ button {
     text-align: left;
     white-space: nowrap;
     z-index: 29;
+}
+.wrapper-51{
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 10px;
+    position: relative;
+    width: 58px;
+    z-index: 31;
+    margin-top: -15%;
 }

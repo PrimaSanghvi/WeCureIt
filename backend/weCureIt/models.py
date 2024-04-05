@@ -4,6 +4,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.utils import timezone
 
 
 # Create your models here.
@@ -18,10 +19,10 @@ class Patient(models.Model):
     email = models.EmailField(max_length = 254)
     password = models.CharField(max_length=100)
     addressLine1 = models.CharField(max_length=254)
-    addressLine2 = models.CharField(max_length=254, default="", null=True, blank=True)
-    city = models.CharField(max_length=254, default="")
-    state = models.CharField(max_length=254, default="")
-    zipCode = models.IntegerField(null=True, blank=True)
+    addressLine2 = models.CharField(max_length=254, default = " ", null = True, blank = True)
+    city = models.CharField(max_length=254)
+    state = models.CharField(max_length=254)
+    zipCode = models.IntegerField()
     phone_number = models.IntegerField()
 
 class PatientCreditCard(models.Model):
@@ -30,16 +31,19 @@ class PatientCreditCard(models.Model):
     card_holder_name =  models.CharField(max_length=100)
     cvv =  models.IntegerField()
     addressLine1 = models.CharField(max_length=254)
-    addressLine2 = models.CharField(max_length=254, default="", null=True, blank=True)
-    city = models.CharField(max_length=254, default="")
-    state = models.CharField(max_length=254, default="")
-    zipCode = models.IntegerField(null=True, blank=True)
+    addressLine2 = models.CharField(max_length=254, default = " ", null = True, blank = True)
+    city = models.CharField(max_length=254)
+    state = models.CharField(max_length=254)
+    zipCode = models.IntegerField()
     expiry_date = models.CharField(max_length=254)
     
 
 
 class Patient_record(models.Model):
     patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    patient_rec_id = models.BigAutoField(auto_created = True,
+                  primary_key = True,
+                  serialize = False)
     first_name = models.CharField(max_length=254)
     last_name = models.CharField(max_length=254)
     medicine_prescribed =  models.CharField(max_length=254)
@@ -52,7 +56,7 @@ class Doctor(models.Model):
                   serialize = False)
     first_name = models.CharField(max_length=254)
     last_name = models.CharField(max_length=254)
-    speciality = models.CharField(max_length=254)
+    speciality = ArrayField(models.CharField(max_length=254))
     email = models.EmailField(max_length = 254)
     password = models.CharField(max_length=100) 
     phone_number = models.IntegerField()
@@ -78,13 +82,12 @@ class Speciality(models.Model):
 
 
 class Doc_schedule(models.Model):
-    schedule_id =  models.BigAutoField(auto_created = True,
-                  primary_key = True,
-                  serialize = False)
+    schedule_id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False)
     doctor_id = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     days_visiting = models.CharField(max_length=254)
-    facility_visiting = models.CharField(max_length=254)
-    visiting_hours =  models.CharField(max_length=254)
+    facility_id = models.ForeignKey(Facility, on_delete=models.CASCADE, null=True, blank=True,related_name='schedules')
+    visiting_hours_start = models.TimeField(null=True)
+    visiting_hours_end = models.TimeField(null=True)
 
 class Appointments(models.Model):
     appointment_id =models.BigAutoField(auto_created = True,
@@ -95,5 +98,8 @@ class Appointments(models.Model):
     doctor_id = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     speciality_id = models.ForeignKey(Speciality, on_delete=models.CASCADE)
     schedule_id =  models.ForeignKey(Doc_schedule, on_delete=models.CASCADE)
+    patient_rec_id = models.ForeignKey(Patient_record, on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    date = models.DateField(default=timezone.now)  # Add this line
+

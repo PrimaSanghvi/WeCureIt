@@ -15,37 +15,36 @@ export default function Main() {
     const navigate = useNavigate();
     const location = useLocation(); 
     const message = location.state?.message;
-    const handleLogin =async () => {
-        
-        try {
-            const payload = {
-                email: email.toUpperCase(),
-                password: password,
-            };
-
-            const response = await axios.post('http://127.0.0.1:8000/api/patientLogin/', payload);
+   
+    const handleLogin = async () => {
+        const payload = {
+            email: email.toUpperCase(),
+            password: password,
+        };
     
-            if (response.status === 200) {
-                console.log("Login Successful:", response.data);
-                const patientId = response.data.patient_id;
+        const patientLoginPromise = axios.post('http://127.0.0.1:8000/api/patientLogin/', payload);
+        const doctorLoginPromise = axios.post('http://127.0.0.1:8000/api/doctorLogin/', payload);
+    
+        const results = await Promise.allSettled([patientLoginPromise, doctorLoginPromise]);
+        
+        const patientResult = results[0];
+        const doctorResult = results[1];
+    
+        if (patientResult.status === "fulfilled" && patientResult.value.status === 200) {
+            console.log("Patient Login Successful:", patientResult.value.data);
+            const patientId = patientResult.value.data.patient_id;
             navigate(`/patientHomepage/${patientId}`);
-            } else {
-                console.error("Login Failed with status:", response.status);
-            }
-        } catch (error) {
-            if (error.response) {
-                console.error("Login Failed:", error.response.data);
-                setErrorMessage(error.response.data.detail || "Invalid credentials. Please try again.");
-            } else if (error.request) {               
-                console.error("No response received:", error.request);
-                setErrorMessage("The server did not respond. Please try again later.");
-            } else {                
-                console.error("Error:", error.message);
-                setErrorMessage("An unexpected error occurred. Please try again.");
-            }
+        } else if (doctorResult.status === "fulfilled" && doctorResult.value.status === 200) {
+            console.log("Doctor Login Successful:", doctorResult.value.data);
+            const doctorId = doctorResult.value.data.doctor_id;
+            navigate(`/doctorHomepage/${doctorId}`);
+        } else {
+            // Handle error: Neither login was successful
+            setErrorMessage("Invalid credentials. Please try again.");
         }
     };
-
+    
+    
     return (
     <div className={styles['main-container']}>
     <div className={styles['section']}>
