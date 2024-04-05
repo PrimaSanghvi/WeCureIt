@@ -1,37 +1,21 @@
 import React from "react";
 import styles from"./EditDoctor.module.css";
-import { useState } from 'react';
+import { useEffect,useState } from 'react';
+import axios from 'axios'; 
+import { useLocation } from 'react-router-dom';
+
 
 export default function Main() {
-
-
-  const specialtylist=[
-    {
-      "speciality_id": 1,
-      "name": "Cardiology"
-    },
-    {
-      "speciality_id": 2,
-      "name": "Pediatrics"
-    },{
-      "speciality_id": 3,
-      "name": "Psychiatry"
-    },{
-      "speciality_id": 4,
-      "name": "Internal Medicine"
-    },{
-      "speciality_id": 5,
-      "name": "Obstetrics and Gynecology"
-    },
-  ]
-
-
-  const [first_name, setFirstName] = useState('Fern');
-  const [last_name, setLastName] = useState('Moyes');
-  const [email, setemail] = useState('Fern.Moyer@gmail.com');
+  const location = useLocation();
+  const doctor_editing = location.state.editdoctor;
+  const [specialtylist,setspecialtylist] =  useState([]);
+  const [first_name, setFirstName] = useState(doctor_editing.first_name);
+  const [last_name, setLastName] = useState(doctor_editing.last_name);
+  const [email, setemail] = useState(doctor_editing.email);
   const [selectedspeciality,setseletedspeciality] = useState("");
-  const [displayedSpeciality, setDisplayedSpeciality] = useState(["Cardiology","Pediatrics"]);
+  const [displayedSpeciality, setDisplayedSpeciality] = useState([doctor_editing.speciality]);
   const [removespeciality,setremovespeciality] = useState('')
+
 
   const handleDisplay = () => {
 
@@ -60,16 +44,53 @@ export default function Main() {
     console.log("transfer to edit facilities")
   }
 
-  const handleSubmit = (e) =>{
+  const handleSubmit = async(e) =>{
     e.preventDefault();
-// Here you can handle the form submission, such as sending the data to your backend
-    console.log("Form submitted!");
-    console.log("First Name:", first_name);
-    console.log("Last Name:", last_name);
-    console.log("Email:", email);
-    console.log("specialities:",displayedSpeciality)
+    const doctor_id = doctor_editing.doctor_id;
+    const password = doctor_editing.password;
+    const phone_number = doctor_editing.phone_number
+    const is_active = doctor_editing.is_active
+    const speciality = displayedSpeciality.join(", ");
+    const updateddoctor = {
+      doctor_id,
+      first_name,
+      last_name,
+      speciality,
+      email,
+      password,
+      phone_number,
+      is_active
+    }
+    console.log(updateddoctor)
+    try {
+      // Send a PUT request to update the doctor's is_active status
+    await axios.put(`http://127.0.0.1:8000/api/removedoctor/${doctor_editing.doctor_id}/`, updateddoctor);
+  // If the request is successful, update the doctor list in the state
+    } catch (error) {
+  // Handle errors
+    console.error('Error removing doctor:', error);
+  }
     
   };
+  
+  
+
+  useEffect(() => {
+    
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/specialties/');
+        const formattedData = response.data.map(item => ({
+          speciality_id: item.id,
+          name: item.name
+        }));
+        setspecialtylist(formattedData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className={styles["main-container"]}>

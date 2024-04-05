@@ -1,32 +1,14 @@
 
     import React from 'react';
-    import { useState } from 'react';
-    
+    import { useEffect,useState } from 'react';
+    import axios from 'axios'; 
     import styles from './AddDoctors.module.css';
+    import { useNavigate } from 'react-router-dom';
+ 
     
     export default function Main() {
-      const specialtylist=[
-        {
-          "speciality_id": 1,
-          "name": "Cardiology"
-        },
-        {
-          "speciality_id": 2,
-          "name": "Pediatrics"
-        },{
-          "speciality_id": 3,
-          "name": "Psychiatry"
-        },{
-          "speciality_id": 4,
-          "name": "Internal Medicine"
-        },{
-          "speciality_id": 5,
-          "name": "Obstetrics and Gynecology"
-        },
-      ]
 
-      
-
+      const [specialtylist,setspecialtylist] =  useState([]);
       const [first_name, setFirstName] = useState('');
       const [last_name, setLastName] = useState('');
       const [email, setemail] = useState('');
@@ -34,29 +16,8 @@
       const [selectedspeciality,setseletedspeciality] = useState("");
       const [displayedSpeciality, setDisplayedSpeciality] = useState([]);
       const [removespeciality,setremovespeciality] = useState('')
-      const [doctorlist, setDoctorList] = useState([
-        {
-          "doctor_id":1,
-          "first_name":"Moyer",
-          "last_name":"Fern",
-          "speciality":"Cardiology",
-          "isactive":true
-        },
-        {
-          "doctor_id":2,
-          "first_name":"McKnight",
-          "last_name":"Tia",
-          "speciality":"Psychiatry",
-          "isactive":true
-        },
-        {
-          "doctor_id":3,
-          "first_name":"TJ",
-          "last_name":"Tia",
-          "speciality":"Psychiatry",
-          "isactive":true
-        },
-      ]);
+      const [doctorlist, setDoctorList] = useState([]);
+      const navigate = useNavigate();
     
       
 
@@ -83,11 +44,32 @@
       const handleSubmit = (e) =>{
         e.preventDefault();
     // Here you can handle the form submission, such as sending the data to your backend
-        console.log("Form submitted!");
-        console.log("First Name:", first_name);
-        console.log("Last Name:", last_name);
-        console.log("Email:", email);
-        console.log("specialities:",displayedSpeciality)
+        const phone_number = "1234567890";
+        const speciality = displayedSpeciality.join(", ");
+        const formData = {
+          first_name,
+          last_name,
+          speciality,
+          password,
+          phone_number,
+          email,
+          is_active:true,
+        }
+        if (Object.keys(formData).length !== 0) {
+          console.log(JSON.stringify(formData));
+          axios.post('http://127.0.0.1:8000/api/DoctorRegister/', formData)
+              .then(response => {
+                
+                  console.log('Form submitted successfully!', response.data);
+                  // Handle any post-submission logic here, like redirecting to another page
+                  
+              })
+              .catch(error => {
+                  console.error('Error submitting form:', error);
+              });
+              window.location.href = "/AddDoctors"
+      }
+      
         
       };
       const transferfacility = () =>{
@@ -96,13 +78,63 @@
         console.log("transfer to edit facilities")
       };
 
-      const removedoctor = (doctorToRemove) => {
-        const updatedDoctorList = doctorlist.filter(doctor => doctor !== doctorToRemove);
-        setDoctorList(updatedDoctorList);
+      const removedoctor = async(doctorToRemove) => {
+          try {
+            // Update the doctor's is_active status to false
+            doctorToRemove.is_active = false;
+            console.log(doctorToRemove)
+            // Send a PUT request to update the doctor's is_active status
+            await axios.put(`http://127.0.0.1:8000/api/removedoctor/${doctorToRemove.doctor_id}/`, doctorToRemove);
+            // If the request is successful, update the doctor list in the state
+            const updatedDoctorList = doctorlist.filter(doctor => doctor !== doctorToRemove);
+            setDoctorList(updatedDoctorList);
+        } catch (error) {
+            // Handle errors
+            console.error('Error removing doctor:', error);
+        }
+        
       };
-      const transfereditdoctor = () =>{
-        window.location.href = "/editdoctors";
+
+
+      const transfereditdoctor = async(editdoctor) =>{
+        navigate('/editdoctors/', { state: {editdoctor}});
+        //window.location.href = "/editdoctors";
       }
+
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const response = await axios.get('http://127.0.0.1:8000/api/specialties/');
+            const response2 = await axios.get('http://127.0.0.1:8000/api/doctorlist/');
+            const formattedData = response.data.map(item => ({
+              speciality_id: item.id,
+              name: item.name
+            }));
+            
+           
+            const doctorlistformatted = response2.data.map(doctor =>  ({
+              doctor_id: doctor.doctor_id,
+              first_name: doctor.first_name,
+              last_name: doctor.last_name,
+              speciality: doctor.speciality,
+              password: doctor.password,
+              phone_number:doctor.phone_number,
+              email:doctor.email,
+              is_active: doctor.is_active
+            }));
+            const activedoctor = doctorlistformatted.filter(doctor => doctor.is_active === true);
+            setDoctorList(activedoctor)
+            
+            setspecialtylist(formattedData);
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+        fetchData();
+      }, []);
+
+      
+
       return (
         <div className={styles["main-container"]}>
           <div className={styles["top-bar"]}>
@@ -198,7 +230,7 @@
                     </div><div className={styles["cell-16"]}>
                         <div className={styles["row-cell-17"]}>
                           <button className={styles["icon-left"]}>
-                            <span className={styles["edit-information-18"]} onClick={transfereditdoctor}>Edit Information</span>
+                            <span className={styles["edit-information-18"]} onClick={()=>transfereditdoctor(doctor)}>Edit Information</span>
                           </button>
                         </div>
                       </div><div className={styles["cell-19"]}>

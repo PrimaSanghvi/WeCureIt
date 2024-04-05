@@ -39,3 +39,17 @@ class SpecialitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Speciality
         fields = ('speciality_id','name')
+
+class DoctorListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ('doctor_id','first_name','last_name','speciality','email','is_active')
+
+class DoctorInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ('doctor_id','first_name','last_name','speciality','password','phone_number','email','is_active')
+
+
+
+
