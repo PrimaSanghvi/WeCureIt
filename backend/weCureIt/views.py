@@ -60,7 +60,8 @@ class PatientPreferenceDetail(APIView):
 class AllDoctorDetail(APIView):
     def get(self, request,*args, **kwarg):
         try:
-            doctor = Doctor.objects.all()
+            # Only retrieving doctors whose 'is_active' is True
+            doctor = Doctor.objects.filter(is_active = True)
             serializer = AllDoctorSerializer(doctor, many=True)
             return Response(serializer.data)
         

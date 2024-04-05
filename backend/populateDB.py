@@ -7,7 +7,7 @@ import psycopg2
 # Define the database connection parameters:
 db_params = {
         'host': 'localhost',
-        'database': 'WeCureITDB',
+        'database': 'WeCureItDB',
         'user': 'laurenhahn',
         'password': '54321',
         'port': 5432
@@ -75,7 +75,8 @@ for facility in facilities:
 
 # Doctor:
 doctors = [["Fern", "Moyer", ["Cardiology"], "fmoyer@gmail.com", "12345", 1111111111, True],
-           ["Tia", "McKnight", ["Cardiology", "Pediatrics"], "tmcknight@gmail.com", "12345", 1111111111, True]
+           ["Tia", "McKnight", ["Cardiology", "Pediatrics"], "tmcknight@gmail.com", "12345", 1111111111, True],
+           ["Gordon", "Ortiz", ["Pediatrics"], "gortiz@gmail.com", "12345", 1111111111, False]
           ]
 
 for doctor in doctors:

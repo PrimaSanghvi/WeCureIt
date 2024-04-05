@@ -43,9 +43,9 @@ class Patient_record(models.Model):
     comments = models.CharField(max_length=254)
 
 class PatientPreference(models.Model):
-    patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE, primary_key = True)
-    doctor_pref = models.CharField(null=True)
-    facility_pref = models.CharField(null=True)
+    patient_id = models.OneToOneField(Patient, on_delete=models.CASCADE, primary_key = True)
+    doctor_pref_id = models.CharField(null=True, max_length=254)
+    facility_pref_id = models.CharField(null=True, max_length=254)
 
 class Doctor(models.Model):
     doctor_id = models.BigAutoField(auto_created = True,

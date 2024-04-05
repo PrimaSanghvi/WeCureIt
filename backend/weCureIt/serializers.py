@@ -34,7 +34,7 @@ class PatientCreditCardSerializer(serializers.ModelSerializer):
 class PatientPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientPreference
-        fields = ('patient_id', 'doctor_pref', 'facility_pref')
+        fields = ('patient_id', 'doctor_pref_id', 'facility_pref_id')
 
 ################## DOCTOR ##################
 class AllDoctorSerializer(serializers.ModelSerializer):

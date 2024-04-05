@@ -10,8 +10,8 @@ import unclickedEditSVG from '../../../src/assets/edit-1.svg'
 export const UserEditPreference = () => {
   const { patientId } = useParams();
 
-  const [doctor_pref, setDoctorPreference] = useState(null);
-  const [facility_pref, setFacilityPreference] = useState(null);
+  const [doctor_pref_id, setDoctorPreference] = useState(null);
+  const [facility_pref_id, setFacilityPreference] = useState(null);
   const [doctor_options, setDoctorOptions] = useState([]);
   const [facility_options, setFacilityOptions] = useState([]);
 
@@ -25,19 +25,20 @@ export const UserEditPreference = () => {
         if (responsePreference.status === 200) {
           const preferenceData = responsePreference.data;
 
-          if (preferenceData.doctor_pref == null) {
-            console.log("preference doctor is null")
-            // setDoctorPreference("No Preference")
+          if (preferenceData.doctor_pref_id === "No Preference") {
+            console.log("Doctor = No Preference")
+            setDoctorPreference("No Preference")
           } else {
-            setDoctorPreference(preferenceData.doctor_pref)
+            console.log("Doctor = " + preferenceData.doctor_pref_id)
+            setDoctorPreference(preferenceData.doctor_pref_id)
           }
 
-          if (preferenceData.facility_pref == null) {
-            console.log("prefernece facility is null")
+          if (preferenceData.facility_pref_id === "No Preference") {
+            console.log("Facility = No Preference")
             setFacilityPreference("No Preference")
           } else {
-            setFacilityPreference(preferenceData.facility_pref)
-            console.log(facility_pref)
+            console.log("Facility = " + preferenceData.facility_pref_id)
+            setFacilityPreference(preferenceData.facility_pref_id)
           }
         } else {
           console.error("Failed to fetch data with status:", responsePreference.status);
@@ -78,7 +79,7 @@ export const UserEditPreference = () => {
     fetchAvailableDoctors();
     fetchAvailableFacility();
     fetchUserPreference();
-  }, [doctor_pref, facility_pref, patientId]);
+  }, [patientId]);
 
   // HOMEPAGE BUTTON:
   const handleClick = () => {
@@ -88,13 +89,14 @@ export const UserEditPreference = () => {
 
   // SAVE CHANGES BUTTON:
   const handleSubmit = () => {
-    console.log("save changes button clicked!")
+    console.log(doctor_pref_id)
+    console.log(facility_pref_id)
 
     const formData = {
-      doctor_pref,
-      facility_pref
+      doctor_pref_id,
+      facility_pref_id
     };
-
+  
     console.log(formData)
     axios.patch(`http://127.0.0.1:8000/api/patientPreference/${patientId}/`, formData)
     .then(response => {
@@ -167,11 +169,11 @@ export const UserEditPreference = () => {
                 </div>
                 <div className={styles['frame-6']}>
                   <div className={styles['frame-7']}>
-                    <select value={doctor_pref}>
+                    <select value={doctor_pref_id} onChange={e => setDoctorPreference(e.target.value)}>
                       {doctor_options.map(doc => (
                         <option key={doc.doctor_id} value={doc.doctor_id}>Dr. {doc.first_name} {doc.last_name}</option>
                       ))}
-                      <option>No Preference</option>
+                      <option key="No Preference" value="No Preference">No Preference</option>
                     </select>
                   </div>
                 </div>
@@ -182,11 +184,11 @@ export const UserEditPreference = () => {
                 </div>
                 <div className={styles['frame-10']}>
                   <div className={styles['frame-11']}>
-                    <select value={facility_pref}>
+                    <select value={facility_pref_id} onChange={e => setFacilityPreference(e.target.value)}>
                       {facility_options.map(fac => (
-                        <option key={fac.name} value={fac.name}>{fac.name}</option>
+                        <option key={fac.facility_id} value={fac.facility_id}>{fac.name}</option>
                       ))}
-                      <option>No Preference</option>
+                      <option key="No Preference" value="No Preference">No Preference</option>
                     </select>
                   </div>
                 </div>
