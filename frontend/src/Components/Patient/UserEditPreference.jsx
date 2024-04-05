@@ -10,8 +10,8 @@ import unclickedEditSVG from '../../../src/assets/edit-1.svg'
 export const UserEditPreference = () => {
   const { patientId } = useParams();
 
-  const [doctor_pref_id, setDoctorPreference] = useState(null);
-  const [facility_pref_id, setFacilityPreference] = useState(null);
+  const [doctor_pref_id, setDoctorPreference] = useState("No Preference");
+  const [facility_pref_id, setFacilityPreference] = useState("No Preference");
   const [doctor_options, setDoctorOptions] = useState([]);
   const [facility_options, setFacilityOptions] = useState([]);
 
