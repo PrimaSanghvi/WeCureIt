@@ -18,12 +18,12 @@ class PatientLoginView(APIView):
         serializer = PatientLoginSerializer(data=request.data)
         
         if serializer.is_valid():
-            print(serializer.validated_data)
+            # print(serializer.validated_data)
             # Authentication successful
             patient_id = serializer.validated_data['patient_id']
             return Response({"patient_id": patient_id}, status=status.HTTP_200_OK)
         else:
-            print(serializer.errors)
+            # print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class PatientCreditCardView(viewsets.ModelViewSet):

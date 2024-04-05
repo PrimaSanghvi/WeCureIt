@@ -16,7 +16,7 @@ class PatientLoginSerializer(serializers.Serializer):
     def validate(self, data):
         try:
             patient = Patient.objects.get(email=data.get("email"))
-            print("Patient found: ", patient.email)
+
             if data.get("password") != patient.password:
                 raise serializers.ValidationError("Invalid login credentials")
         except Patient.DoesNotExist:
