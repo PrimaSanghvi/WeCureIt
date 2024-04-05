@@ -590,7 +590,7 @@
     flex-shrink: 0;
     gap: 10px;
     position: relative;
-    width: 82px;
+    width: 404px;
     z-index: 32;
   }
   .enter-your-email {
@@ -665,7 +665,7 @@
     flex-shrink: 0;
     gap: 10px;
     position: relative;
-    width: 79px;
+    width: 404px;
     z-index: 26;
   }
   .reset-password-1c {
@@ -740,7 +740,7 @@
     flex-shrink: 0;
     gap: 10px;
     position: relative;
-    width: 107px;
+    width: 404px;
     z-index: 20;
   }
   .password {
@@ -941,7 +941,6 @@
     align-items: flex-start;
     flex-wrap: nowrap;
     flex-shrink: 0;
-    gap: 10px;
     position: relative;
     width: 183px;
     height: 32px;
@@ -957,10 +956,9 @@
     justify-content: center;
     flex-wrap: nowrap;
     flex-shrink: 0;
-    gap: 10px;
     position: relative;
     width: 108px;
-    z-index: 38;
+    top:-15px;
   }
   .enter-first-name {
     flex-shrink: 0;
