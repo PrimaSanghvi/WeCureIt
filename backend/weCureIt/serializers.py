@@ -101,7 +101,43 @@ class DocScheduleSerializer(serializers.ModelSerializer):
             return instance.facility_id.address
         return None
 
-class DoctorSerializer(serializers.ModelSerializer):
+# class DoctorSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Doctor
+#         fields = ('first_name', 'last_name', 'email', 'phone_number','speciality')
+
+
+class SpecialitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Speciality
+        fields = ('speciality_id','name')
+
+class DoctorListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
-        fields = ('first_name', 'last_name', 'email', 'phone_number','speciality')
+        fields = ('doctor_id','first_name','last_name','speciality','email','is_active')
+
+class DoctorInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ('doctor_id','first_name','last_name','speciality','password','phone_number','email','is_active')
+
+
+class AdminLoginSerializer(serializers.Serializer):
+    
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        try:
+            admin = AdminTable.objects.get(email=data.get("email"))
+            print("Admin found: ", admin.email)
+            if data.get("password") != admin.password:
+                raise serializers.ValidationError("Invalid login credentials")
+        except AdminTable.DoesNotExist:
+            raise serializers.ValidationError("Invalid login credentials")
+        
+        # Optionally add the patient instance to the validated data if you need it later
+        data['admin_id'] = admin.admin_id
+        return data
+    

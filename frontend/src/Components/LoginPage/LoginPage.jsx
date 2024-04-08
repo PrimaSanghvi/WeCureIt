@@ -24,11 +24,13 @@ export default function Main() {
     
         const patientLoginPromise = axios.post('http://127.0.0.1:8000/api/patientLogin/', payload);
         const doctorLoginPromise = axios.post('http://127.0.0.1:8000/api/doctorLogin/', payload);
+        const adminLoginPromise = axios.post('http://127.0.0.1:8000/api/adminLogin/', payload);
     
-        const results = await Promise.allSettled([patientLoginPromise, doctorLoginPromise]);
+        const results = await Promise.allSettled([patientLoginPromise, doctorLoginPromise,adminLoginPromise]);
         
         const patientResult = results[0];
         const doctorResult = results[1];
+        const adminResult = results[2];
     
         if (patientResult.status === "fulfilled" && patientResult.value.status === 200) {
             console.log("Patient Login Successful:", patientResult.value.data);
@@ -38,7 +40,12 @@ export default function Main() {
             console.log("Doctor Login Successful:", doctorResult.value.data);
             const doctorId = doctorResult.value.data.doctor_id;
             navigate(`/doctorHomepage/${doctorId}`);
-        } else {
+        } else if (adminResult.status === "fulfilled" && adminResult.value.status === 200) {
+            console.log("Admin Login Successful:", adminResult.value.data);
+            const adminId = adminResult.value.data.admin_id;
+            navigate(`/addDoctors/${adminId}`);
+        }
+         else {
             // Handle error: Neither login was successful
             setErrorMessage("Invalid credentials. Please try again.");
         }

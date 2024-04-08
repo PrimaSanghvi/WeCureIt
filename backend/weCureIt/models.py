@@ -23,7 +23,7 @@ class Patient(models.Model):
     city = models.CharField(max_length=254)
     state = models.CharField(max_length=254)
     zipCode = models.IntegerField()
-    phone_number = models.IntegerField()
+    phone_number = models.CharField(max_length=20)
 
 class PatientCreditCard(models.Model):
     patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
@@ -48,19 +48,8 @@ class Patient_record(models.Model):
     last_name = models.CharField(max_length=254)
     medicine_prescribed =  models.CharField(max_length=254)
     disease = models.CharField(max_length=254)
-    comments = models.CharField(max_length=254)
+    comments = models.CharField(max_length=254,null = True, blank = True)
 
-class Doctor(models.Model):
-    doctor_id = models.BigAutoField(auto_created = True,
-                  primary_key = True,
-                  serialize = False)
-    first_name = models.CharField(max_length=254)
-    last_name = models.CharField(max_length=254)
-    speciality = ArrayField(models.CharField(max_length=254))
-    email = models.EmailField(max_length = 254)
-    password = models.CharField(max_length=100) 
-    phone_number = models.IntegerField()
-    is_active = models.BooleanField(default=True)
 
 
 class Facility(models.Model):
@@ -72,6 +61,7 @@ class Facility(models.Model):
     rooms_no = models.IntegerField()
     phone_number = models.IntegerField()
     speciality = ArrayField(models.CharField(max_length=254))
+    is_active = models.BooleanField(default=True)
 
 
 class Speciality(models.Model):
@@ -80,14 +70,26 @@ class Speciality(models.Model):
                   serialize = False)
     name = models.CharField(max_length=254)
 
+class Doctor(models.Model):
+    doctor_id = models.BigAutoField(auto_created = True,
+                  primary_key = True,
+                  serialize = False)
+    first_name = models.CharField(max_length=254)
+    last_name = models.CharField(max_length=254)
+    speciality_id = models.ManyToManyField(Speciality)
+    email = models.EmailField(max_length = 254)
+    password = models.CharField(max_length=100) 
+    phone_number = models.CharField(max_length=20)
+    is_active = models.BooleanField(default=True)
 
 class Doc_schedule(models.Model):
     schedule_id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False)
     doctor_id = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     days_visiting = models.CharField(max_length=254)
-    facility_id = models.ForeignKey(Facility, on_delete=models.CASCADE, null=True, blank=True,related_name='schedules')
+    facility_id = models.ManyToManyField(Facility)
     visiting_hours_start = models.TimeField(null=True)
     visiting_hours_end = models.TimeField(null=True)
+    speciality_id = models.ManyToManyField(Speciality)
 
 class Appointments(models.Model):
     appointment_id =models.BigAutoField(auto_created = True,
@@ -103,3 +105,14 @@ class Appointments(models.Model):
     end_time = models.TimeField()
     date = models.DateField(default=timezone.now)  # Add this line
 
+
+class AdminTable(models.Model):
+    admin_id  = models.BigAutoField(auto_created = True,
+                  primary_key = True,
+                  serialize = False)
+    first_name = models.CharField(max_length=254)
+    last_name = models.CharField(max_length=254)
+    email = models.EmailField(max_length = 254)
+    password = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    phone_number = models.CharField(max_length=20)
