@@ -18,38 +18,47 @@
       const [displayedSpeciality, setDisplayedSpeciality] = useState([]);
       const [removespeciality,setremovespeciality] = useState('')
       const [doctorlist, setDoctorList] = useState([]);
+      const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
+
       const navigate = useNavigate();
     
-      
-
       const handleDisplay = () => {
-        if(selectedspeciality&& !displayedSpeciality.includes(selectedspeciality)){
-          setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
-          setseletedspeciality("");
+        console.log(`Selected Specialty: ${selectedspeciality}`);
+        console.log(`Displayed Speciality Names:`, displayedSpeciality);
+        console.log(`Selected Speciality IDs:`, selectedSpecialityIds);
+    
+        const speciality = specialtylist.find(s => s.name === selectedspeciality);
+        if (speciality && !selectedSpecialityIds.includes(speciality.speciality_id)) {
+            setSelectedSpecialityIds([...selectedSpecialityIds, speciality.speciality_id]);
+            setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
+            setseletedspeciality("");
+        } else if (!selectedspeciality) {
+            alert('Please select a speciality first.');
+        } else {
+            alert('This speciality is already in the list.');
         }
-        else if(!selectedspeciality){
-          alert('Please select a speciality first.');
-        }
-        else{
-          alert('this speciality is already in the list')
-        }
-      };
+    };
+    
       
-      const handleRemove = () =>{
-        if (removespeciality) {
+      
+      const handleRemove = () => {
+        const speciality = specialtylist.find(s => s.name === removespeciality);
+        if (speciality) {
+          setSelectedSpecialityIds(selectedSpecialityIds.filter(id => id !== speciality.speciality_id));
+          // Also update displayedSpeciality to keep the UI in sync
           setDisplayedSpeciality(displayedSpeciality.filter(item => item !== removespeciality));
           setremovespeciality(''); // Clear selected item
         }
       };
-
+      
       const handleSubmit = (e) =>{
         e.preventDefault();
     // Here you can handle the form submission, such as sending the data to your backend
-        const speciality = displayedSpeciality.join(", ");
+      
         const formData = {
           first_name,
           last_name,
-          speciality,
+          speciality_id: selectedSpecialityIds,
           password,
           phone_number,
           email,
@@ -98,9 +107,22 @@
 
 
       const transfereditdoctor = async(editdoctor) =>{
+        console.log(editdoctor)
         navigate('/editdoctors/', { state: {editdoctor}});
         //window.location.href = "/editdoctors";
       }
+      // const transfereditdoctor = (doctorId) => {
+      //   // Assuming you fetch or otherwise determine the doctor's current specialties here or earlier in the component.
+      //   const doctorToEdit = doctorlist.find(doctor => doctor.doctor_id === doctorId);
+    
+      //   // If doctorlist already includes specialty details as you fetch them,
+      //   // ensure those details are structured the way your edit page expects.
+      //   // If not, you might need to fetch the doctor's details, including their specialties, here.
+        
+      //   console.log("Preparing to edit doctor:", doctorToEdit);
+      //   navigate('/editdoctors/', { state: { editdoctor: doctorToEdit } });
+    //};
+    
 
       useEffect(() => {
         const fetchData = async () => {
@@ -108,11 +130,11 @@
             const response = await axios.get('http://127.0.0.1:8000/api/specialties/');
             const response2 = await axios.get('http://127.0.0.1:8000/api/doctorlist/');
             const formattedData = response.data.map(item => ({
-              speciality_id: item.id,
+              speciality_id: item.speciality_id,
               name: item.name
             }));
             
-           
+          
             const doctorlistformatted = response2.data.map(doctor =>  ({
               doctor_id: doctor.doctor_id,
               first_name: doctor.first_name,
@@ -123,9 +145,9 @@
               email:doctor.email,
               is_active: doctor.is_active
             }));
+          
             const activedoctor = doctorlistformatted.filter(doctor => doctor.is_active === true);
             setDoctorList(activedoctor)
-            
             setspecialtylist(formattedData);
           } catch (error) {
             console.error('Error fetching data:', error);

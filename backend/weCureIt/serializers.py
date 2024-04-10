@@ -97,12 +97,6 @@ class DocScheduleSerializer(serializers.ModelSerializer):
             return instance.facility_id.address
         return None
 
-# class DoctorSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Doctor
-#         fields = ('first_name', 'last_name', 'email', 'phone_number','speciality')
-
-
 class SpecialitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Speciality
@@ -113,11 +107,37 @@ class DoctorListSerializer(serializers.ModelSerializer):
         model = Doctor
         fields = ('doctor_id','first_name','last_name','speciality','email','is_active')
 
+
 class DoctorInfoSerializer(serializers.ModelSerializer):
+    speciality_id = serializers.PrimaryKeyRelatedField(
+        queryset=Speciality.objects.all(),
+        many=True,
+        write_only=True,
+        source='speciality'
+    )
+
+    speciality = SpecialitySerializer(many=True, read_only=True,source='speciality_id') 
+
     class Meta:
         model = Doctor
-        fields = ('doctor_id','first_name','last_name','speciality','password','phone_number','email','is_active')
+        fields = ('doctor_id', 'first_name', 'last_name', 'speciality_id', 'password', 'speciality','phone_number', 'email', 'is_active')
 
+    def create(self, validated_data):
+        # `speciality` is now directly in validated_data thanks to `source='speciality'`
+        specialities = validated_data.pop('speciality', [])
+        doctor = Doctor.objects.create(**validated_data)
+        doctor.speciality_id.set(specialities)  # Use set() for many-to-many relationships
+        return doctor
+
+    def update(self, instance, validated_data):
+        specialities = validated_data.pop('speciality', [])
+        # Update scalar fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        # Update many-to-many fields
+        instance.speciality_id.set(specialities)
+        return instance
 
 class AdminLoginSerializer(serializers.Serializer):
     

@@ -52,6 +52,12 @@ class PatientPreference(models.Model):
     facility_pref_id = models.CharField(null=True, max_length=254)
 
 
+class Speciality(models.Model):
+    speciality_id = models.BigAutoField(auto_created = True,
+                  primary_key = True,
+                  serialize = False)
+    name = models.CharField(max_length=254)
+
 class Facility(models.Model):
     facility_id = models.BigAutoField(auto_created = True,
                   primary_key = True,
@@ -59,17 +65,10 @@ class Facility(models.Model):
     name = models.CharField(max_length=254)
     address = models.CharField(max_length=254)
     rooms_no = models.IntegerField()
-    phone_number = models.BigIntegerField()
-    speciality = ArrayField(models.CharField(max_length=254))
+    phone_number = models.IntegerField()
+    speciality_id = models.ManyToManyField(Speciality)
     is_active = models.BooleanField(default=True)
-
-
-class Speciality(models.Model):
-    speciality_id = models.BigAutoField(auto_created = True,
-                  primary_key = True,
-                  serialize = False)
-    name = models.CharField(max_length=254)
-
+    
 class Doctor(models.Model):
     doctor_id = models.BigAutoField(auto_created = True,
                   primary_key = True,

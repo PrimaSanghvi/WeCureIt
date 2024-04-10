@@ -38,14 +38,3 @@ const App = () => {
 };
 
 export default App;
-
-// export default function App() {
-//   return (
-//     <div className='app'>
-//       <main>
-//       <LoginPage />
-//       </main>
-//     </div>
-    
-//   );
-//}
