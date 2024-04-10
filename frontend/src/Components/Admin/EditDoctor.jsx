@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 
 
 export default function Main() {
+  /* eslint-disable no-unused-vars */
   const location = useLocation();
   const doctor_editing = location.state.editdoctor;
   const [specialtylist,setspecialtylist] =  useState([]);
