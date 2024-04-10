@@ -51,18 +51,6 @@ class PatientPreference(models.Model):
     doctor_pref_id = models.CharField(null=True, max_length=254)
     facility_pref_id = models.CharField(null=True, max_length=254)
 
-class Doctor(models.Model):
-    doctor_id = models.BigAutoField(auto_created = True,
-                  primary_key = True,
-                  serialize = False)
-    first_name = models.CharField(max_length=254)
-    last_name = models.CharField(max_length=254)
-    speciality = ArrayField(models.CharField(max_length=254))
-    email = models.EmailField(max_length = 254)
-    password = models.CharField(max_length=100) 
-    phone_number = models.BigIntegerField()
-    is_active = models.BooleanField(default=True)
-
 
 class Facility(models.Model):
     facility_id = models.BigAutoField(auto_created = True,

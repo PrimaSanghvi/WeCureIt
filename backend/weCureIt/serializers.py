@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import *
 from django.utils import timezone
 
-################## PATIENT ##################
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
@@ -143,14 +142,12 @@ class PatientPreferenceSerializer(serializers.ModelSerializer):
         model = PatientPreference
         fields = ('patient_id', 'doctor_pref_id', 'facility_pref_id')
 
-################## DOCTOR ##################
 class AllDoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
-        fields = ('doctor_id', 'first_name', 'last_name', 'speciality', 'email', 'password', 'phone_number', 'is_active')
+        fields = ('doctor_id', 'first_name', 'last_name', 'speciality_id', 'email', 'password', 'phone_number', 'is_active')
 
-################## FACILITY ##################
 class AllFacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
-        fields = ('facility_id', 'name', 'address', 'rooms_no', 'phone_number', 'speciality')
+        fields = ('facility_id', 'name', 'address', 'rooms_no', 'phone_number', 'speciality', 'is_active')

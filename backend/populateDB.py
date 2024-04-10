@@ -64,23 +64,23 @@ conn.commit()
 
 ################# INSERT #################
 # Facility:
-facilities = [["The George Washington University Hospital", "900 23rd St. NW, Washington, D.C. 20037", 5, 2027154000, ["Cardiology"]],
-              ["Holy Cross Hospital", "1500 Forest Glen Rd, Silver Spring, MD 20910", 4, 3017547000, ["Cardiology"]],
-              ["Howard University Hospital", "2041 Georgia Ave NW, Washington, D.C. 20060", 5, 2028656100, ["Cardiology", "Pediatrics"]]
+facilities = [["The George Washington University Hospital", "900 23rd St. NW, Washington, D.C. 20037", 5, 2027154000, ["Cardiology"], True],
+              ["Holy Cross Hospital", "1500 Forest Glen Rd, Silver Spring, MD 20910", 4, 3017547000, ["Cardiology"], True],
+              ["Howard University Hospital", "2041 Georgia Ave NW, Washington, D.C. 20060", 5, 2028656100, ["Cardiology", "Pediatrics"], True]
              ]
 
 for facility in facilities:
-    cur.execute('INSERT INTO "weCureIt_facility" (name, address, rooms_no, phone_number, speciality) VALUES (%s, %s, %s, %s, %s)', (facility[0], facility[1], facility[2], facility[3], facility[4]))
+    cur.execute('INSERT INTO "weCureIt_facility" (name, address, rooms_no, phone_number, speciality, is_active) VALUES (%s, %s, %s, %s, %s, %s)', (facility[0], facility[1], facility[2], facility[3], facility[4], facility[5]))
     conn.commit()
 
 # Doctor:
-doctors = [["Fern", "Moyer", ["Cardiology"], "fmoyer@gmail.com", "12345", 1111111111, True],
-           ["Tia", "McKnight", ["Cardiology", "Pediatrics"], "tmcknight@gmail.com", "12345", 1111111111, True],
-           ["Gordon", "Ortiz", ["Pediatrics"], "gortiz@gmail.com", "12345", 1111111111, False]
+doctors = [["Fern", "Moyer", "fmoyer@gmail.com", "12345", 1111111111, True],
+           ["Tia", "McKnight", "tmcknight@gmail.com", "12345", 1111111111, True],
+           ["Gordon", "Ortiz", "gortiz@gmail.com", "12345", 1111111111, False]
           ]
 
 for doctor in doctors:
-    cur.execute('INSERT INTO "weCureIt_doctor" (first_name, last_name, speciality, email, password, phone_number, is_active) VALUES (%s, %s, %s, %s, %s, %s, %s)', (doctor[0], doctor[1], doctor[2], doctor[3], doctor[4], doctor[5], doctor[6]))
+    cur.execute('INSERT INTO "weCureIt_doctor" (first_name, last_name, email, password, phone_number, is_active) VALUES (%s, %s, %s, %s, %s, %s)', (doctor[0], doctor[1], doctor[2], doctor[3], doctor[4], doctor[5]))
     conn.commit()
 
 # Close everything
