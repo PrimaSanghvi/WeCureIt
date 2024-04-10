@@ -5,10 +5,10 @@ import SignupPage2 from "./Components/LoginPage/SignupPage2";
 import {UserHomePage} from "./Components/Patient/UserHomePage";
 import {UserEditProfile} from "./Components/Patient/UserEditProfile";
 import DoctorHomePage from "./Components/Doctor/DoctorHomePage";
-import AddDoctors from "./Components/admin/AddDoctors";
-import EditDoctor from "./Components/admin/EditDoctor";
-import FacilityHome from './Components/admin/FacilityHome';
-import FacilityEdit from './Components/admin/FacilityEdit';
+import AddDoctors from "./Components/Admin/AddDoctors";
+import EditDoctor from "./Components/Admin/EditDoctor";
+import FacilityHome from './Components/Admin/FacilityHome';
+import FacilityEdit from './Components/Admin/FacilityEdit';
 import { UserEditPreference, UserEditSaved } from './Components/Patient/UserEditPreference';
 import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
 
