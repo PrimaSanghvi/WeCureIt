@@ -5,29 +5,28 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import clickedEditSVG from '../../../src/assets/edit.svg';
+import unclickedEditSVG from '../../../src/assets/edit-1.svg'
 
 export const UserEditProfile = () => {
-
   const { patientId } = useParams();
 
-console.log("This is a line written to the console.");
-const [first_name, setFirstName] = useState('');
-    const [last_name, setLastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [reenteredPassword, setReenteredPassword] = useState('');
-    const [addressLine1, setAddressLine1] = useState('');
-    const [addressLine2, setAddressLine2] = useState('');
-    const [city, setCity] = useState('');
-    const [state, setState] = useState('');
-    const [zipCode, setZipCode] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confrimPasswordError, setconfrimPasswordError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const navigate = useNavigate();
-    const [updateError, setUpdateError] =  useState('');
-
-
+  console.log("This is a line written to the console.");
+  const [first_name, setFirstName] = useState('');
+  const [last_name, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [reenteredPassword, setReenteredPassword] = useState('');
+  const [addressLine1, setAddressLine1] = useState('');
+  const [addressLine2, setAddressLine2] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confrimPasswordError, setconfrimPasswordError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const navigate = useNavigate();
+  const [updateError, setUpdateError] =  useState('');
   const [userData, setUserData] = useState(null);
   const [formErrors, setFormErrors] = useState({
     addressLine1: '',
@@ -48,6 +47,7 @@ const [first_name, setFirstName] = useState('');
       setEmailError("");
     }
   };
+
   const validateAddress = () => {
     let errors = {};
   
@@ -65,7 +65,6 @@ const [first_name, setFirstName] = useState('');
     return Object.keys(errors).length === 0;
   };
   
-
   const validatePassword = () => {
     if (!password) {
       setPasswordError("Password is required.");
@@ -82,7 +81,6 @@ const [first_name, setFirstName] = useState('');
       setconfrimPasswordError("")
     }
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -128,90 +126,94 @@ const [first_name, setFirstName] = useState('');
       })
       .catch(error => {
         console.error('Error submitting form:', error);
-    });
-    
-};
-useEffect(() => {
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/patientDetail/${patientId}`);
-      if (response.status === 200) {
-        const data = response.data;
-        // Set state, checking for null values and providing defaults as necessary
-        setUserData(data);
-        setFirstName(data.first_name  === null ? '' : data.first_name);
-        setLastName(data.last_name === null? '' : data.last_name);
-        setEmail(data.email === null? '' : data.email);
-        // Avoid setting passwords directly from fetched data
-        setAddressLine1(data.addressLine1 === null? '': data.addressLine1);
-        setAddressLine2(data.addressLine2 === null? '': data.addressLine2);
-        setCity(data.city === null ? '' : data.city); // Explicit check for null
-        setState(data.state === null ? '' : data.state); // Explicit check for null
-        setZipCode(data.zipCode === null? '' : data.zipCode);
-        setPassword(data.password === null? '' : data.password)
-        // Additional fields as necessary
-      } else {
-        console.error("Failed to fetch data with status:", response.status);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    });  
   };
 
-  fetchUserData();
-}, [patientId]);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/patientDetail/${patientId}`);
+        if (response.status === 200) {
+          const data = response.data;
+          // Set state, checking for null values and providing defaults as necessary
+          setUserData(data);
+          setFirstName(data.first_name  === null ? '' : data.first_name);
+          setLastName(data.last_name === null? '' : data.last_name);
+          setEmail(data.email === null? '' : data.email);
+          // Avoid setting passwords directly from fetched data
+          setAddressLine1(data.addressLine1 === null? '': data.addressLine1);
+          setAddressLine2(data.addressLine2 === null? '': data.addressLine2);
+          setCity(data.city === null ? '' : data.city); // Explicit check for null
+          setState(data.state === null ? '' : data.state); // Explicit check for null
+          setZipCode(data.zipCode === null? '' : data.zipCode);
+          setPassword(data.password === null? '' : data.password)
+          // Additional fields as necessary
+        } else {
+          console.error("Failed to fetch data with status:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-useEffect(() => {
-  console.log(userData); // This will log userData when it updates
-}, [userData]);
-const handleClick = () => {
+    fetchUserData();
+  }, [patientId]);
+
+  useEffect(() => {
+    console.log(userData); // This will log userData when it updates
+  }, [userData]);
+
+  const handleClick = () => {
     //change the address to the actual homepage or login page to redirect
     window.location.href =`/patientHomepage/${patientId}`;
-    };
-const editpayment = () => {
+  };
+
+  const editpayment = () => {
     //change the code to the real page of edit payment 
     window.location.href = "/editpayment";
     console.log("transfer to edit payment")
-    };
+  };
     
-const editsavedpreference = () =>{
+  const editsavedpreference = () =>{
     //change the code to redirect to the real page of edit saved preference
-    window.location.href = "/editpreference";
-    console.log("transfer to editpayment")
-    }
+    window.location.href = `/editPreference/${patientId}`;
+    console.log("transfer to edit preference")
+  }
+
   return (
-    <div className={styles['main-container']}>
-
-        
-         <div  className={styles['top-bar']}>
-               <div  className={styles['frame']}>      
-               <div className={styles['main-container2']}>
-     <span className={styles['we-cure-it']}>WeCureIt</span>
-     <div className={styles['vector']} />
-   </div>
-                 <div  className={styles['create-appointment-button']}>
-                   <button  className={styles['create-appointment-btn']} onClick={handleClick}>
-                     <div  className={styles['frame-1']}>
-                       <span  className={styles['create-new-appointment']}>
-                           HomePage           
-                       </span>
-                     </div>
-                   </button>
-                 </div>
-                 <div  className={styles['profile']}>
-                   {/* <div  className={styles['unsplash-ctagwpbqg']} /> */}
-                   <div className={styles['dropdown']}>
-                   <FontAwesomeIcon icon={faUserCircle} size="3x"/>
-                   <div className={styles['dropdown-content']}>
-                   <a href="/">Logout</a>
-                   </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
+    // TOP BAR/HEADER:
+    <div className={styles['main-container']}>        
+      <div  className={styles['top-bar']}>
+        <div  className={styles['frame']}>      
+          <div className={styles['main-container2']}>
+            <span className={styles['we-cure-it']}>WeCureIt</span>
+              <div className={styles['vector']} />
+          </div>
+          <div className={styles['create-appointment-button']}>
+            <button  className={styles['create-appointment-btn']} onClick={handleClick}>
+              <div  className={styles['frame-1']}>
+                <span  className={styles['create-new-appointment']}>
+                  HomePage           
+                </span>
+              </div>
+            </button>
+          </div>
+          <div  className={styles['profile']}>
+            {/* <div  className={styles['unsplash-ctagwpbqg']} /> */}
+            <div className={styles['dropdown']}>
+              <FontAwesomeIcon icon={faUserCircle} size="3x"/>
+              <div className={styles['dropdown-content']}>
+                <a href="/">Logout</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       
+      {/* UPDATE ERROR: */}
+      {updateError && <div style={{ color: 'red', textAlign: 'center' }}>{updateError}</div>}
 
-             {updateError && <div style={{ color: 'red', textAlign: 'center' }}>{updateError}</div>}
+      {/* EDIT PROFILE INFORMATION: */}
       <div className={styles['edit-profile-information']}>
         <div className={styles['group-2']}>
           <div className={styles['frame-3']}>
@@ -221,12 +223,12 @@ const editsavedpreference = () =>{
 
             <div className={styles['frame-5']}>
               <div className={styles['frame-6']}>
-              <input className={styles["input" ]}
+                <input className={styles["input" ]}
                  value={addressLine1}
                  onChange={(e) => setAddressLine1(e.target.value)}
                  onBlur = {validateAddress}
                  placeholder=" Address Line 1" type="text" />
-                  {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
+                {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
               </div>
             </div>
             <div className={styles['frame-7']}>
@@ -237,7 +239,6 @@ const editsavedpreference = () =>{
                 onBlur = {validateAddress}
                 placeholder=" Address Line 2" type="text" />
                  {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
-              {/* </div> */}
             </div>
             <div className={styles['frame-a']}>
               <span className={styles['city']}>City</span>
@@ -371,12 +372,14 @@ const editsavedpreference = () =>{
           <span className={styles['save-changes']} onClick ={handleSubmit}>Save Changes</span>
         </div>
       </div>
+
+      {/* SIDE MENU OPTIONS: */}
       <span className={styles['edit-profile-30']}>Edit Profile</span>
-      <img className={styles['edit']} alt = "Edit" src = '/src/assets/edit.svg'/>
+      <img className={styles['edit']} alt = "Edit" src = {clickedEditSVG}/>
       <span className={styles['edit-payment-method']} onClick={editpayment} >Edit Payment Method</span>
-      <img className={styles['edit-31']} alt = "Edit" src = '/src/assets/edit-1.svg'/>
+      <img className={styles['edit-31']} alt = "Edit" src = {unclickedEditSVG}/>
       <span className={styles['edit-saved-preferences']} onClick={editsavedpreference}>Edit Saved Preferences</span>
-      <img className={styles['edit-32']} alt = "Edit" src = '/src/assets/edit-2.svg'/>
+      <img className={styles['edit-32']} alt = "Edit" src = {unclickedEditSVG}/>
     </div>
   );
 }

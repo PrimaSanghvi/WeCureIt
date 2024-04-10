@@ -24,6 +24,7 @@ router = routers.DefaultRouter()
 router.register(r'patientRegister', views.PatientInfoView, 'patientRegister')
 router.register(r'patientCardDetails', views.PatientCreditCardView, 'patientCardDetails')
 router.register(r'DoctorRegister', views.DoctorInfoView, 'DoctorRegister')
+router.register(r'patientPreference', views.PatientPreferenceView, 'patientPreference')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -38,5 +39,8 @@ urlpatterns = [
     path('api/specialties/', views.SpecialtyListView.as_view(), name='specialty-list'),
     path('api/doctorlist/', views.DoctorListView.as_view(), name='doctor-list'),
     path('api/removedoctor/<int:pk>/', views.DoctorInactiveView.as_view(), name='doctor-remove'),
-    path('api/adminLogin/', views.AdminLoginView.as_view(), name='adminLogin')
+    path('api/adminLogin/', views.AdminLoginView.as_view(), name='adminLogin'),
+    path('api/patientPreferenceDetail/<int:pk>/', views.PatientPreferenceDetail.as_view(), name='patientPreferenceDetail'),
+    path('api/allDoctorDetail/', views.AllDoctorDetail.as_view(), name='allDoctorDetail'),
+    path('api/allFacilityDetail/', views.AllFacilityDetail.as_view(), name='allFacilityDetail')
 ]

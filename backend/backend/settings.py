@@ -77,24 +77,16 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-import environ
-env = environ.Env()
-environ.Env.read_env()
-...
-# Your secret key
-SECRET_KEY = env("SECRET_KEY")
-
 DATABASES = {
-    'default': {
-     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT"),
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'NAME': 'wecuredata',
+       'USER': 'postgres',
+       'PASSWORD': 'Zhd123456@',
+       'HOST': '127.0.0.1',
+       'PORT': '5432',
+   }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
