@@ -8,8 +8,6 @@ from django.utils import timezone
 
 
 # Create your models here.
-
-
 class Patient(models.Model):
     patient_id = models.BigAutoField(auto_created = True,
                   primary_key = True,
@@ -36,8 +34,6 @@ class PatientCreditCard(models.Model):
     state = models.CharField(max_length=254)
     zipCode = models.IntegerField()
     expiry_date = models.CharField(max_length=254)
-    
-
 
 class Patient_record(models.Model):
     patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
@@ -50,6 +46,10 @@ class Patient_record(models.Model):
     disease = models.CharField(max_length=254)
     comments = models.CharField(max_length=254,null = True, blank = True)
 
+class PatientPreference(models.Model):
+    patient_id = models.OneToOneField(Patient, on_delete=models.CASCADE, primary_key = True)
+    doctor_pref_id = models.CharField(null=True, max_length=254)
+    facility_pref_id = models.CharField(null=True, max_length=254)
 
 
 class Speciality(models.Model):
