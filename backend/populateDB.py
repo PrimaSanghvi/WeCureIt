@@ -40,6 +40,20 @@ conn.commit()
 cur.execute('DELETE FROM "weCureIt_doctor"')
 conn.commit()
 
+# Admin:
+cur.execute('ALTER SEQUENCE "weCureIt_admintable_admin_id_seq" RESTART WITH 1') # Reset admin id
+conn.commit()
+
+cur.execute('DELETE FROM "weCureIt_admintable"')
+conn.commit()
+
+# Facility:
+cur.execute('ALTER SEQUENCE "weCureIt_speciality_speciality_id_seq" RESTART WITH 1') # Reset speciality id
+conn.commit()
+
+cur.execute('DELETE FROM "weCureIt_speciality"')
+conn.commit()
+
 
 ################# FETCH/SELECT #################
 # All Tables:
@@ -74,13 +88,26 @@ for facility in facilities:
     conn.commit()
 
 # Doctor:
-doctors = [["Fern", "Moyer", "fmoyer@gmail.com", "12345", 1111111111, True],
-           ["Tia", "McKnight", "tmcknight@gmail.com", "12345", 1111111111, True],
-           ["Gordon", "Ortiz", "gortiz@gmail.com", "12345", 1111111111, False]
+doctors = [["Fern", "Moyer", "FMOYER@GMAIL.COM", "12345", 1111111111, True],
+           ["Tia", "McKnight", "TMCKNIGHT@GMAIL.COM", "12345", 1111111111, True],
+           ["Gordon", "Ortiz", "GORTIZ@GMAIL.COM", "12345", 1111111111, False]
           ]
 
 for doctor in doctors:
     cur.execute('INSERT INTO "weCureIt_doctor" (first_name, last_name, email, password, phone_number, is_active) VALUES (%s, %s, %s, %s, %s, %s)', (doctor[0], doctor[1], doctor[2], doctor[3], doctor[4], doctor[5]))
+    conn.commit()
+
+admins = [["Majorie", "Turner", "MTURNER@GMAIL.COM", "12345", True, 1111111111]
+         ]
+
+for admin in admins:
+    cur.execute('INSERT INTO "weCureIt_admintable" (first_name, last_name, email, password, is_active, phone_number) VALUES (%s, %s, %s, %s, %s, %s)', (admin[0], admin[1], admin[2], admin[3], admin[4], admin[5]))
+    conn.commit()
+
+specialities = ["Cardiology", "Dentist"]
+
+for speciality in specialities:
+    cur.execute('INSERT INTO "weCureIt_speciality" (name) VALUES (%s)', (speciality,))
     conn.commit()
 
 # Close everything

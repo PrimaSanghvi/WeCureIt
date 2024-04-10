@@ -1453,10 +1453,16 @@ button {
   height: 28px;
   top: 0;
   left: 0;
-  background: #726ffe;
+  background-image: url('../../assets/images/selectBtn.png');
+  background-color: #726ffe;
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
   z-index: 43;
   border-radius: 10px;
+  content: '';
 }
+
 .button-40 {
   display: flex;
   align-items: flex-start;
@@ -1501,7 +1507,11 @@ button {
   height: 28px;
   top: 0;
   left: 0;
-  background: #726ffe;
+  background-image: url('../../assets/images/unselectBtn.png');
+  background-color: #726ffe;
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
   z-index: 47;
   border-radius: 10px;
 }
