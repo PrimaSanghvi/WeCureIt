@@ -7,8 +7,6 @@ from django.contrib.postgres.fields import ArrayField
 
 
 # Create your models here.
-
-
 class Patient(models.Model):
     patient_id = models.BigAutoField(auto_created = True,
                   primary_key = True,
@@ -35,8 +33,6 @@ class PatientCreditCard(models.Model):
     state = models.CharField(max_length=254, default="")
     zipCode = models.IntegerField(null=True, blank=True)
     expiry_date = models.CharField(max_length=254)
-    
-
 
 class Patient_record(models.Model):
     patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
@@ -46,16 +42,21 @@ class Patient_record(models.Model):
     disease = models.CharField(max_length=254)
     comments = models.CharField(max_length=254)
 
+class PatientPreference(models.Model):
+    patient_id = models.OneToOneField(Patient, on_delete=models.CASCADE, primary_key = True)
+    doctor_pref_id = models.CharField(null=True, max_length=254)
+    facility_pref_id = models.CharField(null=True, max_length=254)
+
 class Doctor(models.Model):
     doctor_id = models.BigAutoField(auto_created = True,
                   primary_key = True,
                   serialize = False)
     first_name = models.CharField(max_length=254)
     last_name = models.CharField(max_length=254)
-    speciality = models.CharField(max_length=254)
+    speciality = ArrayField(models.CharField(max_length=254))
     email = models.EmailField(max_length = 254)
     password = models.CharField(max_length=100) 
-    phone_number = models.IntegerField()
+    phone_number = models.BigIntegerField()
     is_active = models.BooleanField(default=True)
 
 
@@ -66,7 +67,7 @@ class Facility(models.Model):
     name = models.CharField(max_length=254)
     address = models.CharField(max_length=254)
     rooms_no = models.IntegerField()
-    phone_number = models.IntegerField()
+    phone_number = models.BigIntegerField()
     speciality = ArrayField(models.CharField(max_length=254))
 
 

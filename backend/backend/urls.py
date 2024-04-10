@@ -23,10 +23,14 @@ from weCureIt import views
 router = routers.DefaultRouter()
 router.register(r'patientRegister', views.PatientInfoView, 'patientRegister')
 router.register(r'patientCardDetails', views.PatientCreditCardView, 'patientCardDetails')
+router.register(r'patientPreference', views.PatientPreferenceView, 'patientPreference')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include(router.urls)),
     path('api/patientLogin/', views.PatientLoginView.as_view(), name='patientLogin'),
     path('api/patientDetail/<int:pk>/', views.PatientDetail.as_view(), name='patientDetail'),
+    path('api/patientPreferenceDetail/<int:pk>/', views.PatientPreferenceDetail.as_view(), name='patientPreferenceDetail'),
+    path('api/allDoctorDetail/', views.AllDoctorDetail.as_view(), name='allDoctorDetail'),
+    path('api/allFacilityDetail/', views.AllFacilityDetail.as_view(), name='allFacilityDetail')
 ]
