@@ -65,7 +65,7 @@ class Facility(models.Model):
     name = models.CharField(max_length=254)
     address = models.CharField(max_length=254)
     rooms_no = models.IntegerField()
-    phone_number = models.IntegerField()
+    phone_number = models.BigIntegerField()
     speciality_id = models.ManyToManyField(Speciality)
     is_active = models.BooleanField(default=True)
     

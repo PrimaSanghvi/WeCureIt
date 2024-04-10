@@ -170,4 +170,4 @@ class AllDoctorSerializer(serializers.ModelSerializer):
 class AllFacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
-        fields = ('facility_id', 'name', 'address', 'rooms_no', 'phone_number', 'speciality', 'is_active')
+        fields = ('facility_id', 'name', 'address', 'rooms_no', 'phone_number', 'is_active')
