@@ -4,6 +4,9 @@ import SignupPage from "./Components/LoginPage/SignupPage";
 import SignupPage2 from "./Components/LoginPage/SignupPage2";
 import {UserHomePage} from "./Components/Patient/UserHomePage";
 import {UserEditProfile} from "./Components/Patient/UserEditProfile";
+import DoctorHomePage from "./Components/Doctor/DoctorHomePage";
+import AddDoctors from "./Components/admin/AddDoctors";
+import EditDoctor from "./Components/admin/EditDoctor";
 import FacilityHome from './Components/Admin/FacilityHome';
 import FacilityEdit from './Components/Admin/FacilityEdit';
 import { UserEditPreference, UserEditSaved } from './Components/Patient/UserEditPreference';
@@ -21,6 +24,9 @@ const App = () => {
         <Route path="/creditCardDetails" element={<SignupPage2 />}/>
         <Route path="/patientHomepage/:patientId" element={<UserHomePage />}/>
         <Route path="/editProfile/:patientId" element={<UserEditProfile />}/>
+        <Route path ="/doctorHomepage/:doctorId" element = {<DoctorHomePage />}/>
+        <Route path="/addDoctors/:adminId"element={<AddDoctors/>}/>
+        <Route path="/editdoctors"element={<EditDoctor/>}/>
         <Route path="/admin/facility" element={<FacilityHome />}/>
         <Route path="/admin/facility/:facilityId" element={<FacilityEdit />}/>
         <Route path="/editPreference/:patientId" element={<UserEditPreference />}/>

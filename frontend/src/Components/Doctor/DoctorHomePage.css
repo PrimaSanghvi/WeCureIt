@@ -1,0 +1,250 @@
+:root {
+    --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
+    "Source Han Sans CN", sans-serif;
+    }
+    .main-container {
+    overflow: hidden;
+    }
+    .main-container,
+    .main-container * {
+    box-sizing: border-box;
+    }
+    input,
+    select,
+    textarea,
+    button {
+    outline: 0;
+    }
+    .main-container {
+    position: relative;
+    width: 100%;
+    height: 982px;
+    margin: 0 auto;
+    background: #ffffff;
+    overflow: hidden;
+    }
+    .main-container1 {
+        position: relative;
+        float: left;
+        width: 60%;
+        height: 982px;
+        margin: 0 auto;
+        background: #ffffff;
+        overflow: hidden;
+        }
+        .main-container2 {
+            position: relative;
+            float: left;
+            width: 40%;
+            height: 982px;
+            margin: 0 auto;
+            background: #ffffff;
+            overflow: hidden;
+            }
+    .topBar{
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        position: relative;
+        background-color:  #c0cef1;
+        width: 100%;
+        height: 103px;
+        margin: 0 0 0 0;
+    }
+    .text-1{
+        position: relative;
+        width: 40%px;
+        height: 38px;
+        margin-top: 64px;
+        margin-left: 30px;
+        color: #000000;
+        font-family: Poppins, var(--default-font-family);
+        font-size: 25px;
+        font-weight: 600;
+        line-height: 37.5px;
+    }
+    .appointmentinfo{
+        position: relative;
+        width: 584px;
+        height: 369px;
+        margin: 0 auto;
+        margin-top: 5px;
+        margin-left: 0px;
+         background: #fafaff;
+        overflow: hidden;
+        border-radius: 25px;
+        
+    }
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        position: relative;
+        width: 538px;
+        height: 194px;
+        top: 25px;
+        left: 19px;
+        background: #ffffff;
+        border: 1px solid #b9b9b9;
+        z-index: 10;
+        overflow: hidden;
+        border-radius: 4px;
+    }
+    .wrapper2{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        position: absolute;
+        width: 538px;
+        height: 89px;
+        top: 25px;
+        left: 19px;
+        background: #ffffff;
+        border: 1px solid #b9b9b9;
+        z-index: 10;
+        overflow: hidden;
+        margin-top: 220px;
+        border-radius: 4px;
+    }
+    .nextappointment{
+        position: relative;
+        width: 603px;
+        height: 290px;
+        margin-top: 0px;
+        margin-left: 0px;
+        background: #fafaff;
+        overflow: hidden;
+        border-radius: 25px;
+    }
+    .text-2{
+        position: relative;
+        width: 321px;
+        height: 38px;
+        margin-left: 30px;
+        margin-top: 30px;
+        color: #000000;
+        font-family: Poppins, var(--default-font-family);
+        font-size: 25px;
+        font-weight: 600;
+        line-height: 37.5px;
+    }
+    .text-3{
+        position: relative;
+        width: 253px;
+        height: 48px;
+        margin-left: 61px;
+        margin-top: 30px;
+        color: #000000;
+        font-family: Poppins, var(--default-font-family);
+        font-size: 32px;
+        font-weight: 600;
+      line-height: 48px;
+    }
+    .calendar1{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-wrap: nowrap;
+        position: relative;
+        width: 600px;
+        height: 334px;
+        margin-top: 30px;
+        margin-left: 60px;
+    }
+    .locInfo{
+        position: relative;
+    width: 693px;
+    height: 274px;
+    margin: 0 auto;
+    background: #f5f5f5;
+    overflow: hidden;
+    border-radius: 25px;
+    padding: 40px 20px 20px 40px;
+    }
+    .text-11{
+        position: relative;
+        color: #000000;
+        font-family: Poppins, var(--default-font-family);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 18px;
+        text-align: left;
+        justify-content: center;
+        margin-top: 0px;
+        margin-left: 26px;
+    }
+    .text-12{
+        position: relative;
+        color: #000000;
+        font-family: Poppins, var(--default-font-family);
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 19.2px;
+        margin-left: 30px;
+        text-align: left;
+    }
+    .text-13{
+        position: relative;
+        color: #000000;
+        font-family: Poppins, var(--default-font-family);
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 24px;
+        text-align: left;
+        margin-left: 40px;
+    }
+    .text-14{
+        position: relative;
+        color: #000000;
+        font-family: Poppins, var(--default-font-family);
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        text-align: left;
+        margin-left: 40px;
+    }
+    .viewSchdl{
+        position: relative;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        border-radius: 20px;
+        width: 130px;
+        height:30px;
+        margin-left: 250px;
+        border: 0 solid #e0f0f0;
+    }
+    .viewSchdl:hover{
+        background-color:cornflowerblue;
+        color: white;
+    }
+    .text-15{
+        position: relative;
+        font-size: 13px;
+        color: #000000;
+
+    }
+    .viewAppoint{
+        position: relative;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        border-radius: 20px;
+        width: 170px;
+        height:30px;
+        margin-left: 30px;
+        border: 0 solid #e0f0f0;
+    }
+    .viewAppoint:hover{
+        background-color:cornflowerblue;
+        color: white;
+    }
+
+    .no-appointments{
+        text-align: center;  /* Align text to the center */
+  font-weight: bold;   /* Make text bold */
+  width: 100%;         /* Ensure the div takes full width */
+  padding: 20px;       /* Add some padding */
+  box-sizing: border-box;
+    }

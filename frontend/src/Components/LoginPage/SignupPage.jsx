@@ -18,6 +18,7 @@ export default function SignupPage() {
     const [passwordError, setPasswordError] = useState('');
     const [confrimPasswordError, setconfrimPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [phone_number, setPhoneNumber] = useState('');
     const navigate = useNavigate();
     const [formErrors, setFormErrors] = useState({
       addressLine1: '',
@@ -43,8 +44,29 @@ export default function SignupPage() {
     
       if (!addressLine1.trim()) errors.addressLine1 = "Street Address is required.";
       // AddressLine2 is optional
+      setFormErrors(errors); // Assuming you have a state to handle form-wide errors
+      return Object.keys(errors).length === 0;
+    };
+    
+    const validateCity = () => 
+    {
+      let errors = {};
       if (!city.trim()) errors.city = "City is required.";
+      setFormErrors(errors);
+      return Object.keys(errors).length === 0;
+    }
+
+    const validateState = () =>
+    {
+      let errors = {};
       if (!state.trim()) errors.state = "State is required.";
+      setFormErrors(errors); // Assuming you have a state to handle form-wide errors
+      return Object.keys(errors).length === 0;
+    }
+
+    const validateZipcode = () =>
+    {
+      let errors = {};
       if (!zipCode.trim()) {
         errors.zipCode = "Zip-Code is required.";
       } else if (!/^\d{5}(-\d{4})?$/.test(zipCode)) {
@@ -53,9 +75,7 @@ export default function SignupPage() {
     
       setFormErrors(errors); // Assuming you have a state to handle form-wide errors
       return Object.keys(errors).length === 0;
-    };
-    
-
+    }
     const validatePassword = () => {
       if (!password) {
         setPasswordError("Password is required.");
@@ -80,7 +100,6 @@ export default function SignupPage() {
         //   console.error("Password validation failed.");
          // return; // Prevent form submission if passwords do not match
        // }
-        const phone_number = "1234567890";
         
         const formData = {
             first_name,
@@ -162,7 +181,7 @@ export default function SignupPage() {
                 value={city}
                 placeholder='City'
                 onChange={(e) => setCity(e.target.value)}
-                onBlur = {validateAddress}
+                onBlur = {validateCity}
               />
                {formErrors.city && <div style={{ color: 'red' }}>{formErrors.city}</div>}
             </div>
@@ -176,7 +195,7 @@ export default function SignupPage() {
                 value={state}
                 placeholder='State'
                 onChange={(e) => setState(e.target.value)}
-                onBlur = {validateAddress}
+                onBlur = {validateState}
               />
               {formErrors.state && <div style={{ color: 'red' }}>{formErrors.state}</div>}
             </div>
@@ -190,12 +209,26 @@ export default function SignupPage() {
                 value={zipCode}
                 placeholder='Zipcode'
                 onChange={(e) => setZipCode(e.target.value)}
-                onBlur = {validateAddress}
+                onBlur = {validateZipcode}
               />
               {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
             </div>
           </div>
           <div className={styles['box-a']}>
+          <div className={styles['wrapper-51']}>
+                                <span className={styles['text-3']}>Contact Number</span>
+                            </div>
+                            <div>
+                                <div>
+                                <input 
+                                className={styles['box-b']}
+                                type='number'
+                                value={phone_number}
+                                placeholder='Contact Number'
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                />
+                                </div>
+                            </div>
             <div className={styles['wrapper-8']}>
               <span className={styles['text-c']}>Email address</span>
             </div>
