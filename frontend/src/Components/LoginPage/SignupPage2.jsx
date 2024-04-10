@@ -16,6 +16,8 @@ export default function Main() {
     const [cvv, setCVV] = useState('');
     const [expMonth, setExpMonth] = useState('');
     const [expYear, setExpYear] = useState('');
+    const [doctor_pref_id] = useState('');
+    const [facility_pref_id] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
     // const [expDateError, setExpDateError] = useState('');
@@ -69,6 +71,11 @@ export default function Main() {
             expiry_date,
         };
 
+        const preferenceDetails = {
+            doctor_pref_id,
+            facility_pref_id
+        }
+
         if(Object.keys(formData).length !== 0)
         {
             console.log(JSON.stringify(formData))
@@ -83,6 +90,21 @@ export default function Main() {
             })
             .then(response => {
                 console.log('Credit card form submitted successfully!', response.data);
+
+                // Add Patient's default preference to preference table:
+                preferenceDetails.patient_id = response.data.patient_id;
+                preferenceDetails.doctor_pref_id = "No Preference"
+                preferenceDetails.facility_pref_id = "No Preference"
+                console.log(preferenceDetails);
+
+                axios.post(`http://127.0.0.1:8000/api/patientPreference/`, preferenceDetails)
+                .then(response => {
+                    console.log('Form submitted successfully!', response.data);
+                })
+                .catch(error => {
+                    console.error('Error submitting form:', error);
+                });
+
                 // Handle any post-submission logic here, like redirecting to another page
                 navigate('/', { state: { message: 'Account created Successfully! Please Login to the system.' } });
             })
