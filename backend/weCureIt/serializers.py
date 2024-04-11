@@ -171,3 +171,9 @@ class AllFacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
         fields = ('facility_id', 'name', 'address', 'rooms_no', 'phone_number', 'is_active')
+
+# add doctor schedule to the database
+class DocScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doc_schedule
+        fields = '__all__'  # Adjust the fields if you need to exclude some fields

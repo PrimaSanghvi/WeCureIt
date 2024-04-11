@@ -42,5 +42,6 @@ urlpatterns = [
     path('api/adminLogin/', views.AdminLoginView.as_view(), name='adminLogin'),
     path('api/patientPreferenceDetail/<int:pk>/', views.PatientPreferenceDetail.as_view(), name='patientPreferenceDetail'),
     path('api/allDoctorDetail/', views.AllDoctorDetail.as_view(), name='allDoctorDetail'),
-    path('api/allFacilityDetail/', views.AllFacilityDetail.as_view(), name='allFacilityDetail')
+    path('api/allFacilityDetail/', views.AllFacilityDetail.as_view(), name='allFacilityDetail'),
+    path('api/addDoctorSchedule/', views.DocScheduleCreateAPI.as_view(), name = 'addDoctorSchedule'),
 ]
