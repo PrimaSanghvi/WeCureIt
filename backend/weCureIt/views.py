@@ -249,3 +249,54 @@ class DocScheduleCreateAPI(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+################## DOCTOR DELETE SCHEDULE ##################
+class UpdateScheduleDaysAPI(APIView):
+    def post(self, request, *args, **kwargs):
+        doctor_id = request.data.get('doctor_id')
+        day_to_remove = request.data.get('day_to_remove')
+
+        if not doctor_id or not day_to_remove:
+            return Response({'error': 'Both doctor_id and day_to_remove are required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            # Fetch the schedule for the given doctor where the days include the day to remove
+            schedules = Doc_schedule.objects.filter(
+                doctor_id=doctor_id, 
+                days_visiting__icontains=day_to_remove
+            )
+            
+            if not schedules:
+                return Response({'error': 'No schedule found for the given criteria'}, status=status.HTTP_404_NOT_FOUND)
+
+            updated_schedules = []
+            for schedule in schedules:
+                # Split the days, remove the specified day, and join them back into a string
+                days = schedule.days_visiting.split(', ')
+                if day_to_remove in days:
+                    days.remove(day_to_remove)
+                schedule.days_visiting = ', '.join(days)
+                schedule.save()
+                updated_schedules.append(schedule.schedule_id)
+
+            return Response({'message': 'Updated schedules successfully', 'schedules': updated_schedules}, status=status.HTTP_200_OK)
+
+        except Doc_schedule.DoesNotExist:
+            return Response({'error': 'Schedule not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class UnlinkFacilityAPIView(APIView):
+    def delete(self, request, *args, **kwargs):
+        serializer = FacilityUnlinkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Facility unlinked from doctor\'s schedule successfully'}, status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UnlinkSpecialtyAPIView(APIView):
+    def delete(self, request, *args, **kwargs):
+        serializer = SpecialtyUnlinkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Specialty unlinked from doctor\'s schedule successfully'}, status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
