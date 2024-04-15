@@ -173,13 +173,13 @@ class FacilitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Facility
-        fields = ['facility_id', 'name', 'address', 'rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality']
+        fields = ['facility_id', 'name', 'addressLine1', 'addressLine2', 'state','city','zipCode','rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality']
 
     def create(self, validated_data):
         # Extract specialties using the source argument 'speciality'
         specialties = validated_data.pop('speciality', [])
         facility = Facility.objects.create(**validated_data)
-        facility.speciality.set(specialties)  # Set the many-to-many relation
+        facility.speciality_id.set(specialties)  # Set the many-to-many relation
         return facility
 
     def update(self, instance, validated_data):

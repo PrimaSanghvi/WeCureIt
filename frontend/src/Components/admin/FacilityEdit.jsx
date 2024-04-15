@@ -1,22 +1,22 @@
 import React , { useState, useEffect } from "react";
 import styles from './FacilityEdit.module.css';
-import { useParams,useLocation, useNavigate  } from "react-router-dom";
+import { useParams,useLocation  } from "react-router-dom";
 import axios from "axios"; 
 
 export default function FacilityEdit() {
     //
     const {facilityId} = useParams();
-    const { state } = useLocation();
-    const navigate = useNavigate();
+    const { state : locationState } = useLocation();
+    //const navigate = useNavigate();
     const [specialities, setSpecialities] = useState([]);
-    const [name, setFacilityname] = useState(state?.facility.name);
-    const [address1, setAddress1] = useState(state?.facility.address);
-    const [address2, setAddress2] = useState("");
-    const [city, setCity] = useState("");
-    const [states, setStates] = useState("");
-    const [zipcode, setZipcode] = useState("");
-    const [rooms_no, setRoomnumber] = useState(state?.facility.rooms_no);
-    const [phone_number, setPhone] = useState(state?.facility.phone_number);
+    const [name, setFacilityname] = useState(locationState?.facility.name);
+    const [addressLine1, setAddress1] = useState(locationState?.facility.addressLine1);
+    const [addressLine2, setAddress2] = useState(locationState?.facility.addressLine2);
+    const [city, setCity] = useState(locationState?.facility.city);
+    const [state, setStates] = useState(locationState?.facility.state);
+    const [zipCode, setZipcode] = useState(locationState?.facility.zipCode);
+    const [rooms_no, setRoomnumber] = useState(locationState?.facility.rooms_no);
+    const [phone_number, setPhone] = useState(locationState?.facility.phone_number);
      
    
   
@@ -43,8 +43,8 @@ export default function FacilityEdit() {
 
     try
     {
-    if (state?.facility.speciality && Array.isArray(state?.facility.speciality)) {
-      const processedData = state?.facility.speciality.map(spec => ({
+    if (locationState?.facility.speciality && Array.isArray(locationState?.facility.speciality)) {
+      const processedData = locationState?.facility.speciality.map(spec => ({
         speciality_id: spec.speciality_id,
           name: spec.name
       }));
@@ -54,7 +54,7 @@ export default function FacilityEdit() {
     {
       console.error('Error fetching data:', error);
     }
-    }, [facilityId, state?.facility]);
+    }, [facilityId, locationState?.facility]);
 
     const editdoctors = () => {
         //change the code to the real page of doctor page
@@ -88,30 +88,35 @@ export default function FacilityEdit() {
   };
 
   const handleSubmit = async () =>{
-    const facility_id = state?.facility.facility_id;
-    const is_active = state?.facility.is_active
-    
+    const facility_id = locationState?.facility.facility_id;
+    const is_active = locationState?.facility.is_active;
+    const adminId = locationState?.adminId;
+   
     const specialityIds = displayedSpeciality.map(speciality => speciality.speciality_id);
-    const address = address1;
     console.log('the edit is successful!');
 
     const updatedFacility = {
       facility_id,
       name,
-      address,
+      addressLine1,
+      addressLine2,
       phone_number,
       rooms_no,
       is_active,
+      state,
+      city,
+      zipCode,
       speciality_id: specialityIds
     }
 console.log("update", JSON.stringify(updatedFacility))
     try {
       const response = await axios.put(`http://127.0.0.1:8000/api/facilities/update/${facility_id}/`, updatedFacility);
       console.log('Update successful!', response.data);
-      // Handle successful update here, perhaps redirect or show a success message
+      
+      window.location.href = `/admin/facility/${adminId}/`
+
     } catch (error) {
       console.error('Error updating facility:', error);
-      // Handle error here, show an error message or take other actions as needed
     }
    
   }
@@ -155,7 +160,7 @@ console.log("update", JSON.stringify(updatedFacility))
           <div className={styles["frame-6"]}>
           <input
                     className={styles["input"]}
-                    value={address1}
+                    value={addressLine1}
                     onChange={(e) => setAddress1(e.target.value)}
                     placeholder=" Address Line 1"
                     type="text"
@@ -164,7 +169,7 @@ console.log("update", JSON.stringify(updatedFacility))
           <div className={styles["frame-8"]}>
           <input
                     className={styles["input"]}
-                    value={address2}
+                    value={addressLine2}
                     onChange={(e) => setAddress2(e.target.value)}
                     placeholder=" Address Line 2"
                     type="text"
@@ -188,7 +193,7 @@ console.log("update", JSON.stringify(updatedFacility))
           <div className={styles["frame-f"]}>
           <input
                     className={styles["input"]}
-                    value={states}
+                    value={state}
                     onChange={(e) => setStates(e.target.value)}
                     placeholder=" State name"
                     type="text"
@@ -200,7 +205,7 @@ console.log("update", JSON.stringify(updatedFacility))
           <div className={styles["frame-13"]}>
           <input
                     className={styles["input"]}
-                    value={zipcode}
+                    value={zipCode}
                     onChange={(e) => setZipcode(e.target.value)}
                     placeholder="Zip code"
                     type="text"

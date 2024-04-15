@@ -43,9 +43,7 @@ export default function FacilityHome() {
   }, [])
 
   const handleEdit = (facility) => {
-    console.log("here is a hit");
-    console.log(facility.facility_id);
-    navigate(`/admin/editFacility/${facility.facility_id}`, { state: { facility } });
+    navigate(`/admin/editFacility/${facility.facility_id}`, { state: { facility, adminId } });
   };
 
   const editdoctors = () => {
@@ -90,61 +88,83 @@ export default function FacilityHome() {
   };
   const handleAddFacilityCancel = () => {
     setShowAddFacility(false);
+    navigate(`/admin/facility/${adminId}/`)
+    setSelectedSpecialties([])
+    setSelectedSpecialityIds([])
+
   };
 
-  // handle the dualListBox
-  const [availableSpecialties, setAvailableSpecialties] = useState([
-    "Cardiology",
-    "Pediatrics",
-    "Psychiatry",
-    "Internal Medicine",
-    "Obstetrics and Gynecology (OB/GYN)",
-  ]);
-
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
-  const [selectedAvailable, setSelectedAvailable] = useState([]);
-  const [selectedSelected, setSelectedSelected] = useState([]);
+  const [selectedAvailable, setSelectedAvailable] = useState("");
+  const [selectedSelected, setSelectedSelected] = useState("");
+  const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
 
   const handleAdd = () => {
-    setSelectedSpecialties([...selectedSpecialties, ...selectedAvailable]);
-    // setAvailableSpecialties(availableSpecialties.filter(specialty => !selectedAvailable.includes(specialty)));
-    setSelectedAvailable([]);
+
+    const speciality = specialityList.find(s => s.name === selectedAvailable);
+
+    if (speciality && !selectedSpecialityIds.includes(speciality.speciality_id)) {
+      setSelectedSpecialityIds([...selectedSpecialityIds, speciality.speciality_id]);
+      setSelectedSpecialties([...selectedSpecialties, selectedAvailable]);
+      setSelectedAvailable("");
+  } else if (!selectedAvailable) {
+      alert('Please select a speciality first.');
+  } else {
+      alert('This speciality is already in the list.');
+  }
   };
 
   const handleRemove = () => {
-    // setAvailableSpecialties([...availableSpecialties, ...selectedSelected]);
-    setSelectedSpecialties(
-      selectedSpecialties.filter(
-        (specialty) => !selectedSelected.includes(specialty)
-      )
-    );
-    setSelectedSelected([]);
+    const speciality = specialityList.find(s => s.name === selectedSelected);
+    if (speciality) {
+      setSelectedSpecialityIds(selectedSpecialityIds.filter(id => id !== speciality.speciality_id));
+      setSelectedSpecialties(selectedSpecialties.filter(item => item !== selectedSelected));
+      setSelectedSelected(""); 
+    }
   };
 
   //set the input field
   const [name, setFacilityName] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
+  const [addressLine1, setAddress1] = useState("");
+  const [addressLine2, setAddress2] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [zipcode, setZipcode] = useState("");
+  const [zipCode, setZipcode] = useState("");
   const [rooms_no, setRoomnumber] = useState("");
   const [phone_number, setPhone] = useState("");
 
   const handleSubmitFacility = () => 
   {
-    // const specialityIds = displayedSpeciality.map(speciality => speciality.speciality_id);
-    const address = address1;
+    // const specialityIds = selectedSpecialties.map(speciality => speciality.speciality_id);
 
     const formData = {
       name,
-      address,
       phone_number,
       rooms_no,
-      // speciality_id: specialityIds,
+      addressLine1,
+      addressLine2,
+      state,
+      city,
+      zipCode,
+      speciality_id: selectedSpecialityIds,
       is_active:true,
     }
-   console.log(selectedSpecialties)
+   console.log(JSON.stringify(formData));
+
+   if (Object.keys(formData).length !== 0) {
+    console.log(JSON.stringify(formData));
+    axios.post('http://127.0.0.1:8000/api/facilities/create/', formData)
+        .then(response => {
+          
+            console.log('Form submitted successfully!', response.data);
+            window.location.href = `/admin/facility/${adminId}/`
+            
+        })
+        .catch(error => {
+            console.error('Error submitting form:', error);
+        });
+        // window.location.href = "/AddDoctors"
+}
   };
 
   //Manage the rooms for the selected facility
@@ -268,7 +288,7 @@ export default function FacilityHome() {
                 <div className={styles["frame-9"]}>
                   <input
                     className={styles["input"]}
-                    value={address1}
+                    value={addressLine1}
                     onChange={(e) => setAddress1(e.target.value)}
                     placeholder=" Address Line 1"
                     type="text"
@@ -277,7 +297,7 @@ export default function FacilityHome() {
                 <div className={styles["frame-b"]}>
                   <input
                     className={styles["input"]}
-                    value={address2}
+                    value={addressLine2}
                     onChange={(e) => setAddress2(e.target.value)}
                     placeholder=" Address Line 2"
                     type="text"
@@ -313,7 +333,7 @@ export default function FacilityHome() {
                 <div className={styles["frame-16"]}>
                   <input
                     className={styles["input"]}
-                    value={zipcode}
+                    value={zipCode}
                     onChange={(e) => setZipcode(e.target.value)}
                     placeholder="Zip code"
                     type="text"
@@ -439,9 +459,11 @@ export default function FacilityHome() {
                       <div className={styles["frame-3a"]}>
                         <div className={styles["group-3b"]}>
                           <div className={styles["group-3c"]}>
-                            {selectedSpecialties.map((specialty) => (
+                            {selectedSpecialties.map((specialty,index) =>
+                            {
+                              return(
                               <span
-                                key={specialty}
+                                key={index}
                                 className={
                                   styles[
                                     `${
@@ -451,11 +473,12 @@ export default function FacilityHome() {
                                     }`
                                   ]
                                 }
-                                onClick={() => setSelectedSelected([specialty])}
+                                onClick={() => setSelectedSelected(specialty)}
                               >
                                 {specialty}
                               </span>
-                            ))}
+                              )
+                              })}
                           </div>
                         </div>
                       </div>
