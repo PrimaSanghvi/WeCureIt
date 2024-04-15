@@ -38,5 +38,9 @@ urlpatterns = [
     path('api/specialties/', views.SpecialtyListView.as_view(), name='specialty-list'),
     path('api/doctorlist/', views.DoctorListView.as_view(), name='doctor-list'),
     path('api/removedoctor/<int:pk>/', views.DoctorInactiveView.as_view(), name='doctor-remove'),
-    path('api/adminLogin/', views.AdminLoginView.as_view(), name='adminLogin')
+    path('api/adminLogin/', views.AdminLoginView.as_view(), name='adminLogin'),
+   path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
+   path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
+    path('api/facilities/update/<int:pk>/',views.FacilityUpdateView.as_view(), name='facility-update'),
+
 ]

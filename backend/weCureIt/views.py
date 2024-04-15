@@ -122,19 +122,6 @@ class DoctorScheduleView(APIView):
         serializer = DocScheduleSerializer(schedules, many=True, context={'selected_date': selected_date_obj})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-
-# class DoctorDetailView(APIView):
-#     """
-#     Retrieve a doctor's details by doctor_id.
-#     """
-#     def get(self, request, doctor_id):
-#         try:
-#             doctor = Doctor.objects.get(pk=doctor_id)
-#             serializer = DoctorSerializer(doctor)
-#             return Response(serializer.data)
-#         except Doctor.DoesNotExist:
-#             return Response({'message': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
-
 class SpecialityView(viewsets.ModelViewSet):
     model = Speciality
     serializers_class = SpecialitySerializer
@@ -208,3 +195,30 @@ class AdminLoginView(APIView):
         else:
             print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class FacilityListView(APIView):
+    def get(self, request, format=None):
+        facilities = Facility.objects.all()  
+        serializer = FacilitySerializer(facilities, many=True)  
+        return Response(serializer.data) 
+
+class FacilityCreateView(APIView):
+    def post(self, request, format=None):
+        serializer = FacilitySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FacilityUpdateView(APIView):
+    def put(self, request, pk, format=None):
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = FacilitySerializer(facility, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

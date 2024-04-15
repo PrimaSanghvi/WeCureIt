@@ -4,7 +4,7 @@
     import axios from 'axios'; 
     import styles from './AddDoctors.module.css';
     import { useNavigate } from 'react-router-dom';
- 
+    import { useParams } from 'react-router-dom';
     
     export default function Main() {
 
@@ -19,7 +19,7 @@
       const [removespeciality,setremovespeciality] = useState('')
       const [doctorlist, setDoctorList] = useState([]);
       const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
-
+      const { adminId } = useParams(); 
       const navigate = useNavigate();
     
       const handleDisplay = () => {
@@ -84,7 +84,7 @@
       };
       const transferfacility = () =>{
         //change to the real edit facility path
-        window.location.href = "/editfacilities";
+        window.location.href = `/admin/facility/${adminId}/`;
         console.log("transfer to edit facilities")
       };
 
