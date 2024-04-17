@@ -78,13 +78,13 @@ conn.commit()
 
 ################# INSERT #################
 # Facility:
-facilities = [["The George Washington University Hospital", "900 23rd St. NW, Washington, D.C. 20037", 5, 2027154000, True],
-              ["Holy Cross Hospital", "1500 Forest Glen Rd, Silver Spring, MD 20910", 4, 3017547000, True],
-              ["Howard University Hospital", "2041 Georgia Ave NW, Washington, D.C. 20060", 5, 2028656100, True]
+facilities = [["The George Washington University Hospital", "900 23rd St. NW", "", "Washington", "D.C.", 20037,  5, "2027154000", True],
+              ["Holy Cross Hospital", "1500 Forest Glen Rd", "", "Silver Spring", "MD", 20910, 4, "3017547000", True],
+              ["Howard University Hospital", "2041 Georgia Ave NW", "", "Washington", "D.C.", 20060, 5, "2028656100", True]
              ]
 
 for facility in facilities:
-    cur.execute('INSERT INTO "weCureIt_facility" (name, address, rooms_no, phone_number, is_active) VALUES (%s, %s, %s, %s, %s)', (facility[0], facility[1], facility[2], facility[3], facility[4]))
+    cur.execute('INSERT INTO "weCureIt_facility" (name, "addressLine1", "addressLine2", city, state, "zipCode", rooms_no, phone_number, is_active) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', (facility[0], facility[1], facility[2], facility[3], facility[4], facility[5], facility[6], facility[7], facility[8]))
     conn.commit()
 
 # Doctor:
