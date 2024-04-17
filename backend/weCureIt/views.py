@@ -216,7 +216,8 @@ class AllDoctorDetail(APIView):
 class AllFacilityDetail(APIView):
     def get(self, request,*args, **kwarg):
         try:
-            facility = Facility.objects.all()
+            # Only retrieving facility whose 'is_active' is True
+            facility = Facility.objects.filter(is_active = True)
             serializer = AllFacilitySerializer(facility, many=True)
             return Response(serializer.data)
         

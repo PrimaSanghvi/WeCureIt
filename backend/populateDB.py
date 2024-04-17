@@ -80,7 +80,8 @@ conn.commit()
 # Facility:
 facilities = [["The George Washington University Hospital", "900 23rd St. NW", "", "Washington", "D.C.", 20037,  5, "2027154000", True],
               ["Holy Cross Hospital", "1500 Forest Glen Rd", "", "Silver Spring", "MD", 20910, 4, "3017547000", True],
-              ["Howard University Hospital", "2041 Georgia Ave NW", "", "Washington", "D.C.", 20060, 5, "2028656100", True]
+              ["Howard University Hospital", "2041 Georgia Ave NW", "", "Washington", "D.C.", 20060, 5, "2028656100", True],
+              ["MedStar Washington Hospital Center", "110 Irving St NW", "", "Washington", "D.C.", 20010, 5, "2028777000", False]
              ]
 
 for facility in facilities:
