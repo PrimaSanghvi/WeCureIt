@@ -39,17 +39,6 @@ class PatientCreditCard(models.Model):
     zipCode = models.IntegerField()
     expiry_date = models.CharField(max_length=254)
 
-class Patient_record(models.Model):
-    patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    patient_rec_id = models.BigAutoField(auto_created = True,
-                  primary_key = True,
-                  serialize = False)
-    first_name = models.CharField(max_length=254)
-    last_name = models.CharField(max_length=254)
-    medicine_prescribed =  models.CharField(max_length=254)
-    disease = models.CharField(max_length=254)
-    comments = models.CharField(max_length=254,null = True, blank = True)
-
 class PatientPreference(models.Model):
     patient_id = models.OneToOneField(Patient, on_delete=models.CASCADE, primary_key = True)
     doctor_pref_id = models.CharField(null=True, max_length=254)

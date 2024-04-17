@@ -170,7 +170,7 @@ class AllDoctorSerializer(serializers.ModelSerializer):
 class AllFacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
-        fields = ('facility_id', 'name', 'address', 'rooms_no', 'phone_number', 'is_active')
+        fields = ('facility_id', 'name', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'rooms_no', 'phone_number', 'is_active')
 
 # add doctor schedule to the database(handle repeated adding cases)
 class DocScheduleSerializer(serializers.ModelSerializer):
