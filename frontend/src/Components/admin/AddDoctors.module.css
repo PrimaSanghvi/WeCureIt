@@ -1449,11 +1449,13 @@ button {
 }
 .rectangle-3f {
   position: absolute;
+  text-align: center;
   width: 24.14px;
   height: 28px;
   top: 0;
   left: 0;
   background: #726ffe;
+  color: white;
   z-index: 43;
   border-radius: 10px;
 }
@@ -1502,6 +1504,8 @@ button {
   top: 0;
   left: 0;
   background: #726ffe;
+  text-align: center;
+  color: white;
   z-index: 47;
   border-radius: 10px;
 }

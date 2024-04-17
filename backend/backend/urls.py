@@ -30,8 +30,19 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/patientLogin/', views.PatientLoginView.as_view(), name='patientLogin'),
     path('api/patientDetail/<int:pk>/', views.PatientDetail.as_view(), name='patientDetail'),
+    path('api/doctorLogin/', views.DoctorLoginView.as_view(), name='doctorLogin'),
+    path('api/doctors/<int:doctor_id>/appointments/today/', views.TodaysAppointmentsView.as_view(), name='todays-appointments'),
+    path('api/doctors/<int:doctor_id>/appointments/upcoming/', views.UpcomingAppointmentsView.as_view(), name='upcoming-appointments'),
+    path('api/doctors/<int:doctor_id>/schedule/<str:selected_date>/', views.DoctorScheduleView.as_view(), name = 'doctor-schedule'),
+    # path('api/editDoctors/<int:doctor_id>/', views.DoctorDetailView.as_view(), name='doctor-detail'),
     path('api/specialties/', views.SpecialtyListView.as_view(), name='specialty-list'),
     path('api/doctorlist/', views.DoctorListView.as_view(), name='doctor-list'),
-    path('api/removedoctor/<int:pk>/', views.DoctorInactiveView.as_view(), name='doctor-remove')
+    path('api/removedoctor/<int:pk>/', views.DoctorInactiveView.as_view(), name='doctor-remove'),
+    path('api/adminLogin/', views.AdminLoginView.as_view(), name='adminLogin'),
+    path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
+    path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
+    path('api/facilities/update/<int:pk>/',views.FacilityUpdateView.as_view(), name='facility-update'),
+    path('api/patientmedicalrec/<int:pk>/',views.PatientRecView.as_view(), name='medical-review'),
+    path('api/patientmedicalcreate/', views.PatientRecCreateView.as_view(), name='medical-create'),
 
 ]

@@ -292,14 +292,14 @@
               </div>
               <div className={styles["frame-3c"]}>
                 <div className={styles["button"]}>
-                  <div className={styles["button-3d"]}>                 
-                    <div className={styles["rectangle-3f"]} onClick={handleDisplay}></div>
-                  </div>
+                               
+                    <div className={styles["rectangle-3f"]} onClick={handleDisplay}>&gt;</div>
+                
                 </div>
                 <div className={styles["button-40"]}>
-                  <div className={styles["button-41"]}>
-                    <div className={styles["rectangle-43"]} onClick={handleRemove}></div>
-                  </div>
+                  
+                    <div className={styles["rectangle-43"]} onClick={handleRemove}>&lt;</div>
+                  
                 </div>
               </div>
               <div className={styles["selected-specialty"]}>
