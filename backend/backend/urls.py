@@ -42,5 +42,38 @@ urlpatterns = [
     path('api/adminLogin/', views.AdminLoginView.as_view(), name='adminLogin'),
     path('api/patientPreferenceDetail/<int:pk>/', views.PatientPreferenceDetail.as_view(), name='patientPreferenceDetail'),
     path('api/allDoctorDetail/', views.AllDoctorDetail.as_view(), name='allDoctorDetail'),
-    path('api/allFacilityDetail/', views.AllFacilityDetail.as_view(), name='allFacilityDetail')
+    path('api/allFacilityDetail/', views.AllFacilityDetail.as_view(), name='allFacilityDetail'),
+
+    ###### add the doctor schedule, add the schedule repeatedly for the same doctor will only update according data
+    # POST request body: {
+    #     "doctor_id": 1,
+    #     "days_visiting": "Monday, Wednesday, Thursday, Friday",
+    #     "facility_id": [1, 2],
+    #     "visiting_hours_start": "09:00",
+    #     "visiting_hours_end": "17:00",
+    #     "speciality_id": [1, 2]
+    # }
+    path('api/doctorSchedule/add/', views.DocScheduleCreateAPI.as_view(), name = 'add_DoctorSchedule'),
+
+    ###### remove day, this api will update the charField in the doc_schedule table
+    # POST request body: {
+    #     "doctor_id": 1,
+    #     "day_to_remove": "Monday"
+    # }
+    path('api/doctorSchedule/deleteDay/', views.UpdateScheduleDaysAPI.as_view(), name='delete_DoctorSchedule_day'),
+
+    ###### remove Facility 
+    # DELETE request body: {
+    #     "doctor_id": 1,
+    #     "facility_id": 2
+    # }
+    path('api/doctorSchedule/deleteFacility/', views.UnlinkFacilityAPIView.as_view(), name='remove_facility'),
+
+    ###### remove Specialty
+    # DELETE request body: {
+    #     "doctor_id": 1,
+    #     "speciality_id": 2
+    # }
+    path('api/doctorSchedule/deleteSpeciality/', views.UnlinkSpecialtyAPIView.as_view(), name = 'remove_speciality'),
+
 ]
