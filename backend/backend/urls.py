@@ -75,5 +75,8 @@ urlpatterns = [
     #     "speciality_id": 2
     # }
     path('api/doctorSchedule/deleteSpeciality/', views.UnlinkSpecialtyAPIView.as_view(), name = 'remove_speciality'),
+    path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
+    path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
+    path('api/facilities/update/<int:pk>/',views.FacilityUpdateView.as_view(), name='facility-update'),
 
 ]

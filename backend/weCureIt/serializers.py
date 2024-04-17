@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
-from django.utils import timezone
+from django.contrib.auth.hashers import check_password
+
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,12 +16,11 @@ class PatientLoginSerializer(serializers.Serializer):
     def validate(self, data):
         try:
             patient = Patient.objects.get(email=data.get("email"))
-
-            if data.get("password") != patient.password:
+            print("Patient found: ", patient.email)
+            if not check_password(data.get("password"), patient.password):
                 raise serializers.ValidationError("Invalid login credentials")
         except Patient.DoesNotExist:
-            raise serializers.ValidationError("Invalid login credentials")
-        
+            raise serializers.ValidationError("Invalid login credentials")       
         # Optionally add the patient instance to the validated data if you need it later
         data['patient_id'] = patient.patient_id
         return data
@@ -39,10 +39,10 @@ class DoctorLoginSerializer(serializers.Serializer):
         try:
             doctor = Doctor.objects.get(email=data.get("email"))
             print("Doctor found: ", doctor.email)
-            if data.get("password") != doctor.password:
+            if not check_password(data.get("password"), doctor.password):
                 raise serializers.ValidationError("Invalid login credentials")
-        except Doctor.DoesNotExist:
-            raise serializers.ValidationError("Invalid login credentials")
+        except Patient.DoesNotExist:
+            raise serializers.ValidationError("Invalid login credentials")      
         
         # Optionally add the patient instance to the validated data if you need it later
         data['doctor_id'] = doctor.doctor_id
@@ -238,3 +238,34 @@ class SpecialtyUnlinkSerializer(serializers.Serializer):
         for schedule in schedules:
             # Remove the specialty from the schedule
             schedule.speciality_id.remove(speciality_id)
+ 
+    
+class FacilitySerializer(serializers.ModelSerializer):
+    speciality_id = serializers.PrimaryKeyRelatedField(
+        queryset=Speciality.objects.all(),
+        many=True,
+        write_only=True,
+        source='speciality'
+    )
+    speciality = SpecialitySerializer(many=True, read_only=True, source='speciality_id')
+
+    class Meta:
+        model = Facility
+        fields = ['facility_id', 'name', 'addressLine1', 'addressLine2', 'state','city','zipCode','rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality']
+
+    def create(self, validated_data):
+        # Extract specialties using the source argument 'speciality'
+        specialties = validated_data.pop('speciality', [])
+        facility = Facility.objects.create(**validated_data)
+        facility.speciality_id.set(specialties)  # Set the many-to-many relation
+        return facility
+
+    def update(self, instance, validated_data):
+        specialties = validated_data.pop('speciality', [])
+        # Update scalar fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        # Update many-to-many fields
+        instance.speciality_id.set(specialties)
+        return instance

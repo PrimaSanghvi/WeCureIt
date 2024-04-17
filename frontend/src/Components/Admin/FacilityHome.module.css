@@ -245,6 +245,8 @@
     height: 36.783px;
     top: 241px;
     left: 43px;
+    /* background: url(../assets/images/76b62927-b376-4971-a9a2-6720a8f9937e.png)
+      no-repeat center; */
     background-size: cover;
     z-index: 11;
     overflow: hidden;
@@ -324,8 +326,8 @@
     position: relative;
     width: 20.002px;
     height: 20.002px;
-    background: url(../../assets/facilityicon.svg)
-      no-repeat center;
+    /* background: url(../../assets/facilityicon.svg)
+      no-repeat center; */
     background-size: cover;
     z-index: 21;
     overflow: hidden;
@@ -395,8 +397,8 @@
     width: 20px;
     height: 20px;
     margin: 1px 0 0 3px;
-    background: url(../../assets/edit-note.svg)
-      no-repeat center;
+    /* background: url(../../assets/edit-note.svg)
+      no-repeat center; */
     background-size: 100% 100%;
     z-index: 27;
   }
@@ -469,8 +471,8 @@
     width: 20px;
     height: 20px;
     margin: 1px 0 0 3px;
-    background: url(../../assets/edit-note.svg)
-      no-repeat center;
+    /* background: url(../../assets/edit-note.svg)
+      no-repeat center; */
     background-size: 100% 100%;
     z-index: 33;
   }
@@ -544,8 +546,8 @@
     height: 24px;
     top: 50%;
     left: 50%;
-    background: url(../../assets/checked.svg)
-      no-repeat center;
+    /* background: url(../../assets/checked.svg)
+      no-repeat center; */
     background-size: cover;
     transform: translate(-50%, -50%);
     z-index: 39;
@@ -1129,8 +1131,8 @@
     position: relative;
     width: 495px;
     height: 423px;
-    background: url(../../assets/images/chair.png)
-      no-repeat center;
+    /* background: url(../../assets/images/chair.png)
+      no-repeat center; */
     background-size: cover;
     z-index: 82;
   }
@@ -1997,6 +1999,8 @@
     height: 109px;
     top: 35.901px;
     left: 187px;
+    /* background: url(../assets/images/ec09a5fe-2415-45d0-8480-0851bbc66851.png)
+      no-repeat center; */
     background-size: cover;
     z-index: 146;
     border-radius: 20px;
@@ -2266,6 +2270,8 @@
     height: 108.901px;
     top: 36px;
     left: 187px;
+    /* background: url(../assets/images/bf47f434-775e-4bd2-be59-0288794fb56c.png)
+      no-repeat center; */
     background-size: cover;
     z-index: 168;
     border-radius: 20px;
@@ -2708,6 +2714,8 @@
   height: 106.5px;
   top: 36px;
   left: 187px;
+  /* background: url(../assets/images/ef761c1e-43bf-4663-b027-54da0a47155a.png)
+    no-repeat center; */
   background-size: cover;
   z-index: 97;
   border-radius: 20px;
@@ -2961,6 +2969,8 @@
   height: 109.5px;
   top: 36px;
   left: 187px;
+  /* background: url(../assets/images/5f6589d0-5637-4ea6-b946-25e906bb0b19.png)
+    no-repeat center; */
   background-size: cover;
   z-index: 118;
   border-radius: 20px;
@@ -3152,3 +3162,17 @@
 }
 
 
+.no-facilities-message {
+  font-weight: bold;
+  text-align: center;
+  margin: 0; /* Remove margin if you want the text exactly in the center of the div */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+.container-for-no-facilities {
+  position: relative;
+  /* ... other styles ... */
+}

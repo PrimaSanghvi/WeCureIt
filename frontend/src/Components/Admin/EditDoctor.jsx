@@ -16,17 +16,7 @@ export default function Main() {
   const [selectedspeciality,setseletedspeciality] = useState("");
   const [displayedSpeciality, setDisplayedSpeciality] = useState([]);
   const [removespeciality,setremovespeciality] = useState('')
-  const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
-
-  // useEffect(() => {
-  //   // Initialize displayedSpeciality with the names of the doctor's current specialties
-  //   if (doctor_editing.speciality && Array.isArray(doctor_editing.speciality)) {
-  //     const names = doctor_editing.speciality.map(spec => spec.name);
-  //     setDisplayedSpeciality(names);
-  //     const ids = doctor_editing.speciality.map(spec => spec.speciality_id);
-  //     setSelectedSpecialityIds(ids);
-  //   }
-  // }, [doctor_editing]);
+  ;
 
 
   useEffect(() => {
@@ -64,47 +54,6 @@ export default function Main() {
     fetchData();
   }, []);
 
-  // const handleDisplay = () => {
-
-  //   if(selectedspeciality && !displayedSpeciality.includes(selectedspeciality)){
-  //     setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
-  //     setseletedspeciality("");
-  //   }
-  //   else if(!selectedspeciality){
-  //     alert('Please select a speciality first.');
-  //   }
-  //   else{
-  //     alert('this speciality is already in the list')
-  //   }
-  // };
-
-  // const handleDisplay = () => {
-  //   const specialityToAdd = specialtylist.find(spec => spec.speciality_id.toString() === selectedspeciality);
-  //   if (specialityToAdd && !displayedSpeciality.some(spec => spec.speciality_id === specialityToAdd.speciality_id)) {
-  //     setDisplayedSpeciality([...displayedSpeciality, specialityToAdd]);
-  //     setseletedspeciality("");
-  //   } else if (!selectedspeciality) {
-  //     alert('Please select a speciality first.');
-  //   } else {
-  //     alert('This speciality is already in the list');
-  //   }
-  // };
-//   const handleDisplay = () => {
-//     console.log(`Selected Specialty: ${selectedspeciality}`);
-//     console.log(`Displayed Speciality Names:`, displayedSpeciality);
-//     console.log(`Selected Speciality IDs:`, selectedSpecialityIds);
-
-//     const speciality = specialtylist.find(s => s.name === selectedspeciality);
-//     if (speciality && !selectedSpecialityIds.includes(speciality.speciality_id)) {
-//         setSelectedSpecialityIds([...selectedSpecialityIds, speciality.speciality_id]);
-//         setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
-//         setseletedspeciality("");
-//     } else if (!selectedspeciality) {
-//         alert('Please select a speciality first.');
-//     } else {
-//         alert('This speciality is already in the list.');
-//     }
-// };
 const handleDisplay = () => {
   console.log(`Selected Specialty: ${selectedspeciality}`);
   const specialityToAdd = specialtylist.find(s => s.name === selectedspeciality);
@@ -126,35 +75,6 @@ const handleRemove = () => {
   setremovespeciality('');
 };
 
-  
-  // const handleRemove = () =>{
-  //   if (removespeciality) {
-  //     setDisplayedSpeciality(displayedSpeciality.filter(item => item !== removespeciality));
-  //     setremovespeciality(''); // Clear selected item
-  //   }
-  // };
-
-  // const handleDisplay = () => {
-  //   const speciality = specialtylist.find(s => s.name === selectedspeciality);
-  //   if (speciality && !selectedSpecialityIds.includes(speciality.speciality_id)) {
-  //     setSelectedSpecialityIds([...selectedSpecialityIds, speciality.speciality_id]);
-  //     setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
-  //     setseletedspeciality("");
-  //   } else if (!selectedspeciality) {
-  //     alert('Please select a speciality first.');
-  //   } else {
-  //     alert('This speciality is already in the list');
-  //   }
-  // };
-  
-  // const handleRemove = () => {
-  //   const speciality = specialtylist.find(s => s.name === removespeciality);
-  //   if (speciality) {
-  //     setSelectedSpecialityIds(selectedSpecialityIds.filter(id => id !== speciality.speciality_id));
-  //     setDisplayedSpeciality(displayedSpeciality.filter(name => name !== removespeciality));
-  //     setremovespeciality('');
-  //   }
-  // };
 
   const transferaddfacility= ()=>{
     //change to the real edit facility path
@@ -168,11 +88,9 @@ const handleRemove = () => {
     const password = doctor_editing.password;
     const phone_number = doctor_editing.phone_number
     const is_active = doctor_editing.is_active
-    // const speciality = displayedSpeciality.join(", ");
+   
     console.log('displayedSpeciality',displayedSpeciality);
-    // const specialityIds = displayedSpeciality.map(name => 
-    //   specialtylist.find(spec => spec.name === name)?.speciality_id
-    // ).filter(id => id !== undefined);
+    
     const specialityIds = displayedSpeciality.map(speciality => speciality.speciality_id);
 
     console.log('specialityIds',specialityIds);

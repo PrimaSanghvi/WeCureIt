@@ -148,9 +148,9 @@ useEffect(() => {
     { field: "Location", minWidth: 120}
   ]);
 
-  const [colDefsLoc, setColDefsLoc] = useState([
-    { field: "Location", minWidth: 120}
-  ]);
+  // const [colDefsLoc, setColDefsLoc] = useState([
+  //   { field: "Location", minWidth: 120}
+  // ]);
   
   const autoSizeStrategy = useMemo(() => {
     return {
