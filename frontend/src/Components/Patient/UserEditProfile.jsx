@@ -170,7 +170,7 @@ export const UserEditProfile = () => {
 
   const editpayment = () => {
     //change the code to the real page of edit payment 
-    window.location.href = "/editpayment";
+    window.location.href = `/editPayment/${patientId}`;
     console.log("transfer to edit payment")
   };
     

@@ -116,7 +116,7 @@ export const UserEditPreference = () => {
 
   const editpayment = () => {
     //change the code to the real page of edit payment 
-    window.location.href = "/editpayment";
+    window.location.href = `/editPayment/${patientId}`;
     console.log("transfer to edit payment")
   };
 
@@ -202,7 +202,6 @@ export const UserEditPreference = () => {
               <span className={styles['save-changes']}>Save Changes</span>
             </div>
           </button>
-          {/* <span className={styles['save-changes']} onClick ={handleSubmit}>Save Changes</span> */}
         </div>
       </div>
 
