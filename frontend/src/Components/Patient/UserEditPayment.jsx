@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from './UserEditPayment.module.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -9,6 +9,17 @@ import unclickedEditSVG from '../../../src/assets/edit-1.svg'
 
 export const UserEditPayment = () => {
   const { patientId } = useParams();
+
+  const [card_number, setCardNumber] = useState('');
+  const [card_holder_name, setCardHolderName] = useState('');
+  const [cvv, setCVV] = useState('');
+  const [addressLine1, setAddressLine1] = useState('');
+  const [addressLine2, setAddressLine2] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [expMonth, setExpMonth] = useState('');
+  const [expYear, setExpYear] = useState('');
 
   // HOMEPAGE BUTTON:
   const handleClick = () => {
@@ -34,6 +45,70 @@ export const UserEditPayment = () => {
     window.location.href = `/editPreference/${patientId}`;
     console.log("transfer to edit preference")
   }
+
+    // SAVE CHANGES BUTTON:
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    
+        const expiry_date = expMonth + "/" + expYear;
+        console.log(expiry_date);
+
+        const cardDetails = {
+            card_number,
+            card_holder_name,
+            addressLine1,
+            addressLine2,
+            city,
+            state,
+            zipCode,
+            cvv,
+            expiry_date
+        };
+
+        console.log(cardDetails);
+        axios.patch(`http://127.0.0.1:8000/api/patientCardDetails/${patientId}/`, cardDetails)
+        .then(response => {
+            console.log('Form submitted successfully!', response.data);
+        })
+        .catch (error => {
+            console.error('Error submitting form:', error);
+        });
+    }
+
+    // Get Patient's Information:
+    useEffect (() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/api/patientPayment/${patientId}`);
+                
+                if (response.status === 200) {
+                    const data = response.data;
+
+                    // Set the state, checking for null values and providing defaults as necessary:
+                    console.log(data)
+                    setCardHolderName(data.card_holder_name);
+                    setCardNumber(data.card_number);
+                    setCVV(data.cvv);
+                    setAddressLine1(data.addressLine1);
+                    setAddressLine2(data.addressLine2);
+                    setCity(data.city);
+                    setState(data.state);
+                    setZipCode(data.zipCode);
+
+                    var expSplit = data.expiry_date;
+                    var parts = expSplit.split("/");
+                    setExpMonth(parts[0]);
+                    setExpYear(parts[1]);
+                } else {
+                    console.error("Error fetching data:", response.status);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchUserData();
+    }, [patientId]);
 
   return (
     // TOP BAR/HEADER:
@@ -81,12 +156,10 @@ export const UserEditPayment = () => {
                                 <input
                                     className={styles['box-5']}
                                     type='number'
-                                    // value={card_number}
-                                    // onChange={(e) => setCardNumber(e.target.value)}
+                                    value={card_number}
+                                    onChange={(e) => setCardNumber(e.target.value)}
                                     placeholder='Enter Card Number'
-                                    // onBlur={validateCardNumber}
                                 />
-                                 {/* {cardNumError && <div style={{ color: 'red' }}>{cardNumError}</div>} */}
                             </div>
                         </div>
                     </div>
@@ -99,8 +172,8 @@ export const UserEditPayment = () => {
                                 <input
                                     className={styles['section-8']}
                                     type='text'
-                                    // value={card_holder_name}
-                                    // onChange={(e) => setCardholderName(e.target.value)}
+                                    value={card_holder_name}
+                                    onChange={(e) => setCardHolderName(e.target.value)}
                                     placeholder='Enter Cardholder Name'
                                 />
                             </div>
@@ -115,8 +188,8 @@ export const UserEditPayment = () => {
                                 <input
                                     className={styles['section-8']}
                                     type='text'
-                                    // value={addressLine1}
-                                    // onChange={(e) => setAddressLine1(e.target.value)}
+                                    value={addressLine1}
+                                    onChange={(e) => setAddressLine1(e.target.value)}
                                     placeholder='Enter Address Line 1'
                                 />
                             </div>
@@ -126,8 +199,8 @@ export const UserEditPayment = () => {
                                 <input
                                     className={styles['section-8-1']}
                                     type='text'
-                                    // value={addressLine2}
-                                    // onChange={(e) => setAddressLine2(e.target.value)}
+                                    value={addressLine2}
+                                    onChange={(e) => setAddressLine2(e.target.value)}
                                     placeholder='Enter Address Line 2'
                                 />
                             </div>
@@ -140,8 +213,8 @@ export const UserEditPayment = () => {
                                 <input
                                     className={styles['box-6']}
                                     type='text'
-                                    // value={city}
-                                    // onChange={(e) => setCity(e.target.value)}
+                                    value={city}
+                                    onChange={(e) => setCity(e.target.value)}
                                     placeholder='City'
                                 />
                             </div>
@@ -154,8 +227,8 @@ export const UserEditPayment = () => {
                                 <input
                                     className={styles['section-a']}
                                     type='text'
-                                    // value={state}
-                                    // onChange={(e) => setState(e.target.value)}
+                                    value={state}
+                                    onChange={(e) => setState(e.target.value)}
                                     placeholder='State'
                                 />
                             </div>
@@ -168,27 +241,19 @@ export const UserEditPayment = () => {
                                 <input
                                     className={styles['wrapper-b']}
                                     type='number'
-                                    // value={zipCode}
-                                    // onChange={(e) => setZipCode(e.target.value)}
+                                    value={zipCode}
+                                    onChange={(e) => setZipCode(e.target.value)}
                                     placeholder='Zipcode'
                                 />
                             </div>
                         </div>
                     </div>
                     <div className={styles['box-8']}>
-                      <button className={styles['wrapper-c']} >
+                      <button className={styles['wrapper-c']} onClick={handleSubmit} >
                         <div className={styles['section-b']}>
                             <span className={styles['text-12']}>Save Changes</span>
                         </div>
                       </button>
-                        {/* <div className={styles['wrapper-c']}>
-                            <div className={styles['section-b']}>
-                                <div className={styles['box-9']} />
-                            </div>
-                        </div>
-                        <button type="submit">
-                            <label className={styles['text-12']}>Save Changes</label>
-                        </button> */}
                     </div>
                     <div className={styles['group-a']}>
                         <div className={styles['group-b']}>
@@ -199,8 +264,8 @@ export const UserEditPayment = () => {
                                 <input
                                     className={styles['section-c']}
                                     type='number'
-                                    // value={cvv}
-                                    // onChange={(e) => setCVV(e.target.value)}
+                                    value={cvv}
+                                    onChange={(e) => setCVV(e.target.value)}
                                     placeholder='CVV'
                                 />
                             </div>
@@ -216,8 +281,8 @@ export const UserEditPayment = () => {
                                     <input
                                         className={styles['group-e']}
                                         type='number'
-                                        // value={expMonth}
-                                        // onChange={(e) => setExpMonth(e.target.value)}
+                                        value={expMonth}
+                                        onChange={(e) => setExpMonth(e.target.value)}
                                         placeholder='mm'
                                     />
                                     </div>
@@ -227,8 +292,8 @@ export const UserEditPayment = () => {
                                     <input
                                         className={styles['section-f']}
                                         type='number'
-                                        // value={expYear}
-                                        // onChange={(e) => setExpYear(e.target.value)}
+                                        value={expYear}
+                                        onChange={(e) => setExpYear(e.target.value)}
                                         placeholder='yy'
                                     />
                                     </div>

@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/patientLogin/', views.PatientLoginView.as_view(), name='patientLogin'),
     path('api/patientDetail/<int:pk>/', views.PatientDetail.as_view(), name='patientDetail'),
+    path('api/patientPayment/<int:pk>/', views.PatientPaymentView.as_view(), name='patientPaymentView'),
     path('api/doctorLogin/', views.DoctorLoginView.as_view(), name='doctorLogin'),
     path('api/doctors/<int:doctor_id>/appointments/today/', views.TodaysAppointmentsView.as_view(), name='todays-appointments'),
     path('api/doctors/<int:doctor_id>/appointments/upcoming/', views.UpcomingAppointmentsView.as_view(), name='upcoming-appointments'),

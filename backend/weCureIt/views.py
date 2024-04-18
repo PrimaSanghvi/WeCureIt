@@ -33,6 +33,16 @@ class PatientCreditCardView(viewsets.ModelViewSet):
     serializer_class = PatientCreditCardSerializer
     queryset = PatientCreditCard.objects.all()
 
+class PatientPaymentView(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            patient = PatientCreditCard.objects.get(patient_id = pk)
+            serializer = PatientCreditCardSerializer(patient)
+            return Response(serializer.data)
+        except Patient.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+            
+
 class PatientDetail(APIView):
     def get(self, request, pk, format=None):
         try:
