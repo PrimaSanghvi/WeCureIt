@@ -73,7 +73,7 @@ export const UserEditPayment = () => {
             setCVVError("Please insert a valid cvv");
             return;
         } else {
-            if (cvv.toString().length != 3) {
+            if (cvv.toString().length !== 3) {
                 setCVVError("Please insert a valid cvv");
                 return;
             }
@@ -84,7 +84,7 @@ export const UserEditPayment = () => {
             setExpError("Please insert a valid expiration month & year");
             return;
         } else {
-            if ((expMonth > 12) || (expMonth < 1) || (expYear <= 23)) {
+            if ((expMonth > 12) || (expMonth < 1) || (expYear <= 23) || (expYear >30)) {
                 setExpError("Please insert a valid expiration month & year");
                 return;
             }
@@ -129,7 +129,7 @@ export const UserEditPayment = () => {
             setZipError("Please insert a valid Zip-Code")
             return;
         } else {
-            if (zipCode.toString().length != 5) {
+            if (zipCode.toString().length !== 5) {
                 setZipError("Please insert a valid Zip-Code")
                 return;
             }
