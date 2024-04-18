@@ -9,7 +9,6 @@ class PatientSerializer(serializers.ModelSerializer):
         fields = ('patient_id', 'first_name','last_name','email','password','addressLine1','addressLine2','city','state','zipCode','phone_number')
 
 class PatientLoginSerializer(serializers.Serializer):
-    
     email = serializers.EmailField()
     password = serializers.CharField()
 
@@ -29,6 +28,26 @@ class PatientCreditCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientCreditCard
         fields = ('patient_id','card_number', 'card_holder_name', 'cvv','addressLine1','addressLine2','city','state','zipCode', 'expiry_date')
+
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    validEmail = serializers.BooleanField()
+
+    def validate(self, data):
+        try:
+            patient = Patient.objects.get(email=data.get("email"))
+            data["validEmail"] = True
+        except Patient.DoesNotExist:
+            try:
+                doctor = Doctor.objects.get(email=data.get("email"))
+                data["validEmail"] = True
+            except Doctor.DoesNotExist:
+                try:
+                    admin = AdminTable.objects.get(email=data.get("email"))
+                    data["validEmail"] = True
+                except:
+                    data["validEmail"] = False
+        return data
 
 class DoctorLoginSerializer(serializers.Serializer):
     

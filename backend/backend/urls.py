@@ -78,5 +78,5 @@ urlpatterns = [
     path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
     path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
     path('api/facilities/update/<int:pk>/',views.FacilityUpdateView.as_view(), name='facility-update'),
-
+    path('api/allEmails/', views.AllEmailsView.as_view(), name = 'allEmails')
 ]

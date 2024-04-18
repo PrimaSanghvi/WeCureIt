@@ -43,6 +43,15 @@ class PatientDetail(APIView):
         except Patient.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
+class AllEmailsView(APIView):
+    def post(self, request, format=None):
+        serializer = EmailSerializer(data=request.data)
+
+        if serializer.is_valid():
+            return Response(serializer.data)
+        else:
+            return Response(serializer.data)
+        
 class PatientPreferenceView(viewsets.ModelViewSet):
     model = PatientPreference
     serializer_class = PatientPreferenceSerializer
