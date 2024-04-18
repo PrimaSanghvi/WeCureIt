@@ -43,6 +43,7 @@ function DoctorHomePage() {
   };
   useEffect(() => {
     fetchScheduleForSelectedDate(selectDate.toDate());
+    // eslint-disable-next-line
   }, [selectDate, doctorId]);
 
 
@@ -109,6 +110,7 @@ useEffect(() => {
   };
   
   // Column Definitions: Defines & controls grid columns.
+  // eslint-disable-next-line
   const [colDefs, setColDefs] = useState([
     
     { field: 'PatientName', headerName: 'Patient Name', minWidth: 10 },
@@ -132,6 +134,7 @@ useEffect(() => {
   ]);
   
 
+  // eslint-disable-next-line
   const [colDefsup, setColDefsup] = useState([
     { field: "PatientName", minWidth: 10},
     { field: "DateTime", minWidth: 70, maxWidth: 150 },
@@ -189,6 +192,7 @@ useEffect(() => {
         params.api.sizeColumnsToFit();
       }, 10);
     },
+    // eslint-disable-next-line
     [window],
   );
 

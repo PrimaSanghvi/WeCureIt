@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './SignupPage.module.css';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import axios, { all } from 'axios';
+import axios from 'axios';
 
 export default function SignupPage() {
   const [first_name, setFirstName] = useState('');
@@ -80,7 +80,7 @@ export default function SignupPage() {
 
   useEffect(() => {
     const handleAllFilled = () => {
-      if ((emailError == "") && (passwordError == "") && (confrimPasswordError == "")) {
+      if ((emailError === "") && (passwordError === "") && (confrimPasswordError === "")) {
         if (first_name && last_name) {
           if (addressLine1 && city && state && zipCode && phone_number) {
             setAllFilled(true);
@@ -96,6 +96,7 @@ export default function SignupPage() {
     };
 
     handleAllFilled();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [passwordError, confrimPasswordError, emailError, formErrors]);
 
     const validatePassword = () => {
