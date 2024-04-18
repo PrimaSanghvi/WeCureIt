@@ -159,20 +159,15 @@
       
 
       return (
-        <div className={styles["main-container"]}>
-          <div className={styles["top-bar"]}>
-            <div className={styles["top-bar-background"]}></div>
-            <div className={styles["frame"]}>
-              <div className={styles["company-name-icon"]}>
-                <span className={styles["we-cure-it"]}>WeCureIt</span>
-                <div className={styles["medical-cross"]}>
-                  <div className={styles["group"]}>
-                    <div className={styles["vector-stroke"]}></div>
+          <div className={styles['main-container']}>
+                <div  className={styles['top-bar']}>
+                  <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
           <div className={styles["line"]}></div>
           <span className={styles["manage-doctor"]}>Manage Doctor</span>
           <span className={styles["add-doctor"]}>Add Doctor</span>

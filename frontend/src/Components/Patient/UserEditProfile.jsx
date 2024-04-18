@@ -24,8 +24,10 @@ export const UserEditProfile = () => {
   //set several new state to handle control submit when invalid password input
   const [password, setPassword] = useState('');
   const [reenteredPassword, setReenteredPassword] = useState('');
+  // eslint-disable-next-line
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  // eslint-disable-next-line
   const [isFormValid, setIsFormValid] = useState(true);
 
 

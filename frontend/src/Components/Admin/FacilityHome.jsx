@@ -245,15 +245,15 @@ export default function FacilityHome() {
   };
 
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["main-container2"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["vector"]} />
-          </div>
+    <div className={styles['main-container']}>
+      <div  className={styles['top-bar']}>
+        <div  className={styles['frame']}>      
+          <div className={styles['main-container2']}>
+            <span className={styles['we-cure-it']}>WeCureIt</span>
+          <div className={styles['vector']} />
         </div>
       </div>
+    </div>
 
       <div className={styles["rectangle"]}>
         <span className={styles["remove-button"]} onClick={handleAddClick}>
@@ -812,6 +812,7 @@ export default function FacilityHome() {
       <span className={styles["add-manage-facility-span"]}>
         Add/Manage Facility
       </span>
+      <div className={styles["edit-29"]}></div>
     </div>
   );
 }
