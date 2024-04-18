@@ -1052,12 +1052,12 @@ input, select, textarea, button {
   z-index: 40;
 }
 .box-8 {
-  position: relative;
+  position: absolute;
   width: 409px;
   height: 48px;
   margin: 219px 0 0 93px;
   z-index: 3;
-  top: -65px;
+  top: 400px;
 }
 .wrapper-c {
   display: flex;

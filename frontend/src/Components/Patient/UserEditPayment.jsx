@@ -10,6 +10,7 @@ import unclickedEditSVG from '../../../src/assets/edit-1.svg'
 export const UserEditPayment = () => {
   const { patientId } = useParams();
 
+  // Data from DB
   const [card_number, setCardNumber] = useState('');
   const [card_holder_name, setCardHolderName] = useState('');
   const [cvv, setCVV] = useState('');
@@ -20,6 +21,16 @@ export const UserEditPayment = () => {
   const [zipCode, setZipCode] = useState('');
   const [expMonth, setExpMonth] = useState('');
   const [expYear, setExpYear] = useState('');
+
+  // Edge Case:
+  const [cardNumberError, setCardNumberError] = useState('');
+  const [cvvError, setCVVError] = useState('');
+  const [expError, setExpError] = useState('');
+  const [cardHolderNameError, setCardHolderNameError] = useState('');
+  const [addressLine1Error, setAddressLine1Error] = useState('');
+  const [cityError, setCityError] = useState('');
+  const [stateError, setStateError] = useState('');
+  const [zipError, setZipError] = useState('');
 
   // HOMEPAGE BUTTON:
   const handleClick = () => {
@@ -49,9 +60,84 @@ export const UserEditPayment = () => {
     // SAVE CHANGES BUTTON:
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Edge case testing:
+        if (!card_number) {
+            setCardNumberError("Please insert a card number");
+            return;
+        } else {
+            setCardNumberError("");
+        }
+
+        if (!cvv) {
+            setCVVError("Please insert a valid cvv");
+            return;
+        } else {
+            if (cvv.toString().length != 3) {
+                setCVVError("Please insert a valid cvv");
+                return;
+            }
+            setCVVError("");
+        }
+
+        if ((!expMonth) || (expMonth && !expYear) || (!expMonth && expYear)) {
+            setExpError("Please insert a valid expiration month & year");
+            return;
+        } else {
+            if ((expMonth > 12) || (expMonth < 1) || (expYear <= 23)) {
+                setExpError("Please insert a valid expiration month & year");
+                return;
+            }
+            setExpError("");
+        }
+
+        if (!card_holder_name) {
+            setCardHolderNameError("Please insert a cardholder name");
+            return;
+        } else {
+            setCardHolderNameError("")
+        }
+
+        if (!addressLine1) {
+            setAddressLine1Error("Please insert an address");
+            return;
+        } else {
+            setAddressLine1Error("");
+        }
+
+        if (!city) {
+            setCityError("Please insert a city");
+            return;
+        } else {
+            setCityError("");
+        }
+
+        if (!state) {
+            setStateError("Please insert a state");
+            return;
+        } else {
+            let regex = /^[a-zA-Z]+$/;
+
+            if (!(regex.test(state))) {
+                setStateError("Please insert a state");
+                return;
+            }
+            setStateError("");
+        }
+
+        if (!zipCode) {
+            setZipError("Please insert a valid Zip-Code")
+            return;
+        } else {
+            if (zipCode.toString().length != 5) {
+                setZipError("Please insert a valid Zip-Code")
+                return;
+            }
+            setZipError("")
+        }
     
+        // Submitting update:
         const expiry_date = expMonth + "/" + expYear;
-        console.log(expiry_date);
 
         const cardDetails = {
             card_number,
@@ -161,6 +247,7 @@ export const UserEditPayment = () => {
                                     placeholder='Enter Card Number'
                                 />
                             </div>
+                            {cardNumberError && <div style={{ color: 'red' }}>{cardNumberError}</div>}
                         </div>
                     </div>
                     <div className={styles['wrapper-4']}>
@@ -177,6 +264,7 @@ export const UserEditPayment = () => {
                                     placeholder='Enter Cardholder Name'
                                 />
                             </div>
+                            {cardHolderNameError && <div style={{ color: 'red' }}>{cardHolderNameError}</div>}
                         </div>
                     </div>
                     <div className={styles['wrapper-6']}>
@@ -204,48 +292,58 @@ export const UserEditPayment = () => {
                                     placeholder='Enter Address Line 2'
                                 />
                             </div>
+                            {addressLine1Error && <div style={{ color: 'red' }}>{addressLine1Error}</div>}
                         </div>
-                        <div className={styles['group-7']}>
-                            <span className={styles['text-c']}>City</span>
-                        </div>
-                        <div className={styles['cityname']}>
-                            <div>
-                                <input
-                                    className={styles['box-6']}
-                                    type='text'
-                                    value={city}
-                                    onChange={(e) => setCity(e.target.value)}
-                                    placeholder='City'
-                                />
+                        <div style={{marginTop: '75px'}}>
+                            <div className={styles['group-7']}>
+                                <span className={styles['text-c']}>City</span>
                             </div>
-                        </div>
-                        <div className={styles['wrapper-8']}>
-                            <span className={styles['text-e']}>State</span>
-                        </div>
-                        <div className={styles['statename']}>
-                            <div>
-                                <input
-                                    className={styles['section-a']}
-                                    type='text'
-                                    value={state}
-                                    onChange={(e) => setState(e.target.value)}
-                                    placeholder='State'
-                                />
+                            <div className={styles['cityname']}>
+                                <div>
+                                    <input
+                                        className={styles['box-6']}
+                                        type='text'
+                                        value={city}
+                                        onChange={(e) => setCity(e.target.value)}
+                                        placeholder='City'
+                                    />
+                                </div>
                             </div>
+                            {cityError && <div style={{ color: 'red'}}>{cityError}</div>}
                         </div>
-                        <div className={styles['wrapper-a']}>
-                            <span className={styles['text-10']}>Zip-Code</span>
-                        </div>
-                        <div className={styles['zipcode']}>
-                            <div>
-                                <input
-                                    className={styles['wrapper-b']}
-                                    type='number'
-                                    value={zipCode}
-                                    onChange={(e) => setZipCode(e.target.value)}
-                                    placeholder='Zipcode'
-                                />
+                        <div style={{paddingLeft: '145px'}}>
+                            <div className={styles['wrapper-8']}>
+                                <span className={styles['text-e']}>State</span>
                             </div>
+                            <div className={styles['statename']}>
+                                <div>
+                                    <input
+                                        className={styles['section-a']}
+                                        type='text'
+                                        value={state}
+                                        onChange={(e) => setState(e.target.value)}
+                                        placeholder='State'
+                                    />
+                                </div>
+                            </div>
+                            {stateError && <div style={{ color: 'red'}}>{stateError}</div>}
+                        </div>
+                        <div style={{paddingLeft: '295px'}}>
+                            <div className={styles['wrapper-a']}>
+                                <span className={styles['text-10']}>Zip-Code</span>
+                            </div>
+                            <div className={styles['zipcode']}>
+                                <div>
+                                    <input
+                                        className={styles['wrapper-b']}
+                                        type='number'
+                                        value={zipCode}
+                                        onChange={(e) => setZipCode(e.target.value)}
+                                        placeholder='Zipcode'
+                                    />
+                                </div>
+                            </div>
+                            {zipError && <div style={{ color: 'red' }}>{zipError}</div>}
                         </div>
                     </div>
                     <div className={styles['box-8']}>
@@ -269,6 +367,7 @@ export const UserEditPayment = () => {
                                     placeholder='CVV'
                                 />
                             </div>
+                            {cvvError && <div style={{ color: 'red' }}>{cvvError}</div>}
                         </div>
                     </div>
                     <div className={styles['section-d']}>
@@ -299,6 +398,7 @@ export const UserEditPayment = () => {
                                     </div>
                                 </div>
                             </div>
+                            {expError && <div style={{ color: 'red', width: '165px'}}>{expError}</div>}
                         </div>
                     </div>
                 </div>
