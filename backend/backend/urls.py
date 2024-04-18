@@ -42,5 +42,6 @@ urlpatterns = [
    path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
    path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
     path('api/facilities/update/<int:pk>/',views.FacilityUpdateView.as_view(), name='facility-update'),
-
+    path('api/facilities/deactivate/<int:pk>/', views.FacilityDeactivateView.as_view(), name='deactivate-facility'),
+    path('api/available-doctors/', views.AvailableDoctorsView.as_view(), name='available-doctors'),
 ]

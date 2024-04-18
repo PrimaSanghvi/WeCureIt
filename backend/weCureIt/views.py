@@ -222,3 +222,27 @@ class FacilityUpdateView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class FacilityDeactivateView(APIView):
+    def patch(self, request, pk, format=None):
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            return Response({'error': 'Facility not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Set the is_active field to False
+        facility.is_active = False
+        facility.save()
+        
+        # Serialize the facility to send back the updated data
+        serializer = FacilitySerializer(facility)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class AvailableDoctorsView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = AvailableDoctorsSerializer(data=request.data)
+        if serializer.is_valid():
+            available_doctors = serializer.get_available_doctors()
+            return Response(available_doctors)
+        return Response(serializer.errors, status=400)

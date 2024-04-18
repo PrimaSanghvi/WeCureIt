@@ -11,6 +11,7 @@ export default function FacilityHome() {
 
   const navigate = useNavigate();
   const { adminId } = useParams(); 
+
   // Fetch facilities when component mounts
   useEffect(() => {
     const fetchFacilities = async () => {
@@ -23,6 +24,9 @@ export default function FacilityHome() {
     };
     fetchFacilities();
   }, []);
+
+  const activeFacilities = FacilityList.filter(facility => facility.is_active);
+
 
   useEffect(() => {
     
@@ -59,11 +63,19 @@ export default function FacilityHome() {
   // to render the successful delete page
   const [removalSuccess, setRemovalSuccess] = useState(false);
 
-  const handleRemoveClick = (facilityId) => {
-    const facility = FacilityList.find((f) => f.facility_id === facilityId);
-    console.log("test remove");
-    setFacilityToBeRemoved(facility);
-    setShowConfirmationRemove(true);
+  const handleRemoveClick = async(facilityId) => {
+    try {
+      const facility = FacilityList.find((f) => f.facility_id === facilityId);
+      setFacilityToBeRemoved(facility)
+      setShowConfirmationRemove(true);
+
+      const response = await axios.patch(`http://127.0.0.1:8000/api/facilities/deactivate/${facilityId}/`);
+      console.log('Facility deactivated:', response.data);
+     
+      // Optionally refresh the list or update the state to reflect the change
+    } catch (error) {
+      console.error('Error deactivating facility:', error.response ? error.response.data : error.message);
+    }
   };
   // the command is confirmed, send delete command to the backend
   const handleRemoveConfirm = () => {
@@ -73,11 +85,12 @@ export default function FacilityHome() {
     //send the post request to the api to cancel the data
     // render the sucessful info page
     setRemovalSuccess(true);
+    window.location.href = `/admin/facility/${adminId}/`;
   };
   const handleRemoveCancel = () => {
     setShowConfirmationRemove(false);
     setFacilityToBeRemoved(null);
-    setRemovalSuccess(false); // Reset the success state for the next removal
+    setRemovalSuccess(false); // Reset the success state for the next removal 
   };
 
   //handle the show add facility popup page
@@ -574,7 +587,7 @@ export default function FacilityHome() {
             </div>
           </div>
 
-          {FacilityList.length > 0 ? FacilityList.map((facility, index) => (
+          {activeFacilities.length > 0 ? activeFacilities.map((facility, index) => (
             <div
               key={facility.facility_id}
               className={styles[`${index % 2 === 0 ? "row" : "row-1b"}`]}
