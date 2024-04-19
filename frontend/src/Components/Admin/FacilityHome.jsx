@@ -29,7 +29,6 @@ export default function FacilityHome() {
 
 
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
         // console.log(doctor_editing)
@@ -180,28 +179,104 @@ export default function FacilityHome() {
   };
 
   //Manage the rooms for the selected facility
-  const [showRooms, setShowRooms] = useState(false);
-  const [facilityToBeEditRoom, setFacilityToBeEditRoom] = useState(null);
-  const handleRoomClick = (facilityId) => {
-    const facility = FacilityList.find((f) => f.facility_id === facilityId);
-    setShowRooms(true);
-    setFacilityToBeEditRoom(facility);
-  };
-  // handle the date filter and the room
-  const [roomsData, setRoomsData] = useState({
-    "03/23/2024": { available: [1, 2, 3, 4], unavailable: [5] },
-    "03/24/2024": { available: [1, 2, 3], unavailable: [4, 5] },
-    // ... other dates with room availabilities
-  });
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedAvailableRoom, setSelectedAvailableRoom] = useState(null);
-  const [selectedUnavailableRoom, setSelectedUnavailableRoom] = useState(null);
-
   // Function to convert date from YYYY-MM-DD to MM/DD/YYYY
   const convertDateFormat = (isoDate) => {
     if (!isoDate) return '';
     const [year, month, day] = isoDate.split('-');
     return `${month}/${day}/${year}`;
+  };
+
+  const [showRooms, setShowRooms] = useState(false);
+  const [facilityToBeEditRoom, setFacilityToBeEditRoom] = useState(null);
+
+  // handle the date filter and the room
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedAvailableRoom, setSelectedAvailableRoom] = useState(null);
+  const [selectedUnavailableRoom, setSelectedUnavailableRoom] = useState(null);
+  const [selectedFacility, setSelectedFacility] = useState(null);
+ 
+  const formattedDate = convertDateFormat(selectedDate);
+
+  const [roomsData, setRoomsData] = useState({});
+
+  // Get the available and unavailable rooms for the selected date
+  const availableRooms = roomsData[formattedDate]?.available || [];
+  const unavailableRooms = roomsData[formattedDate]?.unavailable || [];
+
+  const getRoomsDB = async (facilityRoom) => {
+    try {
+      const { data: response } = await axios.get(`http://127.0.0.1:8000/api/rooms/`);
+
+      var availableFacilityRooms = []
+      var unavailableFacilityRooms = []
+
+      if (Object.keys(response).length <= 0) {
+        // No data in ManageRooms DB = All rooms are available
+        // Only show available and unavailabe rooms when a date is set:
+        availableFacilityRooms = []
+        unavailableFacilityRooms = []
+        if (selectedDate !== '') {
+          for (let i = 1; i <= facilityRoom.rooms_no; i++) {
+            availableFacilityRooms.push(i);
+          }
+          setRoomsData({
+            [formattedDate]: { available: availableFacilityRooms, unavailable: unavailableFacilityRooms },
+          });
+
+        }
+      } else {        
+        if ((facilityRoom) && (selectedDate !== '')) {
+          for (let i = 0; i < response.length; i++) {
+            if ((response[i]['facility_id'] === facilityRoom.facility_id) && (selectedDate === response[i]['date'])) {
+              // Unavailable room exists for the selected date:
+              availableFacilityRooms = []
+              unavailableFacilityRooms = []
+
+              for (let j = 1; j <= facilityRoom.rooms_no; j++) {
+                if (response[i]['unavailable_room'].includes(j)) {
+                  unavailableFacilityRooms.push(j);
+                } else {
+                  availableFacilityRooms.push(j);
+                }
+              }
+
+              setRoomsData({
+                [formattedDate]: { available: availableFacilityRooms, unavailable: unavailableFacilityRooms }
+              });
+
+              return
+            }
+          }
+
+          // All rooms considered available:
+          availableFacilityRooms = []
+          unavailableFacilityRooms = []
+          for (let i = 1; i <= facilityRoom.rooms_no; i++) {
+            availableFacilityRooms.push(i);
+          }
+          setRoomsData({
+            [formattedDate]: { available: availableFacilityRooms, unavailable: unavailableFacilityRooms },
+          });
+        }
+
+      }
+    } catch (error) {
+      console.error('Failed to fetch rooms from DB:', error);
+    }
+  }
+
+  // Update available rooms everytime the selected date gets changed:
+  useEffect(() => {
+    getRoomsDB(selectedFacility);
+    // eslint-disable-next-line
+  }, [selectedDate,]);
+
+  const handleRoomClick = (facilityId) => {
+    const facility = FacilityList.find((f) => f.facility_id === facilityId);
+    setShowRooms(true);
+    setFacilityToBeEditRoom(facility);
+    
+    setSelectedFacility(facility);
   };
 
   // When the date is changed, update the selected date
@@ -212,12 +287,6 @@ export default function FacilityHome() {
     setSelectedAvailableRoom(null);
     setSelectedUnavailableRoom(null);
   };
-
-  const formattedDate = convertDateFormat(selectedDate);
-
-  // Get the available and unavailable rooms for the selected date
-  const availableRooms = roomsData[formattedDate]?.available || [];
-  const unavailableRooms = roomsData[formattedDate]?.unavailable || [];
 
   // Function to move a room from available to unavailable
   const moveToUnavailable = () => {

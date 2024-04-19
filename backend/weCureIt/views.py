@@ -350,3 +350,9 @@ class AvailableDoctorsView(APIView):
             available_doctors = serializer.get_available_doctors()
             return Response(available_doctors)
         return Response(serializer.errors, status=400)
+    
+class ManageRoomsView(APIView):
+    def get(self, request, format=None):
+        rooms = ManageRooms.objects.all()
+        serializer = ManageRoomsSerializer(rooms, many=True)
+        return Response(serializer.data)

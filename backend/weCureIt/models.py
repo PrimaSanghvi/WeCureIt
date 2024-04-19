@@ -1,10 +1,8 @@
-from django.db import models
-
-
 # Create your models here.
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class Patient(models.Model):
@@ -139,5 +137,5 @@ class ManageRooms(models.Model):
                   primary_key = True,
                   serialize = False)
     facility_id = models.ForeignKey(Facility, on_delete=models.CASCADE)
-    unvailable_room = models.IntegerField()
+    unavailable_room = ArrayField(models.IntegerField())
     date =  models.DateField(default=timezone.now)

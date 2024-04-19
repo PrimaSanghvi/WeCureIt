@@ -513,3 +513,8 @@ class AvailableDoctorsSerializer(serializers.Serializer):
             current_time += datetime.timedelta(minutes=duration + 10)  # Assuming a 10-minute buffer between appointments
 
         return available_slots
+
+class ManageRoomsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ManageRooms
+        fields = ['room_id', 'facility_id', 'unavailable_room', 'date']
