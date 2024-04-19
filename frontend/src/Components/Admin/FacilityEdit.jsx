@@ -107,7 +107,7 @@ export default function FacilityEdit() {
       zipCode,
       speciality_id: specialityIds
     }
-console.log("update", JSON.stringify(updatedFacility))
+    console.log("update", JSON.stringify(updatedFacility))
     try {
       const response = await axios.put(`http://127.0.0.1:8000/api/facilities/update/${facility_id}/`, updatedFacility);
       console.log('Update successful!', response.data);

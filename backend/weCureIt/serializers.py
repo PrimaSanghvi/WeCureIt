@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.hashers import check_password
-
+from django.db.models import Q,Subquery, OuterRef
+from datetime import timedelta
+import datetime
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -288,3 +290,226 @@ class FacilitySerializer(serializers.ModelSerializer):
         # Update many-to-many fields
         instance.speciality_id.set(specialties)
         return instance
+
+class AvailableDoctorsSerializer(serializers.Serializer):
+    speciality_id = serializers.IntegerField(required=False, allow_null=True)
+    facility_id = serializers.IntegerField(required=False, allow_null=True)
+    doctor_id = serializers.IntegerField(required=False, allow_null=True)
+    date = serializers.DateField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"])
+    appointment_length = serializers.ChoiceField(choices=[15, 30, 60])
+
+    def get_available_doctors(self):
+        date = self.validated_data.get('date')
+        weekday = date.strftime("%A").lower()
+        appointment_length = int(self.validated_data.get('appointment_length'))
+
+        # Start building the query
+        query = Q(days_visiting__icontains=weekday)
+
+        # Specialty-based doctor filtering
+        if 'speciality_id' in self.validated_data:
+            specialty_id = self.validated_data['speciality_id']
+            doctor_ids = Doc_schedule.objects.filter(
+                speciality_id=specialty_id
+            ).values_list('doctor_id', flat=True)
+            query &= Q(doctor_id__in=doctor_ids)
+
+
+        if 'doctor_id' in self.validated_data:
+            doctor_id = self.validated_data['doctor_id']
+            doctor_ids = Doc_schedule.objects.filter(
+                doctor_id=doctor_id
+            ).values_list('doctor_id', flat=True)
+            query &= Q(doctor_id=self.validated_data['doctor_id'])
+
+        if 'facility_id' in self.validated_data:
+            facility_id = self.validated_data['facility_id']
+            doctor_ids = Doc_schedule.objects.filter(
+                facility_id=facility_id
+            ).values_list('doctor_id', flat=True)
+            query &= Q(doctor_id__in=doctor_ids)
+
+        any_appointments_booked = False
+        # Fetch schedules that match the dynamic query
+        schedules = Doc_schedule.objects.filter(query).distinct()
+        available_doctors = []
+       
+
+        for schedule in schedules:
+            if 'speciality_id' in self.validated_data and 'facility_id' not in self.validated_data and 'doctor_id' not in self.validated_data:
+                    speciality_id = self.validated_data['speciality_id']
+                    facilities = schedule.facility_id.filter(
+                    is_active=True, 
+                    speciality_id=speciality_id  # Ensure facility is linked to the specified specialty
+                    )
+    
+                    for facility in facilities:
+                        if Appointments.objects.filter(
+                        doctor_id=schedule.doctor_id_id,
+                        facility_id=facility.facility_id,
+                        date=date
+        ).exists() :
+                            any_appointments_booked = True
+                            break
+
+                        if any_appointments_booked:
+                            break
+                        
+                    for facility in facilities:
+                        appointments = Appointments.objects.filter(
+                        doctor_id=schedule.doctor_id_id,
+                        facility_id=facility.facility_id,
+                        date=date
+        )
+                        slots = self.calculate_time_slots(date, appointments, appointment_length)
+                        if any_appointments_booked:
+                            if appointments.exists():
+                                for appointment in appointments:
+                                    if appointment.doctor_id_id == schedule.doctor_id.doctor_id:  
+                                        available_doctors.append({
+                    'doctor_id': schedule.doctor_id.doctor_id,
+                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
+                    'facility_id': facility.facility_id,
+                    'facility_name': facility.name,
+                    'speciality_ids': self.validated_data.get('speciality_id'),
+                    'available_slots': slots
+                    })
+                        else:   
+                                available_doctors.append({
+                    'doctor_id': schedule.doctor_id.doctor_id,
+                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
+                    'facility_id': facility.facility_id,
+                    'facility_name': facility.name,
+                    'speciality_ids': self.validated_data.get('speciality_id'),
+                    'available_slots': slots
+                    })
+
+            if 'facility_id' in self.validated_data:
+                if 'speciality_id' in self.validated_data:
+                    facilities = Facility.objects.filter(facility_id=self.validated_data['facility_id'],speciality_id = self.validated_data['speciality_id'], is_active=True)  
+                    specialty_ids = [self.validated_data.get('speciality_id')]               
+                elif 'doctor_id' in self.validated_data :
+                    facilities = schedule.facility_id.filter(facility_id=self.validated_data['facility_id'],is_active=True)
+                    specialty_ids = list(schedule.speciality_id.values_list('speciality_id', flat=True))  
+                else: 
+                    facilities = Facility.objects.filter(facility_id=self.validated_data['facility_id'], is_active=True)
+                    specialty_ids = list(schedule.speciality_id.values_list('speciality_id', flat=True))
+                for facility in facilities:
+                    if Appointments.objects.filter(
+                    doctor_id=self.validated_data.get('doctor_id') if self.validated_data.get('doctor_id') else schedule.doctor_id_id,
+                    facility_id=self.validated_data.get('facility_id'),
+                    date=date
+                ).exists() :
+                        any_appointments_booked = True
+                        break
+
+                    if any_appointments_booked:
+                        break
+
+                    
+                for facility in facilities:
+                        appointments = Appointments.objects.filter(
+                    doctor_id=self.validated_data.get('doctor_id') if self.validated_data.get('doctor_id') else schedule.doctor_id_id,
+                    facility_id=self.validated_data.get('facility_id'),
+                    date=date
+                )
+                        slots = self.calculate_time_slots(date, appointments, appointment_length)
+                        if any_appointments_booked:
+                            if appointments.exists():
+                                for appointment in appointments:
+                                    if(appointment.doctor_id_id == schedule.doctor_id.doctor_id):
+                                        available_doctors.append({
+                    'doctor_id': schedule.doctor_id.doctor_id,
+                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
+                    'facility_id': facility.facility_id,
+                    'facility_name': facility.name,
+                    'speciality_ids': specialty_ids,
+                    'available_slots': slots
+                })
+                            
+                        else:
+                        
+                            available_doctors.append({
+                    'doctor_id': schedule.doctor_id.doctor_id,
+                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
+                    'facility_id': facility.facility_id,
+                    'facility_name': facility.name,
+                    'speciality_ids': specialty_ids,
+                    'available_slots': slots
+                })
+                    
+                    
+            if 'doctor_id' in self.validated_data and'facility_id' not in  self.validated_data:
+                print("3")
+                if 'speciality_id' in self.validated_data:
+                    facilities = schedule.facility_id.filter(is_active=True, speciality_id = self.validated_data['speciality_id'])  
+                    specialty_ids = self.validated_data.get('speciality_id')
+                else : 
+                    facilities = schedule.facility_id.filter(is_active=True)
+                    specialty_ids = list(schedule.speciality_id.values_list('speciality_id', flat=True))
+                    
+
+                for facility in facilities:
+                    if Appointments.objects.filter(
+                    doctor_id=doctor_id,  # Ensure this uses the specific doctor_id
+                    facility_id=facility.facility_id,
+                    date=date   
+                ).exists():
+                              
+                        any_appointments_booked = True
+                        break
+
+                    if any_appointments_booked:
+                        break
+
+                for facility in facilities:
+                        appointments = Appointments.objects.filter(
+                    doctor_id=doctor_id,  # Ensure this uses the specific doctor_id
+                    facility_id=facility.facility_id,
+                    date=date    
+                )     
+                        slots = self.calculate_time_slots(date, appointments, appointment_length) 
+                        if any_appointments_booked:
+                            if appointments.exists():
+                                for appointment in appointments:
+                                    if appointment.doctor_id_id == schedule.doctor_id.doctor_id:  
+                                        available_doctors = [] 
+                                available_doctors.append({
+                    'doctor_id': schedule.doctor_id.doctor_id,
+                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
+                    'facility_id': facility.facility_id,
+                    'facility_name': facility.name,
+                    'speciality_ids': specialty_ids,
+                    'available_slots': slots
+                })
+                            
+                            
+                        else:
+                            
+                            available_doctors.append({
+                    'doctor_id': doctor_id,
+                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
+                    'facility_id': facility.facility_id,
+                    'facility_name': facility.name,
+                    'speciality_ids': specialty_ids,
+                    'available_slots': slots
+                })
+            
+        return available_doctors
+
+    def calculate_time_slots(self, date, appointments, duration):
+        work_start = datetime.time(9, 0)
+        work_end = datetime.time(17, 0)
+        start_datetime = datetime.datetime.combine(date, work_start)
+        end_datetime = datetime.datetime.combine(date, work_end)
+
+        current_time = start_datetime
+        available_slots = []
+
+        while current_time + datetime.timedelta(minutes=duration) <= end_datetime:
+            end_time = current_time + datetime.timedelta(minutes=duration)
+            if not any(app.start_time <= current_time.time() < app.end_time or app.start_time < end_time.time() <= app.end_time for app in appointments):
+                available_slots.append({'start': current_time.time().strftime('%H:%M'), 'end': end_time.time().strftime('%H:%M')})
+            current_time += datetime.timedelta(minutes=duration + 10)  # Assuming a 10-minute buffer between appointments
+
+        return available_slots
