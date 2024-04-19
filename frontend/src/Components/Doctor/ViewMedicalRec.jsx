@@ -1,17 +1,25 @@
 import { useEffect,useState } from 'react';
 import styles from "./ViewMedicalRec.module.css";
 import axios from 'axios'; 
+import {useLocation,useNavigate } from 'react-router-dom';
 
 export default function Main() {
  //the patient_rec_id is passed by the review patient info page which is not implemented by my end
  //you can change to the real id when integrate this page
-  const [patient_rec_id, setPatientRecId] = useState(1); // Initialize patient_rec_id state
+  // Initialize patient_rec_id state
   const [patientRecData, setPatientRecData] = useState('');
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { data1, data2 } = location.state;
+  console.log("data1:",data1,"data2:",data2);
+
+    
   
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/patientmedicalrec/${patient_rec_id}/`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/patientmedicalrec/${data1}/`);
         setPatientRecData(response.data); 
         
         // Handle the response data here
@@ -21,12 +29,12 @@ export default function Main() {
     };
     
     fetchData(); // Fetch data when component mounts or when patient_rec_id changes
-  }, [patient_rec_id]);
+  }, []);
   console.log('Data:', patientRecData.medical_diagnosis);
 
   const handleexit = () =>{
     //this may change to the real doctor home page path which is not implemented by my end
-    window.location.href = "/doctorHomepage/";
+    navigate(-1);  
   }
 
 

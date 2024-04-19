@@ -11,6 +11,8 @@ import AddSchedule from "./Components/Doctor/AddSchedule";
 import AddScheduleHome from "./Components/Doctor/AddScheduleHome";
 import ViewMedicalRec from "./Components/Doctor/ViewMedicalRec";
 import AddMedicalRec from "./Components/Doctor/AddMedicalRec";
+import DoctorHomePage from "./Components/Doctor/DoctorHomePage";
+import ReviewMedicalInfo from "./Components/Doctor/ReviewMedicalInfo";
 
 const App = () => {
   return (
@@ -27,9 +29,10 @@ const App = () => {
         <Route path="/editdoctors"element={<EditDoctor/>}/>
         <Route path="/addschedule"element={<AddSchedule/>}/>
         <Route path="/editschedule"element={<AddScheduleHome/>}/>
-        <Route path="/viewpatientrec/:patientId"element={<ViewMedicalRec/>}/>
-        <Route path="/addpatientrec/:patientId"element={<AddMedicalRec/>}/>
-        
+        <Route path="/viewpatientrec/:patientrecId"element={<ViewMedicalRec/>}/>
+        <Route path="/addpatientrec/"element={<AddMedicalRec/>}/>
+        <Route path ="/doctorHomepage/:doctorId" element = {<DoctorHomePage />}/>
+        <Route path ="/doctorHomepage/:patientId/medical_info/" element = {<ReviewMedicalInfo />}/>
       </Routes>
     </div>
 </Router>

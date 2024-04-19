@@ -1,9 +1,13 @@
 import { useEffect,useState } from "react";
 import styles from "./AddMedicalRec.module.css";
 import axios from "axios"; 
+import { useLocation,useNavigate } from 'react-router-dom';
+
+
 
 export default function Main() {
 
+  const navigate = useNavigate();
   const [diagnosis_date, setInputdate] = useState("");
   const [medical_diagnosis, setInputdiagnosis] = useState("");
   const [symptoms, setInputsymptoms] = useState("");
@@ -15,21 +19,12 @@ export default function Main() {
   const [isChecked, setIsChecked] = useState(false);
   // the appintmentinfo may get by the review patient info page which is not
   //implemented yet, you can change to the real data once you get the info by that review patient info page
-  const [appointmentinfo, setappointmentinfo] = useState({
-    appointment_id: 1,
-    start_time: "10:30",
-    end_time: "11:00",
-    date: "2024-4-17",
-    schedule_id_id: 1,
-    doctor_id_id: 1,
-    facility_id_id: 1,
-    patient_id_id: 1,
-    patient_rec_id_id: 1,
-    specialty_id_id: 2
-  });
+  
 
   const [patientData, setPatientData] = useState('');
-
+  const location = useLocation();
+  const{data1,data2} = location.state;
+  
 
 
   const handleCheckboxChange = () => {
@@ -52,8 +47,8 @@ export default function Main() {
     // Check if ischecked is true
     if (isChecked) {
       // Here you can handle the form submission, such as sending the data to your backend
-      const patient_id = appointmentinfo.patient_id_id;
-      const doctor_id = appointmentinfo.doctor_id_id;
+      const patient_id = data1;
+      const doctor_id = data2;
       const formData = {
         medical_diagnosis,
         diagnosis_date,
@@ -66,7 +61,7 @@ export default function Main() {
         doctor_id,
         patient_id
       };
-  
+   
       // Check if formData is not empty
       if (Object.keys(formData).length !== 0) {
         console.log(JSON.stringify(formData));
@@ -78,19 +73,20 @@ export default function Main() {
           .catch(error => {
             console.error('Error submitting form:', error);
           });
+          navigate(-1);  
       }
     } else {
       console.log('ischecked is false, form not submitted');
     }
-    //you may change to the real path of front page when integrate this page 
-    window.location.href = "/doctorHomepage/";
+    
+    
   };
   
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/patientDetail/${appointmentinfo.patient_id_id}/`);
+        const response = await axios.get(`http://127.0.0.1:8000/api/patientDetail/${data1}/`);
         setPatientData(response.data) 
         
         // Handle the response data here
@@ -100,7 +96,7 @@ export default function Main() {
     };
     
     fetchData(); // Fetch data when component mounts or when patient_rec_id changes
-  }, [appointmentinfo.patient_id_id]);
+  }, []);
   
 
 
