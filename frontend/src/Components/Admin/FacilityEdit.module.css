@@ -1,96 +1,91 @@
+/* Top Company Header & Side Menu*/
 :root {
-    --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
-      "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
-      "Source Han Sans CN", sans-serif;
-  }
+  --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
+    "Source Han Sans CN", sans-serif;
+}
+
+.main-container, .main-container * {
+  box-sizing: border-box;
+  width: 100%
+}
+
+input, select, textarea, button {
+  outline: 0;
+}
+
+.main-container {
+  position: relative;
+  width: 1512px;
+  height: 982px;
+  margin: 0 auto;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  position: relative;
+  background-color:  #e3ebff;
+  width: 1512px;
+  height: 103px;
+  margin: 0 0 0 0;
+}
+
+.frame {
+  flex-shrink: 0;
+  position: relative;
+  width: 1460.894px;
+  height: 103px;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.main-container2 {
+  position: absolute;
+  left: 4%;
+  width: 213.245px;
+  height: 103px;
+  margin: 0 auto;
+}
+
+.company-name-icon {
+  position: relative;
+  width: 213.245px;
+  height: 103px;
+  margin: 0 0 0 0;
+  z-index: 3;
+}
+
+.we-cure-it {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  height: 87.38%;
+  top: 5.83%;
+  left: 0;
+  color: #1a1a1a;
   
-  .main-container {
-    overflow: hidden;
-  }
-  
-  .main-container,
-  .main-container * {
-    box-sizing: border-box;
-  }
-  
-  input,
-  select,
-  textarea,
-  button {
-    outline: 0;
-  }
-  
-  .main-container {
-    position: relative;
-    width: 1512px;
-    height: 982px;
-    margin: 0 auto;
-    background: #ffffff;
-    overflow: hidden;
-  }
-  .top-bar {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    position: relative;
-    background-color:  #e3ebff;
-    width: 1512px;
-    height: 103px;
-    margin: 0 0 0 0;
-  }
-  
-  .frame {
-    flex-shrink: 0;
-    position: relative;
-    width: 1460.894px;
-    height: 103px;
-    z-index: 2;
-    overflow: hidden;
-  }
-  
-  .main-container2 {
-    position: absolute;
-    left: 4%;
-    width: 213.245px;
-    height: 103px;
-    margin: 0 auto;
-  }
-  
-  .company-name-icon {
-    position: absolute;
-    width: 213.245px;
-    height: 103px;
-    top: 0;
-    left: 0;
-    z-index: 3;
-  }
-  .we-cure-it {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    position: absolute;
-    height: 87.38%;
-    top: 5.83%;
-    left: 0;
-    color: #1a1a1a;
-    
-    font-size: 31px;
-    font-weight: 400;
-    line-height: 90px;
-    text-align: left;
-    white-space: nowrap;
-    z-index: 4;
-  }
-  .vector {
+  font-size: 31px;
+  font-weight: 400;
+  line-height: 90px;
+  text-align: left;
+  white-space: nowrap;
+  z-index: 4;
+}
+  .icon {
     position: absolute;
     width: 24.28%;
     height: 51.53%;
     top: 24.24%;
     left: 73.99%;
-    /* background: url(../../assets/images/Logo.png)
-      no-repeat center; */
+    background: url(../../assets/images/Logo.png)
+    no-repeat center;
     background-size: 100% 100%;
     z-index: 3;
   }
@@ -214,8 +209,8 @@
     height: 36.783px;
     top: 8px;
     left: 0;
-    /* background: url(../assets/images/9cf39527-9cc5-42f6-825d-d2f87e594815.png)
-      no-repeat center; */
+    background: url(../../assets/images/4bc38fe6-9a0d-4721-b9b5-840e787b8d09.png)
+    no-repeat center;
     background-size: cover;
     z-index: 11;
     overflow: hidden;
@@ -575,8 +570,8 @@
     height: 34.767px;
     top: 14.47px;
     left: 0;
-    /* background: url(../assets/images/53d297ce-157a-4dd0-a147-05ab01743d84.png)
-      no-repeat center; */
+    background: url(../../assets/images/674d49b6-c979-4103-a52e-ce84853463fb.png)
+    no-repeat center;
     background-size: cover;
     z-index: 15;
     overflow: hidden;

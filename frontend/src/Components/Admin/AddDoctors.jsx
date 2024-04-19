@@ -108,7 +108,7 @@
 
       const transfereditdoctor = async(editdoctor) =>{
         console.log(editdoctor)
-        navigate('/editdoctors/', { state: {editdoctor}});
+        navigate('/editdoctors/', { state: {editdoctor, adminId}});
         //window.location.href = "/editdoctors";
       }
       // const transfereditdoctor = (doctorId) => {

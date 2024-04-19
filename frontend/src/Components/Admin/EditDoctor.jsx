@@ -2,8 +2,7 @@ import React from "react";
 import styles from"./EditDoctor.module.css";
 import { useEffect,useState } from 'react';
 import axios from 'axios'; 
-import { useLocation } from 'react-router-dom';
-
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Main() {
   /* eslint-disable no-unused-vars */
@@ -15,8 +14,10 @@ export default function Main() {
   const [email, setemail] = useState(doctor_editing.email);
   const [selectedspeciality,setseletedspeciality] = useState("");
   const [displayedSpeciality, setDisplayedSpeciality] = useState([]);
-  const [removespeciality,setremovespeciality] = useState('')
-  ;
+  const [removespeciality,setremovespeciality] = useState('');
+  const adminId = location.state.adminId;
+
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -78,9 +79,15 @@ const handleRemove = () => {
 
   const transferaddfacility= ()=>{
     //change to the real edit facility path
-    window.location.href = "/editfacilities";
+    window.location.href = `/admin/facility/${adminId}/`;
     console.log("transfer to edit facilities")
   }
+
+  const transferAddDoctorPage = () => {
+    // change to add doctor page
+    navigate(`/addDoctors/${adminId}`);
+    console.log("transfer to doctor arrangement");
+  };
 
   const handleSubmit = async(e) =>{
     e.preventDefault();
@@ -125,20 +132,15 @@ const handleRemove = () => {
  
 
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["top-bar-background"]}></div>
-        <div className={styles["frame"]}>
-          <div className={styles["company-name-icon"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["medical-cross"]}>
-              <div className={styles["group"]}>
-                <div className={styles["vector-stroke"]}></div>
+    <div className={styles['main-container']}>
+                <div  className={styles['top-bar']}>
+                  <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className={styles["frame-1"]}>
         <div className={styles["frame-2"]}>
           <span className={styles["specialty-available"]}>Specialty Available</span>
@@ -203,7 +205,7 @@ const handleRemove = () => {
       <span className={styles["edit-doctors-information"]}>
         Edit Doctor’s Information
       </span>
-      <span className={styles["add-manage-doctor"]}>Add/Manage Doctor</span>
+      <span className={styles["add-manage-doctor"]} onClick={transferAddDoctorPage}>Add/Manage Doctor</span>
       <div className={styles["edit"]}></div>
       <div className={styles["frame-1b"]}>
         <div className={styles["frame-1c"]}>

@@ -1,6 +1,6 @@
 import React , { useState, useEffect } from "react";
 import styles from './FacilityEdit.module.css';
-import { useParams,useLocation  } from "react-router-dom";
+import { useParams,useLocation, useNavigate  } from "react-router-dom";
 import axios from "axios"; 
 
 export default function FacilityEdit() {
@@ -17,13 +17,12 @@ export default function FacilityEdit() {
     const [zipCode, setZipcode] = useState(locationState?.facility.zipCode);
     const [rooms_no, setRoomnumber] = useState(locationState?.facility.rooms_no);
     const [phone_number, setPhone] = useState(locationState?.facility.phone_number);
-     
-   
-  
 
     const [selectedAvailable, setSelectedAvailable] = useState("");
     const [removespeciality, setRemoveSpeciality] = useState("");
     const [displayedSpeciality, setDisplayedSpeciality] = useState([]);
+
+    const navigate = useNavigate();
   
     const fetchSpecialities = async () => {
       try {
@@ -58,12 +57,12 @@ export default function FacilityEdit() {
 
     const editdoctors = () => {
         //change the code to the real page of doctor page
-        window.location.href = "/admin/doctor";
+        navigate(`/addDoctors/${locationState?.adminId}`);
         console.log("transfer to doctor arrangement");
       };
     const manageFacility = () => {
-        window.location.href = "/admin/facility";
-        console.log("transfer to doctor arrangement");
+      window.location.href = `/admin/facility/${locationState?.adminId}/`;
+        console.log("transfer to facility arrangement");
     }
    
  
@@ -121,16 +120,15 @@ console.log("update", JSON.stringify(updatedFacility))
    
   }
   return (
-    <div className={styles["main-container"]}>
-      
-      <div className={styles["top-bar"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["main-container2"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["vector"]} />
-          </div>
-        </div>
-      </div>
+    <div className={styles['main-container']}>
+                <div  className={styles['top-bar']}>
+                  <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
+                  </div>
+                </div>
+              </div>
       <span className={styles["edit-facility"]}>Edit Facility</span>
       <div className={styles["flex-row"]}>
         <span className={styles["add-manage-doctor"]}onClick={editdoctors}>Add/Manage Doctor</span>
