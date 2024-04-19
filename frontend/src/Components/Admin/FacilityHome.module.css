@@ -3100,3 +3100,23 @@ input, select, textarea, button {
   z-index: 84;
   overflow: hidden;
 }
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  flex-basis: auto;
+  position: absolute;
+  width: 280px;
+  height: 53px;
+  top: calc(50% - 90px);
+  left: calc(90px);
+  font-family: Poppins, var(--default-font-family);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 52.5px;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 82;
+}

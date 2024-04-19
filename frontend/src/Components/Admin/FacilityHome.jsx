@@ -288,6 +288,8 @@ export default function FacilityHome() {
     // Reset room selection when date changes
     setSelectedAvailableRoom(null);
     setSelectedUnavailableRoom(null);
+    setSubmissionMsg('');
+    setErrorSubmissionMsg('');
   };
 
   // Function to move a room from available to unavailable
@@ -315,6 +317,10 @@ export default function FacilityHome() {
       setSelectedUnavailableRoom(null);
     }
   };
+
+  const [submissionMsg, setSubmissionMsg] = useState('');
+  const [errorSubmissionMsg, setErrorSubmissionMsg] = useState('');
+
   const handelSubmitManageRooms = () =>{
     var unavailable_room = unavailableRooms;
     var date = selectedDate;
@@ -330,19 +336,24 @@ export default function FacilityHome() {
       axios.post('http://127.0.0.1:8000/api/updateRooms/', roomsForm)
       .then(response => {
         console.log("Form submitted successfully:", response.data);
+        setSubmissionMsg("Room Availability Successfully Updated")
       })
     } else if ((selectedRoomId !== '') && (unavailableRooms.length > 0)) {
       // Case #2: Originally some unavailable rooms, now there are still unavailable rooms:
       axios.patch(`http://127.0.0.1:8000/api/updateRooms/${selectedRoomId}/`, roomsForm)
       .then(response => {
         console.log("Form submitted successfully:", response.data);
+        setSubmissionMsg("Room Availability Successfully Updated")
       })
     } else if ((selectedRoomId !== '') && (unavailableRooms.length === 0)) {
       // Case #3: Originally some unavailable rooms, now all are available:
       axios.delete(`http://127.0.0.1:8000/api/updateRooms/${selectedRoomId}/`, roomsForm)
       .then(response => {
         console.log("Form submitted successfully:", response.data);
+        setSubmissionMsg("Room Availability Successfully Updated")
       })
+    } else {
+      setErrorSubmissionMsg("Please provide valid inputs");
     }
   }
 
@@ -354,6 +365,8 @@ export default function FacilityHome() {
     setSelectedUnavailableRoom(null);
     setRoomsData({});
     setSelectedRoomId('');
+    setSubmissionMsg('');
+    setErrorSubmissionMsg('');
   };
 
   return (
@@ -819,6 +832,7 @@ export default function FacilityHome() {
                     className={styles["date-input"]}
                     type="date"
                     id="date"
+                    min = {new Date().toISOString().split("T")[0]}
                     value={selectedDate}
                     onChange={handleDateChange}
                   />
@@ -893,6 +907,10 @@ export default function FacilityHome() {
                 </div>
               </div>
               <div className={styles["group-18-rooms"]}>
+                <div className={styles['message']}>
+                  {submissionMsg && <div style={{ color: 'green' }}>{submissionMsg}</div>}
+                  {errorSubmissionMsg && <div style={{ color: 'red' }}>{errorSubmissionMsg}</div>}
+                </div>
                 <button className={styles["save-availability-button-rooms"]}>
                   <div className={styles["save-availability-button-19-rooms"]}>
                     <span
