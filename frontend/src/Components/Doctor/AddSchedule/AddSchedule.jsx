@@ -352,7 +352,7 @@ function AddSchedule() {
             style={{ height: '300px', width: '400px', justifyContent: 'center', marginLeft: '550px', marginTop: '4%' }}
           >
             <AgGridReact
-              rowData={selectedSpecialties.map(specialty => ({ speciality: specialty.label }))} // Separate data for specialties
+              rowData={selectedSpecialties.map(specialty => ({ speciality: specialty}))} // Separate data for specialties
               columnDefs={[
                 { headerName: 'Specialities', field: 'speciality', headerClass: `${styles['custom-header']}` },
                 {
