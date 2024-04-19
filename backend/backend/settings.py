@@ -82,9 +82,9 @@ DATABASES = {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
        'NAME': 'wecuredata',
        'USER': 'postgres',
-       'PASSWORD': 'Zhd123456@',
-       'HOST': '127.0.0.1',
-       'PORT': '5432',
+       'PASSWORD': 'Rutpatel@03',
+       'HOST': 'localhost',
+       'PORT': '5433',
    }
 }
 
