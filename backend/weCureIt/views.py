@@ -356,3 +356,8 @@ class ManageRoomsView(APIView):
         rooms = ManageRooms.objects.all()
         serializer = ManageRoomsSerializer(rooms, many=True)
         return Response(serializer.data)
+    
+class UpdateRoomsView(viewsets.ModelViewSet):
+    model = ManageRooms
+    serializer_class = ManageRoomsSerializer
+    queryset = ManageRooms.objects.all()

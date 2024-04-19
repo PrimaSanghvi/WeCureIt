@@ -25,6 +25,7 @@ router.register(r'patientRegister', views.PatientInfoView, 'patientRegister')
 router.register(r'patientCardDetails', views.PatientCreditCardView, 'patientCardDetails')
 router.register(r'DoctorRegister', views.DoctorInfoView, 'DoctorRegister')
 router.register(r'patientPreference', views.PatientPreferenceView, 'patientPreference')
+router.register(r'updateRooms', views.UpdateRoomsView, 'updateRooms')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -82,5 +83,5 @@ urlpatterns = [
     path('api/allEmails/', views.AllEmailsView.as_view(), name = 'allEmails'),
     path('api/facilities/deactivate/<int:pk>/', views.FacilityDeactivateView.as_view(), name='deactivate-facility'),
     path('api/available-doctors/', views.AvailableDoctorsView.as_view(), name='available-doctors'),
-    path('api/rooms/', views.ManageRoomsView.as_view(), name = 'manage_rooms')
+    path('api/rooms/', views.ManageRoomsView.as_view(), name = 'manage_rooms'),
 ]

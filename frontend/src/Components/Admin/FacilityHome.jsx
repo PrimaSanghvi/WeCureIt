@@ -193,7 +193,7 @@ export default function FacilityHome() {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedAvailableRoom, setSelectedAvailableRoom] = useState(null);
   const [selectedUnavailableRoom, setSelectedUnavailableRoom] = useState(null);
-  const [selectedFacility, setSelectedFacility] = useState(null);
+  const [selectedRoomId, setSelectedRoomId] = useState('');
  
   const formattedDate = convertDateFormat(selectedDate);
 
@@ -244,6 +244,8 @@ export default function FacilityHome() {
                 [formattedDate]: { available: availableFacilityRooms, unavailable: unavailableFacilityRooms }
               });
 
+              setSelectedRoomId(response[i]['room_id']);
+
               return
             }
           }
@@ -257,6 +259,8 @@ export default function FacilityHome() {
           setRoomsData({
             [formattedDate]: { available: availableFacilityRooms, unavailable: unavailableFacilityRooms },
           });
+          
+          setSelectedRoomId('');
         }
 
       }
@@ -267,7 +271,7 @@ export default function FacilityHome() {
 
   // Update available rooms everytime the selected date gets changed:
   useEffect(() => {
-    getRoomsDB(selectedFacility);
+    getRoomsDB(facilityToBeEditRoom);
     // eslint-disable-next-line
   }, [selectedDate,]);
 
@@ -275,8 +279,6 @@ export default function FacilityHome() {
     const facility = FacilityList.find((f) => f.facility_id === facilityId);
     setShowRooms(true);
     setFacilityToBeEditRoom(facility);
-    
-    setSelectedFacility(facility);
   };
 
   // When the date is changed, update the selected date
@@ -314,16 +316,44 @@ export default function FacilityHome() {
     }
   };
   const handelSubmitManageRooms = () =>{
-    console.log(facilityToBeEditRoom);
-    console.log('edit the rooms successfully!');
-    console.log(formattedDate);
-    console.log(availableRooms);
-    console.log(unavailableRooms);
+    var unavailable_room = unavailableRooms;
+    var date = selectedDate;
+    var facility_id = facilityToBeEditRoom.facility_id;
 
+    const roomsForm = {
+      unavailable_room,
+      date,
+      facility_id
+    };
+    // Case #1: Originally all available, now certain rooms are unavailable
+    if ((selectedRoomId === '') && (unavailableRooms.length > 0)) {
+      axios.post('http://127.0.0.1:8000/api/updateRooms/', roomsForm)
+      .then(response => {
+        console.log("Form submitted successfully:", response.data);
+      })
+    } else if ((selectedRoomId !== '') && (unavailableRooms.length > 0)) {
+      // Case #2: Originally some unavailable rooms, now there are still unavailable rooms:
+      axios.patch(`http://127.0.0.1:8000/api/updateRooms/${selectedRoomId}/`, roomsForm)
+      .then(response => {
+        console.log("Form submitted successfully:", response.data);
+      })
+    } else if ((selectedRoomId !== '') && (unavailableRooms.length === 0)) {
+      // Case #3: Originally some unavailable rooms, now all are available:
+      axios.delete(`http://127.0.0.1:8000/api/updateRooms/${selectedRoomId}/`, roomsForm)
+      .then(response => {
+        console.log("Form submitted successfully:", response.data);
+      })
+    }
   }
+
   const handleRoomCancel = () => {
     setShowRooms(false);
     setFacilityToBeEditRoom(null);
+    setSelectedDate('');
+    setSelectedAvailable(null);
+    setSelectedUnavailableRoom(null);
+    setRoomsData({});
+    setSelectedRoomId('');
   };
 
   return (
