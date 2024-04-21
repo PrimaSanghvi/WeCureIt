@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import check_password
 from django.db.models import Q,Subquery, OuterRef
 from datetime import timedelta
 import datetime
+from django.db.models import Sum
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -239,6 +240,8 @@ class AvailableDoctorsSerializer(serializers.Serializer):
        
 
         for schedule in schedules:
+            work_start = schedule.visiting_hours_start
+            work_end = schedule.visiting_hours_end
             if 'speciality_id' in self.validated_data and 'facility_id' not in self.validated_data and 'doctor_id' not in self.validated_data:
                     speciality_id = self.validated_data['speciality_id']
                     facilities = schedule.facility_id.filter(
@@ -264,7 +267,9 @@ class AvailableDoctorsSerializer(serializers.Serializer):
                         facility_id=facility.facility_id,
                         date=date
         )
-                        slots = self.calculate_time_slots(date, appointments, appointment_length)
+                        slots = self.calculate_time_slots(date, work_start, work_end,  appointments, appointment_length)
+                        #slots = self.calculate_time_slots(date, facility.facility_id, schedule.doctor_id_id, appointments, appointment_length)
+                        print("doctor_id_id", schedule.doctor_id_id)
                         if any_appointments_booked:
                             if appointments.exists():
                                 for appointment in appointments:
@@ -316,7 +321,8 @@ class AvailableDoctorsSerializer(serializers.Serializer):
                     facility_id=self.validated_data.get('facility_id'),
                     date=date
                 )
-                        slots = self.calculate_time_slots(date, appointments, appointment_length)
+                        slots = self.calculate_time_slots(date, work_start, work_end, appointments, appointment_length)
+                        # slots = self.calculate_time_slots(date, self.validated_data.get('facility_id'), schedule.doctor_id_id, appointments, appointment_length)
                         if any_appointments_booked:
                             if appointments.exists():
                                 for appointment in appointments:
@@ -343,7 +349,6 @@ class AvailableDoctorsSerializer(serializers.Serializer):
                     
                     
             if 'doctor_id' in self.validated_data and'facility_id' not in  self.validated_data:
-                print("3")
                 if 'speciality_id' in self.validated_data:
                     facilities = schedule.facility_id.filter(is_active=True, speciality_id = self.validated_data['speciality_id'])  
                     specialty_ids = self.validated_data.get('speciality_id')
@@ -371,7 +376,8 @@ class AvailableDoctorsSerializer(serializers.Serializer):
                     facility_id=facility.facility_id,
                     date=date    
                 )     
-                        slots = self.calculate_time_slots(date, appointments, appointment_length) 
+                        slots = self.calculate_time_slots(date, work_start, work_end, appointments, appointment_length) 
+                        # slots = self.calculate_time_slots(date, facility.facility_id, doctor_id, appointments, appointment_length)
                         if any_appointments_booked:
                             if appointments.exists():
                                 for appointment in appointments:
@@ -400,9 +406,45 @@ class AvailableDoctorsSerializer(serializers.Serializer):
             
         return available_doctors
 
-    def calculate_time_slots(self, date, appointments, duration):
-        work_start = datetime.time(9, 0)
-        work_end = datetime.time(17, 0)
+
+    # def calculate_time_slots(self, date, appointments, duration):
+    #     work_start = datetime.time(9, 0)
+    #     work_end = datetime.time(17, 0)
+    #     start_datetime = datetime.datetime.combine(date, work_start)
+    #     end_datetime = datetime.datetime.combine(date, work_end)
+
+    #     current_time = start_datetime
+    #     available_slots = []
+
+    #     while current_time + datetime.timedelta(minutes=duration) <= end_datetime:
+    #         end_time = current_time + datetime.timedelta(minutes=duration)
+    #         next_possible_start = end_time + datetime.timedelta(minutes=10)  # Next possible start time including buffer
+
+    #         # Check for appointment overlaps, ensuring a 10-minute break between end of last appointment and start of new one.
+    #         if not any((app.start_time <= current_time.time() < app.end_time) or (app.start_time < next_possible_start.time() <= app.end_time) for app in appointments):
+    #             available_slots.append({'start': current_time.time().strftime('%H:%M'), 'end': end_time.time().strftime('%H:%M')})
+            
+    #         # Move to the next time slot, trying to align as closely as possible with end times of existing appointments
+    #         if appointments:
+    #             # Finding the closest next start time after the last appointment and buffer period
+    #             last_appointment_end = max((app.end_time for app in appointments if app.end_time <= next_possible_start.time()), default=None)
+    #             if last_appointment_end:
+    #                 # Adjust current time to be after the last appointment ends plus buffer
+    #                 adjusted_start_time = datetime.datetime.combine(date, last_appointment_end) + datetime.timedelta(minutes=10)
+    #                 if adjusted_start_time.time() > current_time.time():
+    #                     current_time = adjusted_start_time
+    #                 else:
+    #                     current_time += datetime.timedelta(minutes=duration + 10)
+    #             else:
+    #                 current_time += datetime.timedelta(minutes=duration + 10)
+    #         else:
+    #             current_time += datetime.timedelta(minutes=duration + 10)
+
+    #     return available_slots
+
+    def calculate_time_slots(self, date,work_start, work_end, appointments, duration):
+        # work_start = datetime.time(9, 0)
+        # work_end = datetime.time(17, 0)
         start_datetime = datetime.datetime.combine(date, work_start)
         end_datetime = datetime.datetime.combine(date, work_end)
 
