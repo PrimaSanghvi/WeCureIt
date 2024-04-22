@@ -67,6 +67,7 @@ class PatientPreferenceView(viewsets.ModelViewSet):
     serializer_class = PatientPreferenceSerializer
     queryset = PatientPreference.objects.all()
 
+
 class DoctorLoginView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = DoctorLoginSerializer(data=request.data)
@@ -361,3 +362,124 @@ class UpdateRoomsView(viewsets.ModelViewSet):
     model = ManageRooms
     serializer_class = ManageRoomsSerializer
     queryset = ManageRooms.objects.all()
+
+class PatientRecView(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            rec = Patient_record.objects.get(patient_rec_id=pk)
+            
+            # Serialize the Patient_record data
+            serializer = PatientMedicalRecSerialier(rec)
+            data = serializer.data
+            
+            # Get the associated Patient object
+            patient_id = rec.patient_id_id
+            patient_info = Patient.objects.get(patient_id=patient_id)
+            
+            # Serialize the Patient data
+            serializer2 = PatientSerializer(patient_info)
+            doctor_info = Doctor.objects.get(doctor_id=rec.doctor_id_id)
+            serializer3 = DoctorInfoSerializer(doctor_info)
+            
+            # Merge patient data into the response data
+            data['patient_firstname'] = serializer2.data['first_name']
+            data['patient_lastname'] = serializer2.data['last_name']
+            data['patient_address'] = serializer2.data['addressLine1']
+            data['patient_city'] = serializer2.data['city']
+            data['patient_state'] = serializer2.data['state']
+            data['patient_zip'] = serializer2.data['zipCode']
+            data['doctor_firstname'] = serializer3.data['first_name']
+            data['doctor_lastname'] = serializer3.data['last_name']
+            
+            return Response(data)
+            
+        except Patient_record.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+class  PatientRecCreateView(APIView):
+    def post(self, request, format=None):
+        serializer = PatientMedicalRecSerialier(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class PatientAllRecView(APIView):
+    def get(self, request, pk, format=None):
+        records = Patient_record.objects.filter(patient_id=pk)
+        serializer = PatientMedicalRecSerialier(records, many=True)
+        data = serializer.data
+        for record in data:
+
+            doctor_id = record['doctor_id']
+            doctor_info = Doctor.objects.get(doctor_id=doctor_id)
+            serializer3 = DoctorInfoSerializer(doctor_info)
+            appoint = Appointments.objects.get(patient_id=pk,doctor_id=doctor_id,date=record['diagnosis_date'])
+            serializer2 = AppointmentSerializer(appoint)
+            record['doctor_firstname'] = serializer3.data['first_name']
+            record['doctor_lastname'] = serializer3.data['last_name']
+            s4 = SpecialitySerializer(Speciality.objects.get(speciality_id=serializer2.data['speciality_id']))
+            s5 = FacilitySerializer(Facility.objects.get(facility_id=serializer2.data['facility_id']))
+            record['specialty'] = s4.data['name']
+            record['locname'] = s5.data['name']
+            record['locadd'] = s5.data['addressLine1']+" "+s5.data['addressLine2']
+            record['locCSZ'] = s5.data['city']+", "+s5.data['state'] +", "+str(s5.data['zipCode'])
+            
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class NewRecView(APIView):
+    def get(self, request):
+        # Access query parameters
+        diagnosis_date = request.query_params.get('diagnosis_date')
+        doctor_id = request.query_params.get('doctor_id')
+        patient_id = request.query_params.get('patient_id')
+        
+        # Filter records based on the query parameters
+        records = Patient_record.objects.filter(
+            diagnosis_date=diagnosis_date,
+            doctor_id=doctor_id,
+            patient_id=patient_id
+        )
+        
+        # Check if records are found
+        if not records.exists():
+            return Response({'detail': 'No data found'}, status=status.HTTP_200_OK)
+        
+        # Serialize the records
+        serializer = Patient_record(records, many=True)
+        
+        # Return the serialized data
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class DoctorDetail(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            patient = Doctor.objects.get(pk=pk)
+            serializer = DoctorInfoSerializer(patient)
+            return Response(serializer.data)
+            
+        except Patient.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+class FacilityDetail(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            facility = Facility.objects.get(pk=pk)
+            serializer = FacilitySerializer(facility)
+        
+            return Response(serializer.data)
+        except Facility.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+class SpecialtyDetail(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            sp = Speciality.objects.get(pk=pk)
+            serializer = SpecialitySerializer(sp)
+        
+            return Response(serializer.data)
+        except Facility.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+       

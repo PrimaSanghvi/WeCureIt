@@ -12,7 +12,12 @@ import FacilityEdit from './Components/Admin/FacilityEdit';
 import { UserEditPayment } from './Components/Patient/UserEditPayment';
 import { UserEditPreference } from './Components/Patient/UserEditPreference';
 import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
-
+import AddSchedule from "./Components/Doctor/AddSchedule";
+import AddScheduleHome from "./Components/Doctor/AddScheduleHome";
+import ViewMedicalRec from "./Components/Doctor/ViewMedicalRec";
+import AddMedicalRec from "./Components/Doctor/AddMedicalRec";
+import DoctorHomePage from "./Components/Doctor/DoctorHomePage";
+import ReviewMedicalInfo from "./Components/Doctor/ReviewMedicalInfo";
 
 const App = () => {
   return (
@@ -33,6 +38,12 @@ const App = () => {
         <Route path="/admin/editFacility/:facilityId" element={<FacilityEdit />}/>
         <Route path="/editPreference/:patientId" element={<UserEditPreference />}/>
         <Route path="/editPayment/:patientId" element={<UserEditPayment />}/>
+        <Route path="/addschedule"element={<AddSchedule/>}/>
+        <Route path="/editschedule"element={<AddScheduleHome/>}/>
+        <Route path="/viewpatientrec/:patientrecId"element={<ViewMedicalRec/>}/>
+        <Route path="/addpatientrec/"element={<AddMedicalRec/>}/>
+        <Route path ="/doctorHomepage/:doctorId" element = {<DoctorHomePage />}/>
+        <Route path ="/doctorHomepage/:patientId/medical_info/" element = {<ReviewMedicalInfo />}/>
       </Routes>
     </div>
 </Router>

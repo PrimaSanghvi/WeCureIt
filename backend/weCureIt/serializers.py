@@ -79,7 +79,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointments
-        fields = ('appointment_id', 'PatientName', 'DateTime', 'Location', 'patient_rec_id')
+        fields = ('appointment_id', 'PatientName', 'DateTime', 'Location', 'patient_rec_id','patient_id','speciality_id','facility_id')
 
     def get_PatientName(self, obj):
         return f"{obj.patient_id.first_name} {obj.patient_id.last_name}"
@@ -518,3 +518,10 @@ class ManageRoomsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ManageRooms
         fields = ['room_id', 'facility_id', 'unavailable_room', 'date']
+    
+class PatientMedicalRecSerialier(serializers.ModelSerializer):
+    class Meta:
+        model = Patient_record
+        fields = '__all__'
+
+
