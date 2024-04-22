@@ -15,7 +15,7 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import './CalView.css';
 import './DoctorHomePage.css'
 import axios from "axios";
-import { useParams , Link,useNavigate } from 'react-router-dom';
+import { useParams , Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
 
@@ -30,6 +30,7 @@ function DoctorHomePage() {
   const { doctorId } = useParams(); 
   const [selectedDateSchedule, setSelectedDateSchedule] = useState(null);
 
+  const navigate = useNavigate();
    
   const fetchScheduleForSelectedDate = async (selectedDate) => {
     const formattedDate = format(selectedDate, 'yyyy-MM-dd'); // Format the date as required by your backend

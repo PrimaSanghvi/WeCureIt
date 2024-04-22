@@ -16,7 +16,6 @@ import AddSchedule from "./Components/Doctor/AddSchedule";
 import AddScheduleHome from "./Components/Doctor/AddScheduleHome";
 import ViewMedicalRec from "./Components/Doctor/ViewMedicalRec";
 import AddMedicalRec from "./Components/Doctor/AddMedicalRec";
-import DoctorHomePage from "./Components/Doctor/DoctorHomePage";
 import ReviewMedicalInfo from "./Components/Doctor/ReviewMedicalInfo";
 
 const App = () => {
