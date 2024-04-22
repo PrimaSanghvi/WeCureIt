@@ -9,6 +9,7 @@ import AddDoctors from "./Components/Admin/AddDoctors";
 import EditDoctor from "./Components/Admin/EditDoctor";
 import FacilityHome from './Components/Admin/FacilityHome';
 import FacilityEdit from './Components/Admin/FacilityEdit';
+import UserAppointment from './Components/Patient/UserAppointment';
 import { UserEditPreference, UserEditSaved } from './Components/Patient/UserEditPreference';
 import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
 
@@ -24,12 +25,13 @@ const App = () => {
         <Route path="/creditCardDetails" element={<SignupPage2 />}/>
         <Route path="/patientHomepage/:patientId" element={<UserHomePage />}/>
         <Route path="/editProfile/:patientId" element={<UserEditProfile />}/>
-        <Route path ="/doctorHomepage/:doctorId" element = {<DoctorHomePage />}/>
+        <Route path="/doctorHomepage/:doctorId" element = {<DoctorHomePage />}/>
         <Route path="/addDoctors/:adminId"element={<AddDoctors/>}/>
         <Route path="/editdoctors"element={<EditDoctor/>}/>
         <Route path="/admin/facility" element={<FacilityHome />}/>
         <Route path="/admin/facility/:facilityId" element={<FacilityEdit />}/>
         <Route path="/editPreference/:patientId" element={<UserEditPreference />}/>
+        <Route path="/patient/appointment" element={<UserAppointment />}/>
       </Routes>
     </div>
 </Router>

@@ -75,5 +75,8 @@ urlpatterns = [
     #     "speciality_id": 2
     # }
     path('api/doctorSchedule/deleteSpeciality/', views.UnlinkSpecialtyAPIView.as_view(), name = 'remove_speciality'),
-
+    ###### get doc schedule List
+    # GET request
+    # 
+    path('api/findAvailableSchedule/', views.DocScheduleListView.as_view(), name='search_available_schedule'),
 ]
