@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
-import datetime
 
 # Create your views here.
 ################## PATIENT ##################
@@ -244,7 +243,7 @@ class AllFacilityDetail(APIView):
 ################## DOCTOR SCHEDULE ##################
 class DocScheduleCreateAPI(APIView):
     def post(self, request, *args, **kwargs):
-        serializer = DocScheduleSerializer(data=request.data)
+        serializer = DocScheduleSerializerAdd(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -300,3 +299,64 @@ class UnlinkSpecialtyAPIView(APIView):
             serializer.save()
             return Response({'message': 'Specialty unlinked from doctor\'s schedule successfully'}, status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+################## DOCTOR SCHEDULE SEARCH##################
+from rest_framework import generics 
+from django.db.models import Q
+from datetime import datetime, timedelta
+from itertools import product
+from django.utils.dateparse import parse_date
+
+class DocScheduleListView(generics.ListAPIView):
+    serializer_class = DocScheduleSerializerFilter
+    
+    def get_queryset(self):
+        # Retrieve query parameters for basic filters
+        doctor_name = self.request.query_params.get('doctor_name', None)
+        date_query = self.request.query_params.get('date', None)
+        
+        queryset = Doc_schedule.objects.filter(facility_id__is_active=True)
+        
+        if doctor_name:
+            first_name, last_name = doctor_name.split(' ')
+            queryset = queryset.filter(
+                Q(doctor_id__first_name__icontains=first_name) &
+                Q(doctor_id__last_name__icontains=last_name)
+            )
+        if date_query:
+            day_of_week = datetime.strptime(date_query, '%Y-%m-%d').strftime('%A')
+            queryset = queryset.filter(days_visiting__icontains=day_of_week)
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = DocScheduleSerializerFilter(queryset, many=True)
+        
+        speciality_name = request.query_params.get('speciality_name', None)
+        facility_name = request.query_params.get('facility_name', None)
+        unique_entries = set()
+        flattened_data = []
+
+        for schedule in serializer.data:
+            doctor_name = f"{schedule['doctor']['first_name']} {schedule['doctor']['last_name']}"
+            date_provided = request.query_params.get('date', None)
+            date_list = [datetime.strptime(date_provided, '%Y-%m-%d')] if date_provided else [datetime.now() + timedelta(days=i) for i in range(14)]
+
+            for date in date_list:
+                day_name = date.strftime('%A')
+                if day_name in schedule['days_visiting']:
+                    specialties = [spec['name'] for spec in schedule['speciality']]
+                    facilities = [fac['name'] for fac in schedule['facility'] if fac['is_active']]
+                    for specialty, facility in product(specialties, facilities):
+                        entry = (date.strftime('%Y-%m-%d'), doctor_name, specialty, facility)
+                        if (speciality_name is None or specialty == speciality_name) and (facility_name is None or facility == facility_name) and entry not in unique_entries:
+                            unique_entries.add(entry)
+                            flattened_data.append({
+                                'date': date.strftime('%Y-%m-%d'),
+                                'doctor': doctor_name,
+                                'specialty': specialty,
+                                'facility': facility
+                            })
+
+        return Response(flattened_data)
