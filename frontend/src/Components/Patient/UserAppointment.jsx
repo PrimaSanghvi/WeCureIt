@@ -98,70 +98,65 @@ export default function UserAppointment() {
   const [showPopup, setShowPopup] = useState(false);
 
   // click on a row and add this row to the selected schedule
-  const handleScheduleClick = (schedule) =>{
+  const handleScheduleClick = (schedule) => {
     setSelectedSchedule(schedule);
     setShowPopup(true);
     console.log(selectedSchedule);
-  }
+  };
 
   // the time length for the user to choose
   const [timeLength, setTimeLength] = useState(null);
   const timeLengthList = [
-    {timeLength: '15 min'},
-    {timeLength: '30 min'},
-    {timeLength: '60 min'},
-]
-// put the call schedule request here
-const handleChangeTimeLength = (event) => {
-  setTimeLength(event.target.value);
-  // use selectedSchedule & timeLength to call the backend endpoint
+    { timeLength: "15 min" },
+    { timeLength: "30 min" },
+    { timeLength: "60 min" },
+  ];
+  // put the call schedule request here
+  const handleChangeTimeLength = (event) => {
+    setTimeLength(event.target.value);
+    // use selectedSchedule & timeLength to call the backend endpoint
+  };
 
-};
+  // a temp list to show the option
+  // just for display
+  // please use your own timeslots from the endpoint
+  const timeSlots = [
+    "10:00 AM - 10:15 AM",
+    "10:30 AM - 10:45 AM",
+    "12:30 PM - 12:45 PM",
+    "2:15 PM - 2:30 PM",
+  ];
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+  const handleTimeSlotChange = (event) => {
+    setSelectedTimeSlot(event.target.value);
+  };
 
+  const [showConfirm, setShowConfirm] = useState(false);
+  // confirm the slot, put your post schedule request here
+  /////
+  /////
+  const handleScheduleSubmit = () => {
+    // put your post schedule request here
+    setShowPopup(false);
+    setShowConfirm(true);
+    // clear the current status
+    setTimeLength("");
+  };
 
+  // close the pop-up page
+  const handleCancelClick = () => {
+    setShowPopup(false);
+    setSelectedSchedule(null);
+    setTimeLength(null);
+    setSelectedTimeSlot("");
+  };
 
-// a temp list to show the option
-// just for display 
-// please use your own timeslots from the endpoint
-const timeSlots = [
-  '10:00 AM - 10:15 AM',
-  '10:30 AM - 10:45 AM',
-  '12:30 PM - 12:45 PM',
-  '2:15 PM - 2:30 PM',
-];
-const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
-const handleTimeSlotChange = (event) => {
-  setSelectedTimeSlot(event.target.value);
-};
-
-
-const [showConfirm, setShowConfirm] = useState(false);
-// confirm the slot, put your post schedule request here
-/////
-/////
-const handleScheduleSubmit =() =>{
-  // put your post schedule request here
-   setShowPopup(false);
-   setShowConfirm(true);
-   // clear the current status
-   setTimeLength('');
-}
-
-
-// close the pop-up page
-const handleCancelClick = () =>{
-  setShowPopup(false);
-  setSelectedSchedule(null);
-  setTimeLength(null);
-  setSelectedTimeSlot('');
-}
-
-// close the confirmation page
-const handleCloseClick =() =>{
-  setShowConfirm(false);
-  setSelectedSchedule(null);
-  setSelectedTimeSlot('');
-}
+  // close the confirmation page
+  const handleCloseClick = () => {
+    setShowConfirm(false);
+    setSelectedSchedule(null);
+    setSelectedTimeSlot("");
+  };
   return (
     <div className={styles["main-container"]}>
       <div className={styles["top-bar"]}>
@@ -172,7 +167,7 @@ const handleCloseClick =() =>{
           </div>
         </div>
       </div>
-    
+
       <span className={styles["schedule-appointment"]}>
         Schedule Appointment
       </span>
@@ -222,7 +217,6 @@ const handleCloseClick =() =>{
               </option>
             ))}
           </select>
-         
         </div>
         <div className={styles["specialty-drop-down"]}>
           <span className={styles["specialty"]}>Specialty</span>
@@ -295,7 +289,10 @@ const handleCloseClick =() =>{
           </div>
 
           {scheduleList.map((schedule, index) => (
-            <div className={styles[`${index % 2 === 0 ? "row" : "row-2b"}`]}  onClick={() => handleScheduleClick(schedule)}>
+            <div
+              className={styles[`${index % 2 === 0 ? "row" : "row-2b"}`]}
+              onClick={() => handleScheduleClick(schedule)}
+            >
               <div className={styles["date-1c"]}>
                 <div className={styles["date-1d"]}>
                   <div className={styles["date-1e"]}>
@@ -336,128 +333,136 @@ const handleCloseClick =() =>{
               </div>
             </div>
           ))}
-
-        
-
         </div>
       </div>
       {showPopup && selectedSchedule && (
-          <div className={styles['pop-up']}>
-          <span className={styles['schedule-new-appointment']}>
+        <div className={styles["pop-up"]}>
+          <span className={styles["schedule-new-appointment"]}>
             Schedule New Appointment for {selectedSchedule.date}
           </span>
-          <div className={styles['specialty-pop']}>
-            <span className={styles['specialty-1']}>Specialty</span>
-            <div className={styles['form-pop']}>
-    
-              <div className={styles['text-wrap-pop']}>
-                <span className={styles['cardiology']}>{selectedSchedule.specialty}</span>
+          <div className={styles["specialty-pop"]}>
+            <span className={styles["specialty-1"]}>Specialty</span>
+            <div className={styles["form-pop"]}>
+              <div className={styles["text-wrap-pop"]}>
+                <span className={styles["cardiology"]}>
+                  {selectedSchedule.specialty}
+                </span>
               </div>
             </div>
           </div>
-          <div className={styles['time']}>
-            <span className={styles['time-2']}>Time</span>
-            <div className={styles['form-3']}>
-            {!timeLength ?(
-              <span className={styles['select-appointment-length']}>
-              Please select an appointment length first.
-            </span>
-            ):(<>
-              {timeSlots.map((timeSlot, index) => (
-                <label key={index}>
-                  <input
-                    type="radio"
-                    value={timeSlot}
-                    checked={selectedTimeSlot === timeSlot}
-                    onChange={handleTimeSlotChange}
-                  />
-                  {timeSlot}
-                </label>
-              ))}
-              </>
-            )
-          }
-              
+          <div className={styles["time"]}>
+            <span className={styles["time-2"]}>Time</span>
+            <div className={styles["form-3"]}>
+              {!timeLength ? (
+                <span className={styles["select-appointment-length"]}>
+                  Please select an appointment length first.
+                </span>
+              ) : (
+                <>
+                  {timeSlots.map((timeSlot, index) => (
+                    <label key={index}>
+                      <input
+                        type="radio"
+                        value={timeSlot}
+                        checked={selectedTimeSlot === timeSlot}
+                        onChange={handleTimeSlotChange}
+                      />
+                      {timeSlot}
+                    </label>
+                  ))}
+                </>
+              )}
             </div>
           </div>
-          <div className={styles['facility-pop']}>
-            <span className={styles['facility-4']}>Facility</span>
-            <button className={styles['form-5']}>
-              <div className={styles['text-wrap-6']}>
-                <span className={styles['facility-selected']}>
-                {selectedSchedule.date}
+          <div className={styles["facility-pop"]}>
+            <span className={styles["facility-4"]}>Facility</span>
+            <button className={styles["form-5"]}>
+              <div className={styles["text-wrap-6"]}>
+                <span className={styles["facility-selected"]}>
+                  {selectedSchedule.date}
                 </span>
               </div>
             </button>
           </div>
-          <div className={styles['doctor-pop']}>
-            <span className={styles['doctor-7']}>Doctor</span>
-            <div className={styles['form-8-pop']}>
-              <div className={styles['text-wrap-9']}>
-                <span className={styles['doctor-selected']}>{selectedSchedule.doctor}</span>
+          <div className={styles["doctor-pop"]}>
+            <span className={styles["doctor-7"]}>Doctor</span>
+            <div className={styles["form-8-pop"]}>
+              <div className={styles["text-wrap-9"]}>
+                <span className={styles["doctor-selected"]}>
+                  {selectedSchedule.doctor}
+                </span>
               </div>
             </div>
           </div>
-          <div className={styles['appointment-length-drop-down']}>
-            <span className={styles['appointment-length']}>Appointment Length</span>
+          <div className={styles["appointment-length-drop-down"]}>
+            <span className={styles["appointment-length"]}>
+              Appointment Length
+            </span>
             <select
-            className={styles["form-8"]}
-            id="timelength-select"
-            value={timeLength}
-            onChange={handleChangeTimeLength}
-          >
-            <option value="">Not Selected</option>
-            {timeLengthList.map((timeLength) => (
-              <option key={timeLength.timeLength} value={timeLength.timeLength}>
-                {timeLength.timeLength}
-              </option>
-            ))}
-          </select>
-          
+              className={styles["form-8"]}
+              id="timelength-select"
+              value={timeLength}
+              onChange={handleChangeTimeLength}
+            >
+              <option value="">Not Selected</option>
+              {timeLengthList.map((timeLength) => (
+                <option
+                  key={timeLength.timeLength}
+                  value={timeLength.timeLength}
+                >
+                  {timeLength.timeLength}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className={styles['rectangle']}>
-            <span className={styles['cancel-button']} onClick={handleCancelClick}>Cancel</span>
+          <div className={styles["rectangle"]}>
+            <span
+              className={styles["cancel-button"]}
+              onClick={handleCancelClick}
+            >
+              Cancel
+            </span>
           </div>
-          <div className={styles['rectangle-c']}>
-            <span className={styles['confirm']} onClick={handleScheduleSubmit}>Confirm</span>
+          <div className={styles["rectangle-c"]}>
+            <span className={styles["confirm"]} onClick={handleScheduleSubmit}>
+              Confirm
+            </span>
           </div>
         </div>
-         )}
+      )}
 
+      {showConfirm && (
+        <div className={styles["pop-up-remove"]}>
+          <div className={styles["bench-accounting-nvzvopqwg-unsplash"]} />
 
-         {showConfirm && (
-            <div className={styles["pop-up-remove"]}>
-              <div className={styles["bench-accounting-nvzvopqwg-unsplash"]} />
-              
-                  <div className={styles["remove-information"]}>
-                    
-                    <span className={styles["are-you-sure-wish-remove"]}>
-                      {selectedSchedule.date}
-                      <br />
-                      {selectedTimeSlot}
-                      <br />
-                      {selectedSchedule.doctor}
-                      <br />
-                      {selectedSchedule.specialty}
-                      <br />
-                      {selectedSchedule.facilityObj['name']}
-                      <br />
-                      was successfully reserved! <br />
-                    </span>
-                  </div>
-                  <button className={styles["close-button"]}>
-                    <div className={styles["cancel-button-4"]}>
-                      <span
-                        className={styles["cancel-button-5"]}  
-                        onClick={handleCloseClick}
-                      >
-                        Close
-                      </span>
-                      <div className={styles["rectangle-6"]} />
-                    </div>
-                  </button>
+          <div className={styles["remove-information"]}>
+            <span className={styles["are-you-sure-wish-remove"]}>
+              {selectedSchedule.date}
+              <br />
+              {selectedTimeSlot}
+              <br />
+              {selectedSchedule.doctor}
+              <br />
+              {selectedSchedule.specialty}
+              <br />
+              {selectedSchedule.facilityObj["name"]}
+              <br />
+              was successfully reserved! <br />
+            </span>
+          </div>
+          <button className={styles["close-button"]}>
+            <div className={styles["cancel-button-4"]}>
+              <span
+                className={styles["cancel-button-5"]}
+                onClick={handleCloseClick}
+              >
+                Close
+              </span>
+              <div className={styles["rectangle-6"]} />
             </div>
-          )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
