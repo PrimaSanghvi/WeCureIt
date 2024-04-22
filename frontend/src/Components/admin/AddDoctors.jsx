@@ -4,7 +4,7 @@
     import axios from 'axios'; 
     import styles from './AddDoctors.module.css';
     import { useNavigate } from 'react-router-dom';
- 
+    import { useParams } from 'react-router-dom';
     
     export default function Main() {
 
@@ -13,48 +13,58 @@
       const [last_name, setLastName] = useState('');
       const [email, setemail] = useState('');
       const [password , settpassword] = useState('');
+      const [phone_number, setPhone_number] = useState('');
       const [selectedspeciality,setseletedspeciality] = useState("");
       const [displayedSpeciality, setDisplayedSpeciality] = useState([]);
       const [removespeciality,setremovespeciality] = useState('')
       const [doctorlist, setDoctorList] = useState([]);
+      const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
+      const { adminId } = useParams(); 
       const navigate = useNavigate();
     
-      
-
       const handleDisplay = () => {
-        if(selectedspeciality&& !displayedSpeciality.includes(selectedspeciality)){
-          setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
-          setseletedspeciality("");
+        console.log(`Selected Specialty: ${selectedspeciality}`);
+        console.log(`Displayed Speciality Names:`, displayedSpeciality);
+        console.log(`Selected Speciality IDs:`, selectedSpecialityIds);
+    
+        const speciality = specialtylist.find(s => s.name === selectedspeciality);
+        if (speciality && !selectedSpecialityIds.includes(speciality.speciality_id)) {
+            setSelectedSpecialityIds([...selectedSpecialityIds, speciality.speciality_id]);
+            setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
+            setseletedspeciality("");
+        } else if (!selectedspeciality) {
+            alert('Please select a speciality first.');
+        } else {
+            alert('This speciality is already in the list.');
         }
-        else if(!selectedspeciality){
-          alert('Please select a speciality first.');
-        }
-        else{
-          alert('this speciality is already in the list')
-        }
-      };
+    };
+    
       
-      const handleRemove = () =>{
-        if (removespeciality) {
+      
+      const handleRemove = () => {
+        const speciality = specialtylist.find(s => s.name === removespeciality);
+        if (speciality) {
+          setSelectedSpecialityIds(selectedSpecialityIds.filter(id => id !== speciality.speciality_id));
+          // Also update displayedSpeciality to keep the UI in sync
           setDisplayedSpeciality(displayedSpeciality.filter(item => item !== removespeciality));
           setremovespeciality(''); // Clear selected item
         }
       };
-
+      
       const handleSubmit = (e) =>{
         e.preventDefault();
     // Here you can handle the form submission, such as sending the data to your backend
-        const phone_number = "1234567890";
-        const speciality = displayedSpeciality.join(", ");
+      
         const formData = {
           first_name,
           last_name,
-          speciality,
+          speciality_id: selectedSpecialityIds,
           password,
           phone_number,
           email,
           is_active:true,
         }
+        console.log(formData)
         if (Object.keys(formData).length !== 0) {
           console.log(JSON.stringify(formData));
           axios.post('http://127.0.0.1:8000/api/DoctorRegister/', formData)
@@ -67,14 +77,14 @@
               .catch(error => {
                   console.error('Error submitting form:', error);
               });
-              window.location.href = "/AddDoctors"
+              // window.location.href = "/AddDoctors"
       }
       
         
       };
       const transferfacility = () =>{
         //change to the real edit facility path
-        window.location.href = "/editfacilities";
+        window.location.href = `/admin/facility/${adminId}/`;
         console.log("transfer to edit facilities")
       };
 
@@ -97,9 +107,22 @@
 
 
       const transfereditdoctor = async(editdoctor) =>{
-        navigate('/editdoctors/', { state: {editdoctor}});
+        console.log(editdoctor)
+        navigate('/editdoctors/', { state: {editdoctor, adminId}});
         //window.location.href = "/editdoctors";
       }
+      // const transfereditdoctor = (doctorId) => {
+      //   // Assuming you fetch or otherwise determine the doctor's current specialties here or earlier in the component.
+      //   const doctorToEdit = doctorlist.find(doctor => doctor.doctor_id === doctorId);
+    
+      //   // If doctorlist already includes specialty details as you fetch them,
+      //   // ensure those details are structured the way your edit page expects.
+      //   // If not, you might need to fetch the doctor's details, including their specialties, here.
+        
+      //   console.log("Preparing to edit doctor:", doctorToEdit);
+      //   navigate('/editdoctors/', { state: { editdoctor: doctorToEdit } });
+    //};
+    
 
       useEffect(() => {
         const fetchData = async () => {
@@ -107,11 +130,11 @@
             const response = await axios.get('http://127.0.0.1:8000/api/specialties/');
             const response2 = await axios.get('http://127.0.0.1:8000/api/doctorlist/');
             const formattedData = response.data.map(item => ({
-              speciality_id: item.id,
+              speciality_id: item.speciality_id,
               name: item.name
             }));
             
-           
+          
             const doctorlistformatted = response2.data.map(doctor =>  ({
               doctor_id: doctor.doctor_id,
               first_name: doctor.first_name,
@@ -122,9 +145,9 @@
               email:doctor.email,
               is_active: doctor.is_active
             }));
+          
             const activedoctor = doctorlistformatted.filter(doctor => doctor.is_active === true);
             setDoctorList(activedoctor)
-            
             setspecialtylist(formattedData);
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -136,20 +159,15 @@
       
 
       return (
-        <div className={styles["main-container"]}>
-          <div className={styles["top-bar"]}>
-            <div className={styles["top-bar-background"]}></div>
-            <div className={styles["frame"]}>
-              <div className={styles["company-name-icon"]}>
-                <span className={styles["we-cure-it"]}>WeCureIt</span>
-                <div className={styles["medical-cross"]}>
-                  <div className={styles["group"]}>
-                    <div className={styles["vector-stroke"]}></div>
+          <div className={styles['main-container']}>
+                <div  className={styles['top-bar']}>
+                  <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
           <div className={styles["line"]}></div>
           <span className={styles["manage-doctor"]}>Manage Doctor</span>
           <span className={styles["add-doctor"]}>Add Doctor</span>
@@ -264,6 +282,17 @@
               type="text" value ={password} onChange={(e)=>settpassword(e.target.value)}
             />
           </div>
+          <div className={styles['frame-phone']}>
+                <span className={styles['text-3']}>Contact Number</span>
+                <br/>
+                <input
+                        className={styles['contact']}
+                        type='number'
+                        value={phone_number}
+                        placeholder='Enter Contact Number'
+                        onChange={(e) => setPhone_number(e.target.value)}
+                        />
+            </div>
           <div className={styles["frame-33"]}>
             <div className={styles["frame-34"]}>
               <span className={styles["specialty-available"]}>Specialty Available</span>
@@ -292,14 +321,14 @@
               </div>
               <div className={styles["frame-3c"]}>
                 <div className={styles["button"]}>
-                               
-                    <div className={styles["rectangle-3f"]} onClick={handleDisplay}>&gt;</div>
-                
+                  <div className={styles["button-3d"]}>                 
+                    <div className={styles["rectangle-3f"]} onClick={handleDisplay}></div>
+                  </div>
                 </div>
                 <div className={styles["button-40"]}>
-                  
-                    <div className={styles["rectangle-43"]} onClick={handleRemove}>&lt;</div>
-                  
+                  <div className={styles["button-41"]}>
+                    <div className={styles["rectangle-43"]} onClick={handleRemove}></div>
+                  </div>
                 </div>
               </div>
               <div className={styles["selected-specialty"]}>

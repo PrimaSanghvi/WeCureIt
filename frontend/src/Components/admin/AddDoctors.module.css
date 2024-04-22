@@ -1,3 +1,4 @@
+/* Top Company Header & Side Menu*/
 :root {
   --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
@@ -5,19 +6,12 @@
     "Source Han Sans CN", sans-serif;
 }
 
-.main-container {
-  overflow: hidden;
-}
-
-.main-container,
-.main-container * {
+.main-container, .main-container * {
   box-sizing: border-box;
+  width: 100%
 }
 
-input,
-select,
-textarea,
-button {
+input, select, textarea, button {
   outline: 0;
 }
 
@@ -29,25 +23,19 @@ button {
   background: #ffffff;
   overflow: hidden;
 }
+
 .top-bar {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   flex-wrap: nowrap;
   position: relative;
+  background-color:  #e3ebff;
   width: 1512px;
   height: 103px;
   margin: 0 0 0 0;
 }
-.top-bar-background {
-  flex-shrink: 0;
-  position: relative;
-  width: 1512px;
-  height: 103px;
-  background: #e3ebff;
-  z-index: 1;
-  border-radius: 16px 16px 0 0;
-}
+
 .frame {
   flex-shrink: 0;
   position: relative;
@@ -56,6 +44,15 @@ button {
   z-index: 2;
   overflow: hidden;
 }
+
+.main-container2 {
+  position: absolute;
+  left: 4%;
+  width: 213.245px;
+  height: 103px;
+  margin: 0 auto;
+}
+
 .company-name-icon {
   position: relative;
   width: 213.245px;
@@ -63,6 +60,7 @@ button {
   margin: 0 0 0 0;
   z-index: 3;
 }
+
 .we-cure-it {
   display: flex;
   align-items: center;
@@ -72,7 +70,7 @@ button {
   top: 5.83%;
   left: 0;
   color: #1a1a1a;
-  font-family: ?????, var(--default-font-family);
+  
   font-size: 31px;
   font-weight: 400;
   line-height: 90px;
@@ -80,14 +78,18 @@ button {
   white-space: nowrap;
   z-index: 4;
 }
-.medical-cross {
+.icon {
   position: absolute;
-  width: 27.75%;
-  height: 58.89%;
-  top: 20.56%;
-  left: 72.25%;
-  z-index: 5;
+  width: 24.28%;
+  height: 51.53%;
+  top: 24.24%;
+  left: 73.99%;
+  background: url(../../assets/images/Logo.png)
+    no-repeat center;
+  background-size: 100% 100%;
+  z-index: 3;
 }
+
 .group {
   position: relative;
   width: 51.776px;
@@ -209,7 +211,7 @@ button {
   flex-basis: auto;
   position: relative;
   height: 21px;
-  color: #000000;
+  color: black;
   font-family: Poppins, var(--default-font-family);
   font-size: 14px;
   font-weight: 500;
@@ -252,7 +254,7 @@ button {
   flex-basis: auto;
   position: relative;
   height: 15px;
-  color: #d9d9d9;
+  color: black;
   font-family: Poppins, var(--default-font-family);
   font-size: 10px;
   font-weight: 500;
@@ -332,7 +334,7 @@ button {
   flex-basis: auto;
   position: relative;
   height: 15px;
-  color: #d9d9d9;
+  color: black;
   font-family: Poppins, var(--default-font-family);
   font-size: 10px;
   font-weight: 500;
@@ -1177,7 +1179,7 @@ button {
   position: absolute;
   width: 423.14px;
   height: 170px;
-  top: 526px;
+  top: 600px;
   left: 294px;
   z-index: 23;
 }
@@ -1449,16 +1451,20 @@ button {
 }
 .rectangle-3f {
   position: absolute;
-  text-align: center;
   width: 24.14px;
   height: 28px;
   top: 0;
   left: 0;
-  background: #726ffe;
-  color: white;
+  background-image: url('../../assets/images/selectBtn.png');
+  background-color: #726ffe;
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
   z-index: 43;
   border-radius: 10px;
+  content: '';
 }
+
 .button-40 {
   display: flex;
   align-items: flex-start;
@@ -1503,9 +1509,11 @@ button {
   height: 28px;
   top: 0;
   left: 0;
-  background: #726ffe;
-  text-align: center;
-  color: white;
+  background-image: url('../../assets/images/unselectBtn.png');
+  background-color: #726ffe;
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
   z-index: 47;
   border-radius: 10px;
 }
@@ -1644,7 +1652,7 @@ button {
   position: absolute;
   width: 404px;
   height: 32px;
-  top: 719px;
+  top: 800px;
   left: 295px;
   cursor: pointer;
   background: transparent;
@@ -1687,7 +1695,7 @@ button {
   position: absolute;
   width: 164px;
   height: 20px;
-  top: 723px;
+  top: 805px;
   left: 424px;
   color: #ffffff;
   font-family: Poppins, var(--default-font-family);
@@ -1709,3 +1717,55 @@ button {
   background-color: #eeeeff;
 }
 
+.frame-phone{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  position: absolute;
+  width: 436.931px;
+  height: 71.289px;
+  top: 520px;
+  left: 296px;
+  z-index: 9;
+}
+
+.text-3{
+  position: relative;
+  flex-shrink: 0;
+  flex-basis: auto;
+  margin: 0x auto;
+  height: 21px;
+  color: #000000;
+  font-family: Poppins, var(--default-font-family);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+  text-align: left;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.contact
+{
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  gap: 8px;
+  position: relative;
+  width: 404px;
+  height: 32px;
+  top: -15%;
+  padding: 10px 0 10px 10px;
+  border: 1px solid #d9d9d9;
+  z-index: 12;
+  overflow: hidden;
+  border-radius: 10px;
+  font-family: Poppins, var(--default-font-family);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 21px;
+  text-align: left;
+  white-space: nowrap;
+}
