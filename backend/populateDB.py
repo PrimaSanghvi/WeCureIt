@@ -26,6 +26,13 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 ################# DELETE ALL ITEMS FIRST FOR A CLEAN START #################
+# Mange Rooms:
+cur.execute('ALTER SEQUENCE "weCureIt_managerooms_room_id_seq" RESTART WITH 1') # Reset speciality id
+conn.commit()
+
+cur.execute('DELETE FROM "weCureIt_managerooms"')
+conn.commit()
+
 # Facility:
 cur.execute('ALTER SEQUENCE "weCureIt_facility_facility_id_seq" RESTART WITH 1') # Reset facility id
 conn.commit()
@@ -78,13 +85,14 @@ conn.commit()
 
 ################# INSERT #################
 # Facility:
-facilities = [["The George Washington University Hospital", "900 23rd St. NW, Washington, D.C. 20037", 5, 2027154000, True],
-              ["Holy Cross Hospital", "1500 Forest Glen Rd, Silver Spring, MD 20910", 4, 3017547000, True],
-              ["Howard University Hospital", "2041 Georgia Ave NW, Washington, D.C. 20060", 5, 2028656100, True]
+facilities = [["The George Washington University Hospital", "900 23rd St. NW", "", "Washington", "D.C.", 20037,  5, "2027154000", True],
+              ["Holy Cross Hospital", "1500 Forest Glen Rd", "", "Silver Spring", "MD", 20910, 4, "3017547000", True],
+              ["Howard University Hospital", "2041 Georgia Ave NW", "", "Washington", "D.C.", 20060, 5, "2028656100", True],
+              ["MedStar Washington Hospital Center", "110 Irving St NW", "", "Washington", "D.C.", 20010, 5, "2028777000", False]
              ]
 
 for facility in facilities:
-    cur.execute('INSERT INTO "weCureIt_facility" (name, address, rooms_no, phone_number, is_active) VALUES (%s, %s, %s, %s, %s)', (facility[0], facility[1], facility[2], facility[3], facility[4]))
+    cur.execute('INSERT INTO "weCureIt_facility" (name, "addressLine1", "addressLine2", city, state, "zipCode", rooms_no, phone_number, is_active) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)', (facility[0], facility[1], facility[2], facility[3], facility[4], facility[5], facility[6], facility[7], facility[8]))
     conn.commit()
 
 # Doctor:
@@ -109,6 +117,15 @@ specialities = ["Cardiology", "Dentist"]
 for speciality in specialities:
     cur.execute('INSERT INTO "weCureIt_speciality" (name) VALUES (%s)', (speciality,))
     conn.commit()
+
+cur.execute('INSERT INTO "weCureIt_managerooms" (unavailable_room, date, facility_id_id) VALUES (ARRAY[1, 3, 5], %s, %s)', ('04/22/2024', '1'))
+conn.commit()
+
+cur.execute('INSERT INTO "weCureIt_managerooms" (unavailable_room, date, facility_id_id) VALUES (ARRAY[1], %s, %s)', ('04/25/2024', '1'))
+conn.commit()
+
+cur.execute('INSERT INTO "weCureIt_managerooms" (unavailable_room, date, facility_id_id) VALUES (ARRAY[2, 3], %s, %s)', ('04/25/2024', '2'))
+conn.commit()
 
 # Close everything
 cur.close()

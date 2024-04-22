@@ -9,7 +9,8 @@ import AddDoctors from "./Components/Admin/AddDoctors";
 import EditDoctor from "./Components/Admin/EditDoctor";
 import FacilityHome from './Components/Admin/FacilityHome';
 import FacilityEdit from './Components/Admin/FacilityEdit';
-import { UserEditPreference, UserEditSaved } from './Components/Patient/UserEditPreference';
+import { UserEditPayment } from './Components/Patient/UserEditPayment';
+import { UserEditPreference } from './Components/Patient/UserEditPreference';
 import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
 
 
@@ -20,6 +21,7 @@ const App = () => {
         <Routes>
    
         <Route path="/" element={<LoginPage />}/>
+        <Route path="/login" element={<LoginPage />}/>
         <Route path="/signUp" element={<SignupPage />}/>
         <Route path="/creditCardDetails" element={<SignupPage2 />}/>
         <Route path="/patientHomepage/:patientId" element={<UserHomePage />}/>
@@ -27,9 +29,10 @@ const App = () => {
         <Route path ="/doctorHomepage/:doctorId" element = {<DoctorHomePage />}/>
         <Route path="/addDoctors/:adminId"element={<AddDoctors/>}/>
         <Route path="/editdoctors"element={<EditDoctor/>}/>
-        <Route path="/admin/facility" element={<FacilityHome />}/>
-        <Route path="/admin/facility/:facilityId" element={<FacilityEdit />}/>
+        <Route path="/admin/facility/:adminId" element={<FacilityHome />}/>
+        <Route path="/admin/editFacility/:facilityId" element={<FacilityEdit />}/>
         <Route path="/editPreference/:patientId" element={<UserEditPreference />}/>
+        <Route path="/editPayment/:patientId" element={<UserEditPayment />}/>
       </Routes>
     </div>
 </Router>

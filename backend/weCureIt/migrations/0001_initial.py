@@ -92,6 +92,21 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='PatientCreditCard',
+            fields=[
+                ('card_number', models.CharField(max_length=19, primary_key=True, serialize=False)),
+                ('card_holder_name', models.CharField(max_length=100)),
+                ('cvv', models.IntegerField()),
+                ('addressLine1', models.CharField(max_length=254)),
+                ('addressLine2', models.CharField(blank=True, default=' ', max_length=254, null=True)),
+                ('city', models.CharField(max_length=254)),
+                ('state', models.CharField(max_length=254)),
+                ('zipCode', models.IntegerField()),
+                ('expiry_date', models.CharField(max_length=254)),
+                ('patient_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='weCureIt.patient')),
+            ],
+        ),
+        migrations.CreateModel(
             name='Patient_record',
             fields=[
                 ('patient_rec_id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),

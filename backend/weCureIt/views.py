@@ -10,7 +10,6 @@ from django.shortcuts import get_object_or_404
 import datetime
 
 # Create your views here.
-################## PATIENT ##################
 class PatientInfoView(viewsets.ModelViewSet):
     model = Patient
     serializer_class = PatientSerializer
@@ -34,6 +33,16 @@ class PatientCreditCardView(viewsets.ModelViewSet):
     serializer_class = PatientCreditCardSerializer
     queryset = PatientCreditCard.objects.all()
 
+class PatientPaymentView(APIView):
+    def get(self, request, pk, format=None):
+        try:
+            patient = PatientCreditCard.objects.get(patient_id = pk)
+            serializer = PatientCreditCardSerializer(patient)
+            return Response(serializer.data)
+        except Patient.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+            
+
 class PatientDetail(APIView):
     def get(self, request, pk, format=None):
         try:
@@ -43,6 +52,15 @@ class PatientDetail(APIView):
             
         except Patient.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+class AllEmailsView(APIView):
+    def post(self, request, format=None):
+        serializer = EmailSerializer(data=request.data)
+
+        if serializer.is_valid():
+            return Response(serializer.data)
+        else:
+            return Response(serializer.data)
         
 class PatientPreferenceView(viewsets.ModelViewSet):
     model = PatientPreference
@@ -121,19 +139,6 @@ class DoctorScheduleView(APIView):
         serializer = DocScheduleSerializer(schedules, many=True, context={'selected_date': selected_date_obj})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-
-# class DoctorDetailView(APIView):
-#     """
-#     Retrieve a doctor's details by doctor_id.
-#     """
-#     def get(self, request, doctor_id):
-#         try:
-#             doctor = Doctor.objects.get(pk=doctor_id)
-#             serializer = DoctorSerializer(doctor)
-#             return Response(serializer.data)
-#         except Doctor.DoesNotExist:
-#             return Response({'message': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
-
 class SpecialityView(viewsets.ModelViewSet):
     model = Speciality
     serializers_class = SpecialitySerializer
@@ -192,8 +197,6 @@ class DoctorInactiveView(APIView):
         
         except Doctor.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-     
-
 
 class AdminLoginView(APIView):
     def post(self, request, *args, **kwargs):
@@ -218,7 +221,6 @@ class PatientPreferenceDetail(APIView):
         except PatientPreference.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-################## DOCTOR ##################
 class AllDoctorDetail(APIView):
     def get(self, request,*args, **kwarg):
         try:
@@ -230,13 +232,132 @@ class AllDoctorDetail(APIView):
         except Doctor.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-################## FACILITY ##################
 class AllFacilityDetail(APIView):
     def get(self, request,*args, **kwarg):
         try:
-            facility = Facility.objects.all()
+            # Only retrieving facility whose 'is_active' is True
+            facility = Facility.objects.filter(is_active = True)
             serializer = AllFacilitySerializer(facility, many=True)
             return Response(serializer.data)
         
         except Facility.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+class DocScheduleCreateAPI(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = DocScheduleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UpdateScheduleDaysAPI(APIView):
+    def post(self, request, *args, **kwargs):
+        doctor_id = request.data.get('doctor_id')
+        day_to_remove = request.data.get('day_to_remove')
+
+        if not doctor_id or not day_to_remove:
+            return Response({'error': 'Both doctor_id and day_to_remove are required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            # Fetch the schedule for the given doctor where the days include the day to remove
+            schedules = Doc_schedule.objects.filter(
+                doctor_id=doctor_id, 
+                days_visiting__icontains=day_to_remove
+            )
+            
+            if not schedules:
+                return Response({'error': 'No schedule found for the given criteria'}, status=status.HTTP_404_NOT_FOUND)
+
+            updated_schedules = []
+            for schedule in schedules:
+                # Split the days, remove the specified day, and join them back into a string
+                days = schedule.days_visiting.split(', ')
+                if day_to_remove in days:
+                    days.remove(day_to_remove)
+                schedule.days_visiting = ', '.join(days)
+                schedule.save()
+                updated_schedules.append(schedule.schedule_id)
+
+            return Response({'message': 'Updated schedules successfully', 'schedules': updated_schedules}, status=status.HTTP_200_OK)
+
+        except Doc_schedule.DoesNotExist:
+            return Response({'error': 'Schedule not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+class UnlinkFacilityAPIView(APIView):
+    def delete(self, request, *args, **kwargs):
+        serializer = FacilityUnlinkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Facility unlinked from doctor\'s schedule successfully'}, status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UnlinkSpecialtyAPIView(APIView):
+    def delete(self, request, *args, **kwargs):
+        serializer = SpecialtyUnlinkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Specialty unlinked from doctor\'s schedule successfully'}, status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FacilityListView(APIView):
+    def get(self, request, format=None):
+        facilities = Facility.objects.all()  
+        serializer = FacilitySerializer(facilities, many=True)  
+        return Response(serializer.data) 
+
+class FacilityCreateView(APIView):
+    def post(self, request, format=None):
+        serializer = FacilitySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FacilityUpdateView(APIView):
+    def put(self, request, pk, format=None):
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = FacilitySerializer(facility, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class FacilityDeactivateView(APIView):
+    def patch(self, request, pk, format=None):
+        try:
+            facility = Facility.objects.get(pk=pk)
+        except Facility.DoesNotExist:
+            return Response({'error': 'Facility not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Set the is_active field to False
+        facility.is_active = False
+        facility.save()
+        
+        # Serialize the facility to send back the updated data
+        serializer = FacilitySerializer(facility)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class AvailableDoctorsView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = AvailableDoctorsSerializer(data=request.data)
+        if serializer.is_valid():
+            available_doctors = serializer.get_available_doctors()
+            return Response(available_doctors)
+        return Response(serializer.errors, status=400)
+    
+class ManageRoomsView(APIView):
+    def get(self, request, format=None):
+        rooms = ManageRooms.objects.all()
+        serializer = ManageRoomsSerializer(rooms, many=True)
+        return Response(serializer.data)
+    
+class UpdateRoomsView(viewsets.ModelViewSet):
+    model = ManageRooms
+    serializer_class = ManageRoomsSerializer
+    queryset = ManageRooms.objects.all()
