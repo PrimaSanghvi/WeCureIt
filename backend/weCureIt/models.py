@@ -131,7 +131,7 @@ class AdminTable(models.Model):
     email = models.EmailField(max_length = 254, unique=True)
     password = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
-    phone_number = models.CharField(max_length=20
+    phone_number = models.CharField(max_length=20)
 
     def save(self, *args, **kwargs):
         if self.password:
