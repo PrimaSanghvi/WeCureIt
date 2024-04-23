@@ -24,8 +24,10 @@ export const UserEditProfile = () => {
   //set several new state to handle control submit when invalid password input
   const [password, setPassword] = useState('');
   const [reenteredPassword, setReenteredPassword] = useState('');
+  // eslint-disable-next-line
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  // eslint-disable-next-line
   const [isFormValid, setIsFormValid] = useState(true);
 
 
@@ -191,7 +193,7 @@ export const UserEditProfile = () => {
 
   const editpayment = () => {
     //change the code to the real page of edit payment 
-    window.location.href = "/editpayment";
+    window.location.href = `/editPayment/${patientId}`;
     console.log("transfer to edit payment")
   };
     

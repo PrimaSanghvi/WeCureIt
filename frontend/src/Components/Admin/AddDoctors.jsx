@@ -4,7 +4,7 @@
     import axios from 'axios'; 
     import styles from './AddDoctors.module.css';
     import { useNavigate } from 'react-router-dom';
- 
+    import { useParams } from 'react-router-dom';
     
     export default function Main() {
 
@@ -19,7 +19,7 @@
       const [removespeciality,setremovespeciality] = useState('')
       const [doctorlist, setDoctorList] = useState([]);
       const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
-
+      const { adminId } = useParams(); 
       const navigate = useNavigate();
     
       const handleDisplay = () => {
@@ -84,7 +84,7 @@
       };
       const transferfacility = () =>{
         //change to the real edit facility path
-        window.location.href = "/editfacilities";
+        window.location.href = `/admin/facility/${adminId}/`;
         console.log("transfer to edit facilities")
       };
 
@@ -108,7 +108,7 @@
 
       const transfereditdoctor = async(editdoctor) =>{
         console.log(editdoctor)
-        navigate('/editdoctors/', { state: {editdoctor}});
+        navigate('/editdoctors/', { state: {editdoctor, adminId}});
         //window.location.href = "/editdoctors";
       }
       // const transfereditdoctor = (doctorId) => {
@@ -159,20 +159,15 @@
       
 
       return (
-        <div className={styles["main-container"]}>
-          <div className={styles["top-bar"]}>
-            <div className={styles["top-bar-background"]}></div>
-            <div className={styles["frame"]}>
-              <div className={styles["company-name-icon"]}>
-                <span className={styles["we-cure-it"]}>WeCureIt</span>
-                <div className={styles["medical-cross"]}>
-                  <div className={styles["group"]}>
-                    <div className={styles["vector-stroke"]}></div>
+          <div className={styles['main-container']}>
+                <div  className={styles['top-bar']}>
+                  <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
           <div className={styles["line"]}></div>
           <span className={styles["manage-doctor"]}>Manage Doctor</span>
           <span className={styles["add-doctor"]}>Add Doctor</span>

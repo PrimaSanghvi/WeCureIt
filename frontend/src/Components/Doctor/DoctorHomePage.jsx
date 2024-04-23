@@ -15,8 +15,9 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import './CalView.css';
 import './DoctorHomePage.css'
 import axios from "axios";
-import { useParams } from 'react-router-dom';
+import { useParams , Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+
 
 
 function DoctorHomePage() {
@@ -29,6 +30,7 @@ function DoctorHomePage() {
   const { doctorId } = useParams(); 
   const [selectedDateSchedule, setSelectedDateSchedule] = useState(null);
 
+  const navigate = useNavigate();
    
   const fetchScheduleForSelectedDate = async (selectedDate) => {
     const formattedDate = format(selectedDate, 'yyyy-MM-dd'); // Format the date as required by your backend
@@ -43,6 +45,7 @@ function DoctorHomePage() {
   };
   useEffect(() => {
     fetchScheduleForSelectedDate(selectDate.toDate());
+    // eslint-disable-next-line
   }, [selectDate, doctorId]);
 
 
@@ -51,13 +54,13 @@ useEffect(() => {
       try {
         const todayResponse = await axios.get(`http://127.0.0.1:8000/api/doctors/${doctorId}/appointments/today/`);
         // Process today's appointments and add additional fields as needed
-        const processedTodaysAppointments = todayResponse.data.map(appointment => ({
-          ...appointment,
-          // You can add additional processing if needed, for example:
-          Completed: false,  // Assume false if undefined
-          // Link the medical info to a UI element or another page
-          PatientMedicalInformation: "Medical Info",  // This should be replaced with actual logic
-        }));
+        const processedTodaysAppointments = todayResponse.data.map((appointment, index) => {
+          return {
+              ...appointment,
+              Completed: false, // Assume false if undefined
+              PatientMedicalInformation: appointment, // This should be replaced with actual logic
+          };
+      });
         
         setTodaysAppointments(processedTodaysAppointments); // Set the processed data
   
@@ -109,6 +112,7 @@ useEffect(() => {
   };
   
   // Column Definitions: Defines & controls grid columns.
+  // eslint-disable-next-line
   const [colDefs, setColDefs] = useState([
     
     { field: 'PatientName', headerName: 'Patient Name', minWidth: 10 },
@@ -117,12 +121,34 @@ useEffect(() => {
       field: 'PatientMedicalInformation',
       headerName: 'Medical Info',
       minWidth: 120,
-      cellRenderer: (params) => (
-        <a href={params.value} target="_blank" rel="noopener noreferrer">
-          Medical History
-        </a>
-      ),
-    },
+      cellRenderer: (params) => {
+        const patientId = params.value.patient_id; 
+        console.log("params:",params.value);
+        const handleClick = () => {
+          
+        
+        navigate(`/doctorHomepage/${patientId}/medical_info/`, {
+          state: {
+            data1: params.data.PatientName, 
+            data2: params.data.patient_id, 
+            data3: doctorId,
+            data4: params.data.speciality_id,
+            data5: params.data.facility_id,
+          },
+        });
+      };
+          return (
+            
+              <a target="_blank" rel="noopener noreferrer" onClick={handleClick}>
+                Medical History
+              </a>
+            
+            //<Link to={{ pathname: `/doctorHomepage/${patientId}/medical_info/`,
+                        
+              
+          );
+      },
+  },
     {
       field: 'Completed',
       headerName: 'Completed',
@@ -132,6 +158,7 @@ useEffect(() => {
   ]);
   
 
+  // eslint-disable-next-line
   const [colDefsup, setColDefsup] = useState([
     { field: "PatientName", minWidth: 10},
     { field: "DateTime", minWidth: 70, maxWidth: 150 },
@@ -148,9 +175,7 @@ useEffect(() => {
     { field: "Location", minWidth: 120}
   ]);
 
-  const [colDefsLoc, setColDefsLoc] = useState([
-    { field: "Location", minWidth: 120}
-  ]);
+  
   
   const autoSizeStrategy = useMemo(() => {
     return {
@@ -189,6 +214,7 @@ useEffect(() => {
         params.api.sizeColumnsToFit();
       }, 10);
     },
+    // eslint-disable-next-line
     [window],
   );
 
@@ -327,7 +353,6 @@ useEffect(() => {
         <div className="appointmentinfo">
   {todaysAppointments && todaysAppointments.length > 0 ? (
     <div className="wrapper">
-      {console.log(todaysAppointments)}
       <div style={containerStyle} className="ag-theme-quartz">
         <AgGridReact
           rowData={todaysAppointments}

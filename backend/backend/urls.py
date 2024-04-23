@@ -25,12 +25,14 @@ router.register(r'patientRegister', views.PatientInfoView, 'patientRegister')
 router.register(r'patientCardDetails', views.PatientCreditCardView, 'patientCardDetails')
 router.register(r'DoctorRegister', views.DoctorInfoView, 'DoctorRegister')
 router.register(r'patientPreference', views.PatientPreferenceView, 'patientPreference')
+router.register(r'updateRooms', views.UpdateRoomsView, 'updateRooms')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include(router.urls)),
     path('api/patientLogin/', views.PatientLoginView.as_view(), name='patientLogin'),
     path('api/patientDetail/<int:pk>/', views.PatientDetail.as_view(), name='patientDetail'),
+    path('api/patientPayment/<int:pk>/', views.PatientPaymentView.as_view(), name='patientPaymentView'),
     path('api/doctorLogin/', views.DoctorLoginView.as_view(), name='doctorLogin'),
     path('api/doctors/<int:doctor_id>/appointments/today/', views.TodaysAppointmentsView.as_view(), name='todays-appointments'),
     path('api/doctors/<int:doctor_id>/appointments/upcoming/', views.UpcomingAppointmentsView.as_view(), name='upcoming-appointments'),
@@ -75,6 +77,21 @@ urlpatterns = [
     #     "speciality_id": 2
     # }
     path('api/doctorSchedule/deleteSpeciality/', views.UnlinkSpecialtyAPIView.as_view(), name = 'remove_speciality'),
+    path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
+    path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
+    path('api/facilities/update/<int:pk>/',views.FacilityUpdateView.as_view(), name='facility-update'),
+    path('api/allEmails/', views.AllEmailsView.as_view(), name = 'allEmails'),
+    path('api/facilities/deactivate/<int:pk>/', views.FacilityDeactivateView.as_view(), name='deactivate-facility'),
+    path('api/available-doctors/', views.AvailableDoctorsView.as_view(), name='available-doctors'),
+    path('api/rooms/', views.ManageRoomsView.as_view(), name = 'manage_rooms'),
+    path('api/patientmedicalrec/<int:pk>/',views.PatientRecView.as_view(), name='medical-review'),
+    path('api/patientmedicalcreate/<int:pk>/',views.PatientRecView.as_view(), name='medical-review'),
+    path('api/patientmedicalcreate/medical_info/<int:pk>/', views.PatientAllRecView.as_view(), name='all-medical'),
+    path('api/patientmedicalcheck/', views.NewRecView.as_view(), name='medical_check'),
+    path('api/doctorinfo/<int:pk>/', views.DoctorDetail.as_view(), name='doctor-info'),
+    path('api/facilityinfo/<int:pk>/', views.FacilityDetail.as_view(), name='doctor-info'),
+    path('api/specialtyinfo/<int:pk>/', views.SpecialtyDetail.as_view(), name='doctor-info'),
+    path('api/patientmedicalcreate/', views.PatientRecCreateView.as_view(), name='doctor-info'),
     ###### get doc schedule List
     # GET request
     # 

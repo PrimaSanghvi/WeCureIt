@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 //import './SignupPage2.css';
 import  styles from './SignupPage2.module.css';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom';
 
@@ -22,6 +22,7 @@ export default function Main() {
     const navigate = useNavigate();
     // const [expDateError, setExpDateError] = useState('');
     const[cardNumError, setCardNumError] = useState('');
+    const [isChecked, setIsChecked] = useState(false);
     // const validateExpDat = () =>
     // {
     //     setExpMonth(expMonth.trim());
@@ -76,42 +77,49 @@ export default function Main() {
             facility_pref_id
         }
 
-        if(Object.keys(formData).length !== 0)
-        {
-            console.log(JSON.stringify(formData))
-        axios.post('http://127.0.0.1:8000/api/patientRegister/', formData)
-        .then(response => {
-            console.log('Form submitted successfully!', response.data);
-            const patientId = response.data.patient_id;
-            cardDetails.patient_id = patientId; 
- 
-               return axios.post('http://127.0.0.1:8000/api/patientCardDetails/', cardDetails);
-                
-            })
-            .then(response => {
-                console.log('Credit card form submitted successfully!', response.data);
-
-                // Add Patient's default preference to preference table:
-                preferenceDetails.patient_id = response.data.patient_id;
-                preferenceDetails.doctor_pref_id = "No Preference"
-                preferenceDetails.facility_pref_id = "No Preference"
-                console.log(preferenceDetails);
-
-                axios.post(`http://127.0.0.1:8000/api/patientPreference/`, preferenceDetails)
+        // Only submit if the patient has selected the checkbox:
+        if (isChecked) {
+            if(Object.keys(formData).length !== 0)
+            {
+                console.log(JSON.stringify(formData))
+                axios.post('http://127.0.0.1:8000/api/patientRegister/', formData)
                 .then(response => {
-                    console.log('Form submitted successfully!', response.data);
+                console.log('Form submitted successfully!', response.data);
+                const patientId = response.data.patient_id;
+                cardDetails.patient_id = patientId; 
+    
+                return axios.post('http://127.0.0.1:8000/api/patientCardDetails/', cardDetails);
+                    
+                })
+                .then(response => {
+                    console.log('Credit card form submitted successfully!', response.data);
+
+                    // Add Patient's default preference to preference table:
+                    preferenceDetails.patient_id = response.data.patient_id;
+                    preferenceDetails.doctor_pref_id = "No Preference"
+                    preferenceDetails.facility_pref_id = "No Preference"
+                    console.log(preferenceDetails);
+
+                    axios.post(`http://127.0.0.1:8000/api/patientPreference/`, preferenceDetails)
+                    .then(response => {
+                        console.log('Form submitted successfully!', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error submitting form:', error);
+                    });
+
+                    // Handle any post-submission logic here, like redirecting to another page
+                    navigate('/', { state: { message: 'Account created Successfully! Please Login to the system.' } });
                 })
                 .catch(error => {
                     console.error('Error submitting form:', error);
                 });
+            }
+        }
+    };
 
-                // Handle any post-submission logic here, like redirecting to another page
-                navigate('/', { state: { message: 'Account created Successfully! Please Login to the system.' } });
-            })
-        .catch(error => {
-            console.error('Error submitting form:', error);
-        });
-    }
+    const handleCheckbox = () => {
+        setIsChecked(!isChecked);
     };
 
     return (
@@ -138,7 +146,6 @@ export default function Main() {
     </div>
     <form onSubmit={handleSubmit}>
         <div className={styles['section-5']}>
-            <div className={styles['img-2']} />
             <div className={styles['group-3']}>
                 <div className={styles['box-3']}>
                     <div className={styles['box-4']}>
@@ -251,21 +258,29 @@ export default function Main() {
                             </div>
                         </div>
                     </div>
-                    <div className={styles['box-8']}>
-                        <div className={styles['wrapper-c']}>
-                            <div className={styles['section-b']}>
-                                <div className={styles['box-9']} />
-                            </div>
+                    {/* Changes button depending on if the checkbox is clicked: */}
+                    {isChecked ? (
+                        <div className={styles['box-8']}>
+                            <button disabled={!isChecked} className={styles['wrapper-c']}>
+                                <div className={styles['section-b']}>
+                                    <span className={styles['text-12']}>Create an Account</span>
+                                </div>
+                            </button>
                         </div>
-                        <button type="submit">
-                            <label className={styles['text-12']}>Create an Account</label>
-                        </button>
-                    </div>
+                    ) : (
+                        <div className={styles['box-8']}>
+                            <button disabled={!isChecked} className={styles['wrapper-c']}>
+                                <div className={styles['section-b2']}>
+                                    <span className={styles['text-12']}>Create an Account</span>
+                                </div>
+                            </button>
+                        </div>
+                    )}
                     <div className={styles['group-9']}>
                         <div className={styles['box-a']}>
                             <span className={styles['text-13']}>Have an Account</span>
                             <span className={styles['text-14']}>? </span>
-                            <span className={styles['text-15']}>Login</span>
+                            <Link to="/login" className={styles['text-15']}>Login</Link>
                         </div>
                     </div>
                     <div className={styles['group-a']}>
@@ -315,9 +330,24 @@ export default function Main() {
                         </div>
                     </div>
                 </div>
+                <div>
+                    <p className={styles['note-credit-card']}>
+                        Note: Credit card is only for reservation. At the appointment, you may pay with a different card. <br />
+                        <br />
+                        Any time you miss or cancel an appointment within 24 hours before your appointment, you will be charged to
+                        this saved payment.
+                    </p>
+
+                    <div className={styles['checkbox']}>
+                        <label>
+                            <input type="checkbox" checked={isChecked} onChange={handleCheckbox}/>
+                            I agree to the conditions stated above
+                        </label>
+                    </div>           
+                </div>
             </div>
         </form>
-        </div>
+    </div>
     );
     
 }

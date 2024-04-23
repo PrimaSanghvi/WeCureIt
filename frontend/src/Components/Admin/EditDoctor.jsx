@@ -2,8 +2,7 @@ import React from "react";
 import styles from"./EditDoctor.module.css";
 import { useEffect,useState } from 'react';
 import axios from 'axios'; 
-import { useLocation } from 'react-router-dom';
-
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Main() {
   /* eslint-disable no-unused-vars */
@@ -15,18 +14,10 @@ export default function Main() {
   const [email, setemail] = useState(doctor_editing.email);
   const [selectedspeciality,setseletedspeciality] = useState("");
   const [displayedSpeciality, setDisplayedSpeciality] = useState([]);
-  const [removespeciality,setremovespeciality] = useState('')
-  const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
+  const [removespeciality,setremovespeciality] = useState('');
+  const adminId = location.state.adminId;
 
-  // useEffect(() => {
-  //   // Initialize displayedSpeciality with the names of the doctor's current specialties
-  //   if (doctor_editing.speciality && Array.isArray(doctor_editing.speciality)) {
-  //     const names = doctor_editing.speciality.map(spec => spec.name);
-  //     setDisplayedSpeciality(names);
-  //     const ids = doctor_editing.speciality.map(spec => spec.speciality_id);
-  //     setSelectedSpecialityIds(ids);
-  //   }
-  // }, [doctor_editing]);
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -64,47 +55,6 @@ export default function Main() {
     fetchData();
   }, []);
 
-  // const handleDisplay = () => {
-
-  //   if(selectedspeciality && !displayedSpeciality.includes(selectedspeciality)){
-  //     setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
-  //     setseletedspeciality("");
-  //   }
-  //   else if(!selectedspeciality){
-  //     alert('Please select a speciality first.');
-  //   }
-  //   else{
-  //     alert('this speciality is already in the list')
-  //   }
-  // };
-
-  // const handleDisplay = () => {
-  //   const specialityToAdd = specialtylist.find(spec => spec.speciality_id.toString() === selectedspeciality);
-  //   if (specialityToAdd && !displayedSpeciality.some(spec => spec.speciality_id === specialityToAdd.speciality_id)) {
-  //     setDisplayedSpeciality([...displayedSpeciality, specialityToAdd]);
-  //     setseletedspeciality("");
-  //   } else if (!selectedspeciality) {
-  //     alert('Please select a speciality first.');
-  //   } else {
-  //     alert('This speciality is already in the list');
-  //   }
-  // };
-//   const handleDisplay = () => {
-//     console.log(`Selected Specialty: ${selectedspeciality}`);
-//     console.log(`Displayed Speciality Names:`, displayedSpeciality);
-//     console.log(`Selected Speciality IDs:`, selectedSpecialityIds);
-
-//     const speciality = specialtylist.find(s => s.name === selectedspeciality);
-//     if (speciality && !selectedSpecialityIds.includes(speciality.speciality_id)) {
-//         setSelectedSpecialityIds([...selectedSpecialityIds, speciality.speciality_id]);
-//         setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
-//         setseletedspeciality("");
-//     } else if (!selectedspeciality) {
-//         alert('Please select a speciality first.');
-//     } else {
-//         alert('This speciality is already in the list.');
-//     }
-// };
 const handleDisplay = () => {
   console.log(`Selected Specialty: ${selectedspeciality}`);
   const specialityToAdd = specialtylist.find(s => s.name === selectedspeciality);
@@ -126,41 +76,18 @@ const handleRemove = () => {
   setremovespeciality('');
 };
 
-  
-  // const handleRemove = () =>{
-  //   if (removespeciality) {
-  //     setDisplayedSpeciality(displayedSpeciality.filter(item => item !== removespeciality));
-  //     setremovespeciality(''); // Clear selected item
-  //   }
-  // };
-
-  // const handleDisplay = () => {
-  //   const speciality = specialtylist.find(s => s.name === selectedspeciality);
-  //   if (speciality && !selectedSpecialityIds.includes(speciality.speciality_id)) {
-  //     setSelectedSpecialityIds([...selectedSpecialityIds, speciality.speciality_id]);
-  //     setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
-  //     setseletedspeciality("");
-  //   } else if (!selectedspeciality) {
-  //     alert('Please select a speciality first.');
-  //   } else {
-  //     alert('This speciality is already in the list');
-  //   }
-  // };
-  
-  // const handleRemove = () => {
-  //   const speciality = specialtylist.find(s => s.name === removespeciality);
-  //   if (speciality) {
-  //     setSelectedSpecialityIds(selectedSpecialityIds.filter(id => id !== speciality.speciality_id));
-  //     setDisplayedSpeciality(displayedSpeciality.filter(name => name !== removespeciality));
-  //     setremovespeciality('');
-  //   }
-  // };
 
   const transferaddfacility= ()=>{
     //change to the real edit facility path
-    window.location.href = "/editfacilities";
+    window.location.href = `/admin/facility/${adminId}/`;
     console.log("transfer to edit facilities")
   }
+
+  const transferAddDoctorPage = () => {
+    // change to add doctor page
+    navigate(`/addDoctors/${adminId}`);
+    console.log("transfer to doctor arrangement");
+  };
 
   const handleSubmit = async(e) =>{
     e.preventDefault();
@@ -168,11 +95,9 @@ const handleRemove = () => {
     const password = doctor_editing.password;
     const phone_number = doctor_editing.phone_number
     const is_active = doctor_editing.is_active
-    // const speciality = displayedSpeciality.join(", ");
+   
     console.log('displayedSpeciality',displayedSpeciality);
-    // const specialityIds = displayedSpeciality.map(name => 
-    //   specialtylist.find(spec => spec.name === name)?.speciality_id
-    // ).filter(id => id !== undefined);
+    
     const specialityIds = displayedSpeciality.map(speciality => speciality.speciality_id);
 
     console.log('specialityIds',specialityIds);
@@ -207,20 +132,15 @@ const handleRemove = () => {
  
 
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["top-bar-background"]}></div>
-        <div className={styles["frame"]}>
-          <div className={styles["company-name-icon"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["medical-cross"]}>
-              <div className={styles["group"]}>
-                <div className={styles["vector-stroke"]}></div>
+    <div className={styles['main-container']}>
+                <div  className={styles['top-bar']}>
+                  <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div className={styles["frame-1"]}>
         <div className={styles["frame-2"]}>
           <span className={styles["specialty-available"]}>Specialty Available</span>
@@ -285,7 +205,7 @@ const handleRemove = () => {
       <span className={styles["edit-doctors-information"]}>
         Edit Doctor’s Information
       </span>
-      <span className={styles["add-manage-doctor"]}>Add/Manage Doctor</span>
+      <span className={styles["add-manage-doctor"]} onClick={transferAddDoctorPage}>Add/Manage Doctor</span>
       <div className={styles["edit"]}></div>
       <div className={styles["frame-1b"]}>
         <div className={styles["frame-1c"]}>

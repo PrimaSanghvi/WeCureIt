@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './SignupPage.module.css';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
 
 export default function SignupPage() {
   const [first_name, setFirstName] = useState('');
@@ -29,6 +29,7 @@ export default function SignupPage() {
       first_name: '',
       last_name: '',
     });
+    const [allFilled, setAllFilled] = useState(false);
 
     const validateEmail = () => {
       if (!email.trim()) {
@@ -39,9 +40,9 @@ export default function SignupPage() {
         setEmailError("");
       }
     };
+
     const validateAddress = () => {
       let errors = {};
-    
       if (!addressLine1.trim()) errors.addressLine1 = "Street Address is required.";
       // AddressLine2 is optional
       setFormErrors(errors); // Assuming you have a state to handle form-wide errors
@@ -76,48 +77,91 @@ export default function SignupPage() {
       setFormErrors(errors); // Assuming you have a state to handle form-wide errors
       return Object.keys(errors).length === 0;
     }
+
+  useEffect(() => {
+    const handleAllFilled = () => {
+      if ((emailError === "") && (passwordError === "") && (confrimPasswordError === "")) {
+        if (first_name && last_name) {
+          if (addressLine1 && city && state && zipCode && phone_number) {
+            setAllFilled(true);
+          } else {
+            setAllFilled(false);
+          }
+        } else {
+          setAllFilled(false);
+        }
+      } else {
+        setAllFilled(false);
+      }
+    };
+
+    handleAllFilled();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [passwordError, confrimPasswordError, emailError, formErrors]);
+
     const validatePassword = () => {
+      console.log(reenteredPassword);
       if (!password) {
         setPasswordError("Password is required.");
-      } 
-      // else if (password.length < 8) {
-      //   setPasswordError("Password must be at least 8 characters long.");
-      // }
-       else if (!reenteredPassword) {
-        setconfrimPasswordError("Re-entering the password is required.");
-      } else if (password !== reenteredPassword) {
-        setconfrimPasswordError("Passwords do not match.");
       } else {
         setPasswordError("");
-        setconfrimPasswordError("")
       }
+      if (!reenteredPassword) {
+        setconfrimPasswordError("Re-entering the password is required.");
+      } else {
+        setconfrimPasswordError("");
+      }
+      
+      if (password && reenteredPassword) {
+        if (password !== reenteredPassword) {
+          setconfrimPasswordError("Passwords do not match.");
+        } else {
+          setPasswordError("");
+          setconfrimPasswordError("");
+        }
+      }
+
     };
   
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // if (!validatePassword()) {
-        //   console.error("Password validation failed.");
-         // return; // Prevent form submission if passwords do not match
-       // }
-        
-        const formData = {
-            first_name,
-            last_name,
-            email,
-            password,
-            addressLine1,
-            addressLine2,
-            city,
-            state,
-            zipCode,
-            phone_number, // Include static phone number in the form data
+        // Ensure that email is unique:
+        console.log(email);
+
+        const payload = {
+          email: email.toUpperCase(),
+          validEmail: false
         };
 
-      
-            navigate('/creditCardDetails', { state: {formData}});
-          
-            
+        // Get all emails to see if the patient can use the email:
+        axios.post(`http://127.0.0.1:8000/api/allEmails/`, payload)
+        .then(response => {
+          console.log('Response data:', response.data);
+
+          // Email taken:
+          if (response.data["validEmail"]) {
+            setEmailError("Email is already taken! Please login or use a different email.")
+          } else {
+            const formData = {
+              first_name,
+              last_name,
+              email,
+              password,
+              addressLine1,
+              addressLine2,
+              city,
+              state,
+              zipCode,
+              phone_number, // Include static phone number in the form data
+          };
+        
+          navigate('/creditCardDetails', { state: {formData}});
+          }
+        })
+        .catch(error => {
+          console.error('Error retrieving all emails:', error);
+        });
     };
     
     return (
@@ -279,23 +323,29 @@ export default function SignupPage() {
                {confrimPasswordError && <div style={{ color: 'red' }}>{confrimPasswordError}</div>}
             </div>
           </div>
-          <div className={styles['section-b']}>
-            <div className={styles['group-9']}>
-              <div className={styles['box-d']}>
-                <div className={styles['section-c']} />
+          {/* Change 'Next' depending on if all components are filled: */}
+          {allFilled ? (
+            <div className={styles['section-b']}>
+              <div className={styles['group-9']}>
+                  <button className={styles['box-d']} onClick={handleSubmit} disabled={!allFilled}>
+                    <label className={styles['text-12']}>Next</label>
+                  </button>
               </div>
             </div>
-            <button type="submit">
-              <label className={styles['text-12']} onClick={handleSubmit}>Next</label>
-            </button>
-            <div className={styles['pic-3']} />
-          </div>
+          ) : (
+            <div className={styles['section-b']}>
+              <div className={styles['group-9']}>
+                  <button className={styles['box-d2']} onClick={handleSubmit} disabled={!allFilled}>
+                    <label className={styles['text-12']}>Next</label>
+                  </button>
+              </div>
+            </div>
+          )}
           <div className={styles['section-d']}>
             <div className={styles['box-e']}>
               <span className={styles['text-13']}>Have an Account</span>
               <span className={styles['text-14']}>? </span>
               <Link to="/">Login</Link>
-              {/* <span className={styles['text-15']}>Login</span> */}
             </div>
           </div>
           <div className={styles['box-f']}>
