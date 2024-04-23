@@ -187,14 +187,15 @@ class AllDoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ('doctor_id', 'first_name', 'last_name', 'speciality_id', 'email', 'password', 'phone_number', 'is_active')
-
+## here i update the address => addressLine1
 class AllFacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
         fields = ('facility_id', 'name', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'rooms_no', 'phone_number', 'is_active')
 
 # add doctor schedule to the database(handle repeated adding cases)
-class DocScheduleSerializer(serializers.ModelSerializer):
+# to distinguish from another DocSchedule Serializer
+class DocScheduleSerializerAdd(serializers.ModelSerializer):
     doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
     facility_id = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all(), many=True)
     speciality_id = serializers.PrimaryKeyRelatedField(queryset=Speciality.objects.all(), many=True)
@@ -259,8 +260,7 @@ class SpecialtyUnlinkSerializer(serializers.Serializer):
         for schedule in schedules:
             # Remove the specialty from the schedule
             schedule.speciality_id.remove(speciality_id)
- 
-    
+
 class FacilitySerializer(serializers.ModelSerializer):
     speciality_id = serializers.PrimaryKeyRelatedField(
         queryset=Speciality.objects.all(),
@@ -524,4 +524,12 @@ class PatientMedicalRecSerialier(serializers.ModelSerializer):
         model = Patient_record
         fields = '__all__'
 
+# to handle the doctor schedule filter
+class DocScheduleSerializerFilter(serializers.ModelSerializer):
+    doctor = AllDoctorSerializer(source='doctor_id', read_only=True)
+    facility = AllFacilitySerializer(source='facility_id', many=True, read_only=True)
+    speciality = SpecialitySerializer(source='speciality_id', many=True, read_only=True)
 
+    class Meta:
+        model = Doc_schedule
+        fields = ('schedule_id', 'doctor', 'facility', 'speciality', 'days_visiting', 'visiting_hours_start', 'visiting_hours_end')

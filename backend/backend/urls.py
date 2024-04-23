@@ -92,4 +92,8 @@ urlpatterns = [
     path('api/facilityinfo/<int:pk>/', views.FacilityDetail.as_view(), name='doctor-info'),
     path('api/specialtyinfo/<int:pk>/', views.SpecialtyDetail.as_view(), name='doctor-info'),
     path('api/patientmedicalcreate/', views.PatientRecCreateView.as_view(), name='doctor-info'),
+    ###### get doc schedule List
+    # GET request
+    # 
+    path('api/findAvailableSchedule/', views.DocScheduleListView.as_view(), name='search_available_schedule'),
 ]
