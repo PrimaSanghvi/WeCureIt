@@ -132,6 +132,11 @@ class AdminTable(models.Model):
     is_active = models.BooleanField(default=True)
     phone_number = models.CharField(max_length=20)
 
+    def save(self, *args, **kwargs):
+        if self.password:
+            self.password = make_password(self.password)
+        super().save(*args, **kwargs)
+
 class ManageRooms(models.Model):
     room_id = models.BigAutoField(auto_created = True,
                   primary_key = True,

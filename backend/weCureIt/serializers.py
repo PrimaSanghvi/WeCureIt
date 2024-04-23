@@ -169,7 +169,7 @@ class AdminLoginSerializer(serializers.Serializer):
         try:
             admin = AdminTable.objects.get(email=data.get("email"))
             print("Admin found: ", admin.email)
-            if data.get("password") != admin.password:
+            if not check_password(data.get("password"), admin.password):
                 raise serializers.ValidationError("Invalid login credentials")
         except AdminTable.DoesNotExist:
             raise serializers.ValidationError("Invalid login credentials")
