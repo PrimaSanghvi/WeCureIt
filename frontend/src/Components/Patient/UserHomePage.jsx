@@ -83,6 +83,7 @@ export const UserHomePage = () => {
 
     fetchUpcomingAppointments();
     fetchPastAppointments();
+    // eslint-disable-next-line
   }, [patientId, selectedDate]);
 
   // Handle trying to cancel an appointment given a selected appointment:
@@ -179,7 +180,7 @@ export const UserHomePage = () => {
                     </div>
                   </div>
                   {/* Display Upcoming Appointments: */}
-                  {upcomingAppointments.map((upcomingApp, index)=> {
+                  {upcomingAppointments.length > 0 ? upcomingAppointments.map((upcomingApp, index)=> {
                     const backgroundColors = ['white', '#eeeeff']; // Add more colors as needed
 
                     // Select a background color based on the index
@@ -236,7 +237,17 @@ export const UserHomePage = () => {
                         </div>
                       </div>
                     );
-                  })}
+                  }): (
+                    <div  className={styles["row"]}>
+                      <div className={styles['date-f']}>
+                          <div className={styles['date-10']}>
+                            <div className={styles['date-11']}>
+                              <span className={styles['date-text']}>No Upcoming Appointments Found</span>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <span  className={styles['past-appointments']}>Past Appointments</span>

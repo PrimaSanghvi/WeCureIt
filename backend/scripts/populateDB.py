@@ -145,6 +145,17 @@ def run():
                        phone_number = "1111111111")
     patientB.save()
 
+    patientC = Patient(first_name = "Sabrina",
+                       last_name = "Porter",
+                       email = "SPORTER@GMAIL.COM",
+                       password = "111",
+                       addressLine1 = "testing",
+                       city = "Washington",
+                       state = "DC",
+                       zipCode = 11111,
+                       phone_number = "1111111111")
+    patientC.save()
+
     # Patient Credit Card:
     patientCreditA = PatientCreditCard(patient_id = patientA,
                                        card_number = "111",
