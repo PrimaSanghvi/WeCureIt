@@ -541,3 +541,59 @@ class DocScheduleListView(generics.ListAPIView):
                             })
 
         return Response(flattened_data)
+    
+class PatientUpcomingAppointmentsView(APIView):
+    """
+    View to get upcoming appointments for a specific patient:
+    """
+    def get(self, request, patient_id):
+        today = timezone.now().astimezone(timezone.get_default_timezone()).date().strftime('%Y-%m-%d')
+        currentTime = datetime.now().strftime("%H:%M:%S")
+
+        appointments = Appointments.objects.filter(
+            patient_id = patient_id,
+            date__gte = today
+        ).select_related('patient_id', 'facility_id').order_by('date', 'start_time')
+
+        serializer = AppointmentSerializer(appointments, many=True)
+
+        upcomingAppointments = []
+        for app in serializer.data:
+            if (app['date'] == today):
+                if (app['end_time'] >= currentTime):
+                    upcomingAppointments.append(app)
+                else:
+                    continue
+            else:
+                upcomingAppointments.append(app)
+        return Response(upcomingAppointments)
+    
+class PatientPastAppointmentsView(APIView):
+    """
+    View to get past appointments for a specific patient:
+    """
+    def get(self, request, patient_id):
+        today = timezone.now().astimezone(timezone.get_default_timezone()).date()
+        currentTime = datetime.now().strftime("%H:%M:%S")
+
+        appointments = Appointments.objects.filter(
+            patient_id = patient_id,
+            date__lte= today
+        ).select_related('patient_id', 'facility_id').order_by('date', 'start_time')
+
+        serializer = AppointmentSerializer(appointments, many=True)
+
+        pastAppointments = []
+        for app in serializer.data:
+            if (app['date'] == today):
+                print(app['end_time'])
+                print(currentTime)
+                if (app['end_time'] < currentTime):
+                    print("INSIDE!")
+                    pastAppointments.append(app)
+                else:
+                    continue
+            else:
+                pastAppointments.append(app)
+
+        return Response(pastAppointments)

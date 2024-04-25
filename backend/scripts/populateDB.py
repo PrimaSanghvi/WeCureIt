@@ -219,9 +219,82 @@ def run():
     patientAppAPast.save()
 
     # -- Patient B --
+    # Future
     startTime = datetime.time(9, 0, 0)
     endTime = datetime.time(9, 30, 0)
     appDate = datetime.date(2024, 4, 29)
+    patientAppBFuture = Appointments(patient_id = patientB,
+                               facility_id = facB,
+                               doctor_id = docB,
+                               speciality_id = spDentist,
+                               schedule_id = docBSched,
+                               patient_rec_id = patientRecB,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBFuture.save()
+
+    startTime = datetime.time(9, 0, 0)
+    endTime = datetime.time(9, 30, 0)
+    appDate = datetime.date(2024, 5, 1)
+    patientAppBFuture = Appointments(patient_id = patientB,
+                               facility_id = facB,
+                               doctor_id = docB,
+                               speciality_id = spDentist,
+                               schedule_id = docBSched,
+                               patient_rec_id = patientRecB,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBFuture.save()
+
+    startTime = datetime.time(9, 0, 0)
+    endTime = datetime.time(9, 30, 0)
+    appDate = datetime.date(2024, 5, 2)
+    patientAppBFuture = Appointments(patient_id = patientB,
+                               facility_id = facB,
+                               doctor_id = docB,
+                               speciality_id = spDentist,
+                               schedule_id = docBSched,
+                               patient_rec_id = patientRecB,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBFuture.save()
+
+    # Past
+    startTime = datetime.time(9, 0, 0)
+    endTime = datetime.time(9, 30, 0)
+    appDate = datetime.date(2024, 3, 25)
+    patientAppBFuture = Appointments(patient_id = patientB,
+                               facility_id = facB,
+                               doctor_id = docB,
+                               speciality_id = spDentist,
+                               schedule_id = docBSched,
+                               patient_rec_id = patientRecB,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBFuture.save()
+
+    startTime = datetime.time(20, 0, 0)
+    endTime = datetime.time(20, 30, 0)
+    appDate = datetime.date(2024, 3, 20)
+    patientAppBFuture = Appointments(patient_id = patientB,
+                               facility_id = facA,
+                               doctor_id = docA,
+                               speciality_id = spCardio,
+                               schedule_id = docBSched,
+                               patient_rec_id = patientRecB,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBFuture.save()
+
+    # Today
+    startTime = datetime.time(9, 0, 0)
+    endTime = datetime.time(9, 15, 0)
+    appDate = datetime.date(2024, 4, 24)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
                                doctor_id = docB,

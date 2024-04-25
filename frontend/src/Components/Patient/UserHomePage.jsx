@@ -1,27 +1,81 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from './UserHomePage.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useParams, Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import axios from "axios";
 
 export const UserHomePage = () => {
   const { patientId } = useParams();
   const location = useLocation();
   const message = location.state?.message;
-    return (
-        
+
+  const [upcomingAppointments, setUpComingAppointments] = useState([]);
+  const [pastAppointments, setPastAppointments] = useState([]);
+
+  // Fetch patient's appointments:
+  useEffect(() => {
+    const fetchUpcomingAppointments = async () => {
+      try {
+        const patientUpResp = await axios.get(`http://127.0.0.1:8000/api/patientUpcomingAppointment/${patientId}/`);
+        const formatedApp = patientUpResp.data.map(item => ({
+          DateTime: item.DateTime,
+          Doctor: item.DoctorName,
+          Specialty: item.SpecialityType,
+          FacilityName: item.Location,
+          Address: item.Address,
+          EndTime: item.end_time,
+          DateOnly: item.DateOnly,
+          TimeOnly: item.TimeOnly,
+          AppointmentID: item.appointment_id
+        }));
+
+        setUpComingAppointments(formatedApp);
+      } catch (error) {
+        console.error("Error fetching upcoming appointments:", error);
+      }
+    };
+
+    const fetchPastAppointments = async () => {
+      try {
+        const patientPastApp = await axios.get(`http://127.0.0.1:8000/api/patientPastAppointment/${patientId}/`);
+        const formatedApp = patientPastApp.data.map(item => ({
+          DateTime: item.DateTime,
+          Doctor: item.DoctorName,
+          Specialty: item.SpecialityType,
+          FacilityName: item.Location,
+          Address: item.Address,
+          EndTime: item.end_time,
+          DateOnly: item.DateOnly,
+          TimeOnly: item.TimeOnly
+        }));
+
+        setPastAppointments(formatedApp);
+      } catch (error) {
+        console.error("Error fetching past appointments:", error);
+      }
+    }
+
+    fetchUpcomingAppointments();
+    fetchPastAppointments();
+  }, []);
+
+  // Handle trying to cancel an appointment given a selected appointment:
+  const handleCancel = (appointmentID) => {
+    console.log(appointmentID);
+  };
+
+  return (      
             <div  className={styles['main-container']}>
               <div  className={styles['top-bar']}>
                
                 <div  className={styles['frame']}>
                  
                 <div className={styles['main-container2']}>
-      <span className={styles['we-cure-it']}>WeCureIt</span>
-      <div className={styles['vector']} />
-    </div>
-
-
+                  <span className={styles['we-cure-it']}>WeCureIt</span>
+                  <div className={styles['vector']} />
+                </div>
                   <div  className={styles['create-appointment-button']}>
                     <button  className={styles['create-appointment-btn']}>
                       <div  className={styles['frame-1']}>
@@ -100,92 +154,65 @@ export const UserHomePage = () => {
                       </div>
                     </div>
                   </div>
-                  <div  className={styles['row']}>
-                    <div  className={styles['date-f']}>
-                      <div  className={styles['date-10']}>
-                        <div  className={styles['date-11']}>
-                          <span  className={styles['date-text']}>03/30/2024</span>
+                  {/* Display Upcoming Appointments: */}
+                  {upcomingAppointments.map((upcomingApp, index)=> {
+                    const backgroundColors = ['white', '#eeeeff']; // Add more colors as needed
+
+                    // Select a background color based on the index
+                    const backgroundColor = backgroundColors[index % backgroundColors.length];
+
+                    return(
+                      <div  className={styles["row"]} style={{backgroundColor: backgroundColor}} key={upcomingApp.AppointmentID} onClick={()=>handleCancel(upcomingApp.AppointmentID)}>
+                        {/* Date: */}
+                        <div className={styles['date-f']}>
+                          <div className={styles['date-10']}>
+                            <div className={styles['date-11']}>
+                              <span className={styles['date-text']} key={index}>{upcomingApp.DateOnly}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Time: */}
+                        <div className={styles['time-12']}>
+                          <div className={styles['time-13']}>
+                            <div className={styles['time-button']}>
+                              <span className={styles['time-text']}>{upcomingApp.TimeOnly}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Doctor: */}
+                        <div className={styles['doctor-14']}>
+                          <div className={styles['doctor-15']}>
+                            <div className={styles['doctor-16']}>
+                              <span className={styles['doctor-17']}>Dr. {upcomingApp.Doctor}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Specialty: */}
+                        <div className={styles['specialty-18']}>
+                          <div className={styles['specialty-19']}>
+                            <div className={styles['specilty-1a']}>
+                              <span className={styles['specialty-1b']}>{upcomingApp.Specialty}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Facility: */}
+                        <div className={styles['facility-1c']}>
+                          <div className={styles['facility-1d']}>
+                            <div className={styles['facility-1e']}>
+                              <span className={styles['facility-1f']}>{upcomingApp.FacilityName}
+                              <br />
+                              {upcomingApp.Address}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div  className={styles['time-12']}>
-                      <div  className={styles['time-13']}>
-                        <button  className={styles['time-button']}>
-                          <span  className={styles['time-text']}>10:00 AM - 10:30 AM</span>
-                        </button>
-                      </div>
-                    </div>
-                    <div  className={styles['doctor-14']}>
-                      <div  className={styles['doctor-15']}>
-                        <div  className={styles['doctor-16']}>
-                          <span  className={styles['doctor-17']}>Dr. Gordon Ortiz</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div  className={styles['specialty-18']}>
-                      <div  className={styles['specialty-19']}>
-                        <div  className={styles['specialty-1a']}>
-                          <span  className={styles['specialty-1b']}>Cardiology</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div  className={styles['facility-1c']}>
-                      <div  className={styles['facility-1d']}>
-                        <div  className={styles['facility-1e']}>
-                          <span  className={styles['facility-1f']}>
-                            The George Washington University Hospital
-                            <br />
-                            900 23rd St. NW
-                            <br />
-                            Washington D.C.,20037
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div  className={styles['row-20']}>
-                    <div  className={styles['date-21']}>
-                      <div  className={styles['date-22']}>
-                        <div  className={styles['date-23']}>
-                          <span  className={styles['date-24']}>04/25/2024</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div  className={styles['time-25']}>
-                      <div  className={styles['time-26']}>
-                        <div  className={styles['time-27']}>
-                          <span  className={styles['time-28']}>12:00 PM - 1:00 PM</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div  className={styles['doctor-29']}>
-                      <div  className={styles['doctor-2a']}>
-                        <div  className={styles['doctor-2b']}>
-                          <span  className={styles['doctor-2c']}>Dr. Amir Wright</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div  className={styles['specialty-2d']}>
-                      <div  className={styles['specialty-2e']}>
-                        <div  className={styles['specialty-2f']}>
-                          <span  className={styles['specialty-30']}>Pediatrics</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div  className={styles['facility-31']}>
-                      <div  className={styles['facility-32']}>
-                        <div  className={styles['facility-33']}>
-                          <span  className={styles['facility-34']}>
-                            Holy Cross Hospital
-                            <br />
-                            1500 Forest Glen Road
-                            <br />
-                            Silver Spring MD 20910
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
               <span  className={styles['past-appointments']}>Past Appointments</span>
