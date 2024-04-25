@@ -5,6 +5,7 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useParams, Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from "axios";
+import { format } from 'date-fns';
 
 export const UserHomePage = () => {
   const { patientId } = useParams();
@@ -44,6 +45,7 @@ export const UserHomePage = () => {
           Specialty: item.SpecialityType,
           FacilityName: item.Location,
           Address: item.Address,
+          StartTime: item.start_time,
           EndTime: item.end_time,
           DateOnly: item.DateOnly,
           TimeOnly: item.TimeOnly,
@@ -112,16 +114,35 @@ export const UserHomePage = () => {
   const [showCancelApp, setShowCancelApp] = useState(false);
   const [showCancelAppConfirm, setShowCancelAppConfirm] = useState(false);
   const [appToCancel, setAppToCancel] = useState(null);
+  const [cancelFee, setCancelFee] = useState(false);
+
+  const currentDay = new Date();
+  const currentDate = format(new Date(), "MM/dd/yyyy");
+  const nextDate = format(currentDay.setDate(currentDay.getDate() + 1), "MM/dd/yyyy");
 
   const handleCancel = (appoint) => {
     setShowCancelApp(true);
     setAppToCancel(appoint);
     setShowCancelAppConfirm(false);
+    setCancelFee(false);
+
+    let date1 = new Date(appoint.DateOnly).getTime();
+    let date2 = new Date(currentDate).getTime();
+    let date3 = new Date(nextDate).getTime();
+
+    if (date1 === date2) {
+      setCancelFee(true);
+    } else if (date2 === date3) {
+      setCancelFee(true);
+    } else {
+      setCancelFee(false);
+    }
   };
 
   const cancelAppointment = async() => {
     try {
       var appointID = appToCancel.AppointmentID;
+      // eslint-disable-next-line
       const cancelApp = await axios.delete(`http://127.0.0.1:8000/api/patientCancelAppointment/${appointID}/`);
     } catch (error) {
       console.error("Error cancelling an appointment:", error);
@@ -132,12 +153,14 @@ export const UserHomePage = () => {
     setShowCancelApp(false);
     setAppToCancel(null);
     setShowCancelAppConfirm(false);
+    setCancelFee(false);
   }
 
   const handleCloseButtonRefresh = () => {
     setShowCancelApp(false);
     setAppToCancel(null);
     setShowCancelAppConfirm(false);
+    setCancelFee(false);
 
     window.location.reload();
   }
@@ -380,25 +403,29 @@ export const UserHomePage = () => {
                     {appToCancel.Address}
                   </span>
                 </p>
-                <p className={styles['this-appointment-has']}>
-                  <span className={styles['text-wrapper-5']}>This appointment has been</span>
-                  <span className={styles['text-wrapper-6']}> canceled</span>
-                  <span className={styles['text-wrapper-5']}>
-                    .<br />
-                    $50 cancellation fee was charged to your payment
-                    <br />
-                    ending at {cardNumber}.
-                    <br />
-                    Thank you!
-                  </span>
-                </p>
+                {cancelFee &&
+                <div>
+                  <p className={styles['this-appointment-has']}>
+                    <span className={styles['text-wrapper-5']}>This appointment has been</span>
+                    <span className={styles['text-wrapper-6']}> canceled</span>
+                    <span className={styles['text-wrapper-5']}>
+                      .<br />
+                      $50 cancellation fee was charged to your payment
+                      <br />
+                      ending at {cardNumber}.
+                      <br />
+                      Thank you!
+                    </span>
+                  </p>
+                </div>
+                }
                 <div className={styles["close-button2"]}>
-                  <div className={styles["overlap-group-wrapper"]}>
-                    <div className={styles['overlap-group2']} onClick={handleCloseButtonRefresh}>
-                      <div className={styles['text-wrapper-4']}>Close</div>
+                    <div className={styles["overlap-group-wrapper"]}>
+                      <div className={styles['overlap-group2']} onClick={handleCloseButtonRefresh}>
+                        <div className={styles['text-wrapper-4']}>Close</div>
+                      </div>
                     </div>
                   </div>
-                </div>
               </div>
               )}
 

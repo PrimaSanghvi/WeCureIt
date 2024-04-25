@@ -573,7 +573,7 @@ class PatientPastAppointmentsView(APIView):
     View to get past appointments for a specific patient:
     """
     def get(self, request, patient_id):
-        today = timezone.now().astimezone(timezone.get_default_timezone()).date()
+        today = timezone.now().astimezone(timezone.get_default_timezone()).date().strftime('%Y-%m-%d')
         currentTime = datetime.now().strftime("%H:%M:%S")
 
         appointments = Appointments.objects.filter(
@@ -586,13 +586,10 @@ class PatientPastAppointmentsView(APIView):
         pastAppointments = []
         for app in serializer.data:
             if (app['date'] == today):
-                print(app['end_time'])
-                print(currentTime)
-                if (app['end_time'] < currentTime):
-                    print("INSIDE!")
-                    pastAppointments.append(app)
-                else:
+                if (app['end_time'] >= currentTime):
                     continue
+                else:
+                    pastAppointments.append(app)
             else:
                 pastAppointments.append(app)
 

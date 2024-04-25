@@ -273,9 +273,23 @@ def run():
                                date = appDate)
     patientAppBFuture.save()
 
-    startTime = datetime.time(9, 0, 0)
-    endTime = datetime.time(9, 30, 0)
+    startTime = datetime.time(16, 0, 0)
+    endTime = datetime.time(16, 30, 0)
     appDate = datetime.date(2024, 5, 2)
+    patientAppBFuture = Appointments(patient_id = patientB,
+                               facility_id = facB,
+                               doctor_id = docB,
+                               speciality_id = spDentist,
+                               schedule_id = docBSched,
+                               patient_rec_id = patientRecB,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBFuture.save()
+
+    startTime = datetime.time(16, 0, 0)
+    endTime = datetime.time(16, 30, 0)
+    appDate = datetime.date(2024, 4, 25)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
                                doctor_id = docB,
@@ -302,9 +316,9 @@ def run():
                                date = appDate)
     patientAppBFuture.save()
 
-    startTime = datetime.time(20, 0, 0)
-    endTime = datetime.time(20, 30, 0)
-    appDate = datetime.date(2024, 3, 20)
+    startTime = datetime.time(1, 00, 0)
+    endTime = datetime.time(1, 00, 0)
+    appDate = datetime.date(2024, 4, 25)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facA,
                                doctor_id = docA,
