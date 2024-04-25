@@ -13,30 +13,67 @@ export default function Main() {
   const [last_name, setLastName] = useState(doctor_editing.last_name);
   const [email, setemail] = useState(doctor_editing.email);
   const [selectedspeciality,setseletedspeciality] = useState("");
-  const [displayedSpeciality, setDisplayedSpeciality] = useState([doctor_editing.speciality]);
+  const [displayedSpeciality, setDisplayedSpeciality] = useState([]);
   const [removespeciality,setremovespeciality] = useState('')
+  ;
 
 
-  const handleDisplay = () => {
+  useEffect(() => {
+    // Initialize displayedSpeciality with the names of the doctor's current specialties
+    try
+    {
+    if (doctor_editing.speciality && Array.isArray(doctor_editing.speciality)) {
+      const processedData = doctor_editing.speciality.map(spec => ({
+        speciality_id: spec.speciality_id,
+          name: spec.name
+      }));
+      setDisplayedSpeciality(processedData);
+    }}
+    catch(error)
+    {
+      console.error('Error fetching data:', error);
+    }
+  }, [doctor_editing]);
 
-    if(selectedspeciality&& !displayedSpeciality.includes(selectedspeciality)){
-      setDisplayedSpeciality([...displayedSpeciality, selectedspeciality]);
+  useEffect(() => {
+    
+    const fetchData = async () => {
+      try {
+        // console.log(doctor_editing)
+        const response = await axios.get('http://127.0.0.1:8000/api/specialties/');
+        const formattedData = response.data.map(item => ({
+          speciality_id: item.speciality_id,
+          name: item.name
+        }));
+        setspecialtylist(formattedData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+const handleDisplay = () => {
+  console.log(`Selected Specialty: ${selectedspeciality}`);
+  const specialityToAdd = specialtylist.find(s => s.name === selectedspeciality);
+  if (specialityToAdd && !displayedSpeciality.some(spec => spec.speciality_id === specialityToAdd.speciality_id)) {
+      // Here, specialityToAdd is the full object from specialtylist that matches the name
+      setDisplayedSpeciality([...displayedSpeciality, specialityToAdd]);
       setseletedspeciality("");
-    }
-    else if(!selectedspeciality){
-      alert('Please select a speciality first.');
-    }
-    else{
-      alert('this speciality is already in the list')
-    }
-  };
+  } else if (!selectedspeciality) {
+      alert('Please select a specialty first.');
+  } else {
+      alert('This specialty is already in the list.');
+  }
+};
 
-  const handleRemove = () =>{
-    if (removespeciality) {
-      setDisplayedSpeciality(displayedSpeciality.filter(item => item !== removespeciality));
-      setremovespeciality(''); // Clear selected item
-    }
-  };
+  
+const handleRemove = () => {
+  console.log('removespeciality',removespeciality);
+  setDisplayedSpeciality(displayedSpeciality.filter(spec => spec.name !== removespeciality));
+  setremovespeciality('');
+};
+
 
   const transferaddfacility= ()=>{
     //change to the real edit facility path
@@ -50,17 +87,26 @@ export default function Main() {
     const password = doctor_editing.password;
     const phone_number = doctor_editing.phone_number
     const is_active = doctor_editing.is_active
-    const speciality = displayedSpeciality.join(", ");
+   
+    console.log('displayedSpeciality',displayedSpeciality);
+    
+    const specialityIds = displayedSpeciality.map(speciality => speciality.speciality_id);
+
+    console.log('specialityIds',specialityIds);
+
     const updateddoctor = {
       doctor_id,
       first_name,
       last_name,
-      speciality,
       email,
       password,
       phone_number,
-      is_active
+      is_active,
+      speciality_id: specialityIds
     }
+   
+  
+    
     console.log(updateddoctor)
     try {
       // Send a PUT request to update the doctor's is_active status
@@ -75,22 +121,7 @@ export default function Main() {
   
   
 
-  useEffect(() => {
-    
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/specialties/');
-        const formattedData = response.data.map(item => ({
-          speciality_id: item.id,
-          name: item.name
-        }));
-        setspecialtylist(formattedData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData();
-  }, []);
+ 
 
   return (
     <div className={styles["main-container"]}>
@@ -153,12 +184,15 @@ export default function Main() {
             <div className={styles["frame-16"]}>
               <div className={styles["group-17"]}>
                 <div className={styles["group-18"]}>
-                {displayedSpeciality.map((speciality, index) => (
-                      <div className={styles["cardiology-19"]}key={index} onClick={()=>setremovespeciality(speciality)}>
-                        {speciality}
-                      </div>
-                    ))}
-                  
+                {displayedSpeciality.map((speciality, index) => 
+                {
+                  return(
+                    <div className={styles["cardiology-19"]} key={index} onClick={() => setremovespeciality(speciality.name)}>
+                    {speciality.name}
+                  </div>
+                  );
+                })}
+
                 </div>
               </div>
             </div>
