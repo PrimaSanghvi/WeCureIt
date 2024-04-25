@@ -1237,7 +1237,7 @@ button {
   height: 237px;
   margin: 14px 0 0 84px;
   z-index: 16;
-  overflow: hidden;
+  overflow: auto;
 }
 .table-36 {
   display: flex;

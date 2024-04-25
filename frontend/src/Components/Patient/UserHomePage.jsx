@@ -59,7 +59,7 @@ export const UserHomePage = () => {
 
     fetchUpcomingAppointments();
     fetchPastAppointments();
-  }, []);
+  }, [patientId]);
 
   // Handle trying to cancel an appointment given a selected appointment:
   const handleCancel = (appointmentID) => {
@@ -276,52 +276,68 @@ export const UserHomePage = () => {
                       </div>
                     </div>
                   </div>
-                  <div  className={styles['row-55']}>
-                    <div  className={styles['date-56']}>
-                      <div  className={styles['date-57']}>
-                        <div  className={styles['date-58']}>
-                          <span  className={styles['date-59']}>02/01/2024</span>
+                {/* Display Past Appointments */}
+                {pastAppointments.map((pastApp,index)=> {
+                  const backgroundColors = ['white', '#eeeeff']; // Add more colors as needed
+
+                  // Select a background color based on the index
+                  const backgroundColor = backgroundColors[index % backgroundColors.length];
+
+                  return (
+                    <div className={styles['row-55']} style={{backgroundColor: backgroundColor}} key={pastApp.AppointmentID}>
+                      {/* Date: */}
+                      <div className={styles['date-56']}>
+                        <div className={styles['date-57']}>
+                          <div className={styles['date-58']}>
+                            <span className={styles['date-59']}>{pastApp.DateOnly}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div  className={styles['time-5a']}>
-                      <div  className={styles['time-5b']}>
-                        <div  className={styles['time-5c']}>
-                          <span  className={styles['time-5d']}>3:00 PM - 4:00 PM</span>
+
+                      {/* Time: */}
+                      <div className={styles['time-5a']}>
+                        <div className={styles['time-5b']}>
+                          <div className={styles['time-5c']}>
+                            <span className={styles['time-5d']}>{pastApp.TimeOnly}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div  className={styles['doctor-5e']}>
-                      <div  className={styles['doctor-5f']}>
-                        <div  className={styles['doctor-60']}>
-                          <span  className={styles['doctor-61']}>Dr. Bernard Webb</span>
+
+                      {/* Doctor: */}
+                      <div className={styles['doctor-5e']}>
+                        <div className={styles['doctor-5f']}>
+                          <div className={styles['doctor-60']}>
+                            <span className={styles['doctor-61']}>Dr. {pastApp.Doctor}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div  className={styles['specialty-62']}>
-                      <div  className={styles['specialty-63']}>
-                        <div  className={styles['specialty-64']}>
-                          <span  className={styles['specialty-65']}>Cardiology</span>
+
+                      {/* Specialty: */}
+                      <div className={styles['specialty-62']}>
+                        <div className={styles['specialty-63']}>
+                          <div className={styles['specialty-64']}>
+                            <span className={styles['specialty-65']}>{pastApp.Specialty}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div  className={styles['facility-66']}>
-                      <div  className={styles['facility-67']}>
-                        <div  className={styles['facility-68']}>
-                          <span  className={styles['facility-69']}>
-                            The George Washington University Hospital
+
+                      {/* Facility: */}
+                      <div className={styles['facility-66']}>
+                        <div className={styles['facility-67']}>
+                          <div className={styles['facility-68']}>
+                            <span className={styles['facility-69']}>{pastApp.FacilityName}
                             <br />
-                            900 23rd St. NW
-                            <br />
-                            Washington D.C.,20037
-                          </span>
+                              {pastApp.Address}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
+          </div>
  );
 }  
   
