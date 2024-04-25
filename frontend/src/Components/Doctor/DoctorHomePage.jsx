@@ -141,7 +141,7 @@ useEffect(() => {
                 Medical History
               </a>
             
-            //<Link to={{ pathname: `/doctorHomepage/${patientId}/medical_info/`,
+           
                         
               
           );

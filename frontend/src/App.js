@@ -13,6 +13,7 @@ import ViewMedicalRec from "./Components/Doctor/ViewMedicalRec";
 import AddMedicalRec from "./Components/Doctor/AddMedicalRec";
 import DoctorHomePage from "./Components/Doctor/DoctorHomePage";
 import ReviewMedicalInfo from "./Components/Doctor/ReviewMedicalInfo";
+import ViewAppointment from "./Components/Doctor/ViewAppointment";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
         <Route path="/addpatientrec/"element={<AddMedicalRec/>}/>
         <Route path ="/doctorHomepage/:doctorId" element = {<DoctorHomePage />}/>
         <Route path ="/doctorHomepage/:patientId/medical_info/" element = {<ReviewMedicalInfo />}/>
+        <Route path ="/doctorHomepage/:doctorId/viewappointment" element = {<ViewAppointment />}/>
       </Routes>
     </div>
 </Router>

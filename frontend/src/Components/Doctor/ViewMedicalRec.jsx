@@ -11,8 +11,8 @@ export default function Main() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { data1, data2 } = location.state;
-  console.log("data1:",data1,"data2:",data2);
+  const { data1} = location.state;
+  
 
     
   
@@ -30,8 +30,7 @@ export default function Main() {
     
     fetchData(); // Fetch data when component mounts or when patient_rec_id changes
   }, []);
-  console.log('Data:', patientRecData.medical_diagnosis);
-
+  
   const handleexit = () =>{
     //this may change to the real doctor home page path which is not implemented by my end
     navigate(-1);  
