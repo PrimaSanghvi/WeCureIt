@@ -2017,3 +2017,40 @@ button {
   position: relative;
   width: 274px;
 }
+
+.this-appointment-has {
+  color: transparent;
+  font-family: "Poppins-Medium", Helvetica;
+  font-size: 24px;
+  font-weight: 500;
+  left: 508px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 283px;
+}
+
+.text-wrapper-5 {
+  color: #000000;
+}
+
+.text-wrapper-6 {
+  color: #ff4a4a;
+}
+
+.close-button2 {
+  height: 80px;
+  left: 681px;
+  position: absolute;
+  top: 433px;
+  width: 274px;
+}
+
+.overlap-group2 {
+  background-color: #f24738;
+  border-radius: 10px;
+  height: 80px;
+  position: relative;
+  width: 274px;
+}

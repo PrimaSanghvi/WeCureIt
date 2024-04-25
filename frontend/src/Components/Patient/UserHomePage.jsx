@@ -13,6 +13,7 @@ export const UserHomePage = () => {
 
   const [upcomingAppointments, setUpComingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
+  const [cardNumber, setCardNumber] = useState('');
 
   // Handle when a date was selected as a filter for past appointments:
   // Convert date from YYYY-MM-DD to MM/DD/YYYY
@@ -32,7 +33,7 @@ export const UserHomePage = () => {
     setPastAppointments([]);
   };
 
-  // Fetch patient's appointments:
+  // Fetch patient's appointments & payment information:
   useEffect(() => {
     const fetchUpcomingAppointments = async () => {
       try {
@@ -81,23 +82,71 @@ export const UserHomePage = () => {
       }
     }
 
+    const fetchPatientPayment = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/patientPayment/${patientId}`);
+
+        if (response.status === 200) {
+          var cardNum = response.data.card_number;
+          if (cardNum.length >= 4) {
+            let cardNumStr = String(cardNum).slice(-4);
+            setCardNumber(cardNumStr);
+          } else {
+            setCardNumber(response.data.card_number);
+          }
+        } else {
+          console.error("Error fetching data:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching patient's payment:", error);
+      }
+    }
+
     fetchUpcomingAppointments();
     fetchPastAppointments();
+    fetchPatientPayment();
     // eslint-disable-next-line
   }, [patientId, selectedDate]);
 
   // Handle trying to cancel an appointment given a selected appointment:
   const [showCancelApp, setShowCancelApp] = useState(false);
+  const [showCancelAppConfirm, setShowCancelAppConfirm] = useState(false);
   const [appToCancel, setAppToCancel] = useState(null);
 
   const handleCancel = (appoint) => {
     setShowCancelApp(true);
     setAppToCancel(appoint);
+    setShowCancelAppConfirm(false);
   };
 
-  const handleCancelButton = () => {
+  const cancelAppointment = async() => {
+    try {
+      var appointID = appToCancel.AppointmentID;
+      const cancelApp = await axios.delete(`http://127.0.0.1:8000/api/patientCancelAppointment/${appointID}/`);
+    } catch (error) {
+      console.error("Error cancelling an appointment:", error);
+    }
+  };
+
+  const handleCloseButton = () => {
     setShowCancelApp(false);
     setAppToCancel(null);
+    setShowCancelAppConfirm(false);
+  }
+
+  const handleCloseButtonRefresh = () => {
+    setShowCancelApp(false);
+    setAppToCancel(null);
+    setShowCancelAppConfirm(false);
+
+    window.location.reload();
+  }
+
+  const handleConfirmButton = () => {
+    setShowCancelApp(false);
+    setShowCancelAppConfirm(true);
+
+    cancelAppointment();
   }
 
   return (      
@@ -259,6 +308,7 @@ export const UserHomePage = () => {
                   )}
                 </div>
               </div>
+              {/* Pop-up screen for cancel */}
               {showCancelApp && (
                 <div className={styles["pop-up-modify"]}>
                   <img alt="" className={styles['bench-accounting']}></img>
@@ -288,14 +338,14 @@ export const UserHomePage = () => {
                   <div className={styles["group-button"]}>
                     <div className={styles["cancel-button"]}>
                       <div className={styles["overlap-group-wrapper"]}>
-                        <div className={styles["overlap-group"]}>
+                        <div className={styles["overlap-group"]} onClick={handleConfirmButton}>
                           <div className={styles["text-wrapper-4"]}>Cancel Appointment</div>
                         </div>
                       </div>
                     </div>
                     <div className={styles["close-button"]}>
                       <div className={styles["overlap-group-wrapper"]}>
-                        <div className={styles["close-button-wrapper"]} onClick={handleCancelButton}>
+                        <div className={styles["close-button-wrapper"]} onClick={handleCloseButton}>
                           <div className={styles["text-wrapper-4"]}>Close</div>
                         </div>
                       </div>
@@ -303,6 +353,55 @@ export const UserHomePage = () => {
                   </div>
                 </div>
               )}
+
+              {/* Pop-up screen for cancel: Confirmation */}
+              {showCancelAppConfirm && (
+                <div className={styles["pop-up-modify"]}>
+                <img alt="" className={styles['bench-accounting']}></img>
+                <p className={styles["appointment"]}>
+                  <span className={styles["text-wrapper"]}>
+                    {appToCancel.DateOnly}
+                    <br />
+                    {appToCancel.TimeOnly}
+                    <br />
+                    Dr. {appToCancel.Doctor}
+                    <br />
+                    Specialty: {appToCancel.Specialty}
+                    <br />
+                  </span>
+                  <span className={styles["span"]}>
+                    <br />
+                  </span>
+                  <span className={styles["text-wrapper-2"]}>
+                    {appToCancel.FacilityName}
+                    <br />
+                  </span>
+                  <span className={styles["text-wrapper-3"]}>
+                    {appToCancel.Address}
+                  </span>
+                </p>
+                <p className={styles['this-appointment-has']}>
+                  <span className={styles['text-wrapper-5']}>This appointment has been</span>
+                  <span className={styles['text-wrapper-6']}> canceled</span>
+                  <span className={styles['text-wrapper-5']}>
+                    .<br />
+                    $50 cancellation fee was charged to your payment
+                    <br />
+                    ending at {cardNumber}.
+                    <br />
+                    Thank you!
+                  </span>
+                </p>
+                <div className={styles["close-button2"]}>
+                  <div className={styles["overlap-group-wrapper"]}>
+                    <div className={styles['overlap-group2']} onClick={handleCloseButtonRefresh}>
+                      <div className={styles['text-wrapper-4']}>Close</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              )}
+
               <span  className={styles['past-appointments']}>Past Appointments</span>
               <div  className={styles['filter']}>
                 <span  className={styles['date-filter']}>Date Filter</span>

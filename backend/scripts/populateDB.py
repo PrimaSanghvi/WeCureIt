@@ -169,8 +169,8 @@ def run():
     patientCreditA.save()
 
     patientCreditB = PatientCreditCard(patient_id = patientB,
-                                       card_number = "111",
-                                       card_holder_name = "Isa",
+                                       card_number = "22221111",
+                                       card_holder_name = "Nia",
                                        cvv = 111,
                                        addressLine1 = "testing",
                                        city = "Washington",
@@ -179,12 +179,26 @@ def run():
                                        expiry_date = "11/25")
     patientCreditB.save()
 
+    patientCreditC = PatientCreditCard(patient_id = patientC,
+                                       card_number = "22221111",
+                                       card_holder_name = "Sabrina",
+                                       cvv = 111,
+                                       addressLine1 = "testing",
+                                       city = "Washington",
+                                       state = "DC", 
+                                       zipCode = 11111,
+                                       expiry_date = "11/25")
+    patientCreditC.save()
+
     # Patient Preference:
     patientPrefA = PatientPreference(patient_id = patientA)
     patientPrefA.save()
 
     patientPrefB = PatientPreference(patient_id = patientB)
     patientPrefB.save()
+
+    patientPrefC = PatientPreference(patient_id = patientC)
+    patientPrefC.save()
 
     # Patient Record:
     # -- Patient A --

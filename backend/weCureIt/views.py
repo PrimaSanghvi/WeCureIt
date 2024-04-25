@@ -597,3 +597,10 @@ class PatientPastAppointmentsView(APIView):
                 pastAppointments.append(app)
 
         return Response(pastAppointments)
+    
+class PatientCancelAppointmentView(APIView):
+    def delete(self, request, pk, format=None):
+        query = Appointments.objects.get(pk=pk)
+        query.delete()
+
+        return Response(status=status.HTTP_200_OK)
