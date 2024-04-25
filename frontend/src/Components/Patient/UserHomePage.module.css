@@ -1885,3 +1885,135 @@ button {
   text-align: center;
   left: 500%;
 }
+
+.pop-up-modify {
+  align-items: center;
+  background-color: #efeff1;
+  border-radius: 35px;
+  height: 524px;
+  overflow: hidden;
+  position: absolute;
+  width: 1169px;
+  top: 250px;
+  left: 200px;
+  z-index: 100;
+}
+
+.bench-accounting {
+  height: 423px;
+  object-fit: cover;
+  position: relative;
+  width: 495px;
+  background: url(../../assets/images/chair.png)
+      no-repeat center;
+}
+
+.appointment {
+  color: #000000;
+  font-family: "Poppins-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 400;
+  left: 599px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 70px;
+  width: 438px;
+}
+
+.text-wrapper {
+  font-weight: 700;
+}
+
+.span {
+  font-family: "Poppins-Thin", Helvetica;
+  font-size: 15px;
+  font-weight: 100;
+}
+
+.text-wrapper-2 {
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.text-wrapper-3 {
+  font-family: "Poppins-Thin", Helvetica;
+  font-size: 16px;
+  font-weight: 100;
+}
+
+.div {
+  color: #000000;
+  font-family: "Poppins-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  left: 599px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 307px;
+  width: 438px;
+}
+
+.group-button {
+  height: 80px;
+  left: 525px;
+  position: absolute;
+  top: 392px;
+  width: 578px;
+}
+
+.cancel-button {
+  height: 80px;
+  left: 304px;
+  position: absolute;
+  top: 0;
+  width: 274px;
+}
+
+.overlap-group-wrapper {
+  height: 80px;
+  width: 276px;
+}
+
+.overlap-group {
+  background-color: #d64e4e;
+  border-radius: 10px;
+  height: 80px;
+  position: relative;
+  width: 274px;
+}
+
+.text-wrapper-4 {
+  -webkit-text-stroke: 1px #f5f5f5;
+  color: #f5f5f5;
+  font-family: "Poppins-Thin", Helvetica;
+  font-size: 20px;
+  font-weight: 100;
+  left: 27px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 24px;
+  width: 218px;
+}
+
+.close-button {
+  height: 80px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 274px;
+}
+
+.close-button-wrapper {
+  background-color: #707070;
+  border-radius: 10px;
+  height: 80px;
+  position: relative;
+  width: 274px;
+}

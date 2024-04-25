@@ -87,9 +87,18 @@ export const UserHomePage = () => {
   }, [patientId, selectedDate]);
 
   // Handle trying to cancel an appointment given a selected appointment:
-  const handleCancel = (appointmentID) => {
-    console.log(appointmentID);
+  const [showCancelApp, setShowCancelApp] = useState(false);
+  const [appToCancel, setAppToCancel] = useState(null);
+
+  const handleCancel = (appoint) => {
+    setShowCancelApp(true);
+    setAppToCancel(appoint);
   };
+
+  const handleCancelButton = () => {
+    setShowCancelApp(false);
+    setAppToCancel(null);
+  }
 
   return (      
             <div  className={styles['main-container']}>
@@ -117,7 +126,7 @@ export const UserHomePage = () => {
                     <div className={styles['dropdown']}>
                     {/* <button className={styles['dropbtn']}> */}
                     <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
-{/* </button> */}
+                    {/* </button> */}
                     <div className={styles['dropdown-content']}>
                     <Link to={`/editProfile/${patientId}`}>Edit Profile</Link>
                     <a href="/">Logout</a>
@@ -187,7 +196,7 @@ export const UserHomePage = () => {
                     const backgroundColor = backgroundColors[index % backgroundColors.length];
 
                     return(
-                      <div  className={styles["row"]} style={{backgroundColor: backgroundColor}} key={index} onClick={()=>handleCancel(upcomingApp.AppointmentID)}>
+                      <div  className={styles["row"]} style={{backgroundColor: backgroundColor}} key={index} onClick={()=>handleCancel(upcomingApp)}>
                         {/* Date: */}
                         <div className={styles['date-f']}>
                           <div className={styles['date-10']}>
@@ -250,6 +259,50 @@ export const UserHomePage = () => {
                   )}
                 </div>
               </div>
+              {showCancelApp && (
+                <div className={styles["pop-up-modify"]}>
+                  <img alt="" className={styles['bench-accounting']}></img>
+                  <p className={styles["appointment"]}>
+                    <span className={styles["text-wrapper"]}>
+                      {appToCancel.DateOnly}
+                      <br />
+                      {appToCancel.TimeOnly}
+                      <br />
+                      Dr. {appToCancel.Doctor}
+                      <br />
+                      Specialty: {appToCancel.Specialty}
+                      <br />
+                    </span>
+                    <span className={styles["span"]}>
+                      <br />
+                    </span>
+                    <span className={styles["text-wrapper-2"]}>
+                      {appToCancel.FacilityName}
+                      <br />
+                    </span>
+                    <span className={styles["text-wrapper-3"]}>
+                      {appToCancel.Address}
+                    </span>
+                  </p>
+                  <p className={styles["div"]}>Note: Cancellation fee will be applied to appointments canceled 24 hours prior!</p>
+                  <div className={styles["group-button"]}>
+                    <div className={styles["cancel-button"]}>
+                      <div className={styles["overlap-group-wrapper"]}>
+                        <div className={styles["overlap-group"]}>
+                          <div className={styles["text-wrapper-4"]}>Cancel Appointment</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles["close-button"]}>
+                      <div className={styles["overlap-group-wrapper"]}>
+                        <div className={styles["close-button-wrapper"]} onClick={handleCancelButton}>
+                          <div className={styles["text-wrapper-4"]}>Close</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               <span  className={styles['past-appointments']}>Past Appointments</span>
               <div  className={styles['filter']}>
                 <span  className={styles['date-filter']}>Date Filter</span>
