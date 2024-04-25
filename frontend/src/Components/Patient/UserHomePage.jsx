@@ -14,6 +14,24 @@ export const UserHomePage = () => {
   const [upcomingAppointments, setUpComingAppointments] = useState([]);
   const [pastAppointments, setPastAppointments] = useState([]);
 
+  // Handle when a date was selected as a filter for past appointments:
+  // Convert date from YYYY-MM-DD to MM/DD/YYYY
+  const convertDateFormat = (isoDate) => {
+    if (!isoDate) return '';
+    const [year, month, day] = isoDate.split('-');
+    return `${month}/${day}/${year}`;
+  };
+
+  const [selectedDate, setSelectedDate] = useState('');
+  const formattedDate = convertDateFormat(selectedDate);
+
+  const handleDateChange = (event) => {
+    const dateSelected = event.target.value;
+
+    setSelectedDate(dateSelected);
+    setPastAppointments([]);
+  };
+
   // Fetch patient's appointments:
   useEffect(() => {
     const fetchUpcomingAppointments = async () => {
@@ -51,7 +69,13 @@ export const UserHomePage = () => {
           TimeOnly: item.TimeOnly
         }));
 
-        setPastAppointments(formatedApp);
+        if (selectedDate !== '') {
+          const newFormated = formatedApp.filter((item) => item.DateOnly === formattedDate);
+
+          setPastAppointments(newFormated);
+        } else {
+          setPastAppointments(formatedApp);
+        }
       } catch (error) {
         console.error("Error fetching past appointments:", error);
       }
@@ -59,7 +83,7 @@ export const UserHomePage = () => {
 
     fetchUpcomingAppointments();
     fetchPastAppointments();
-  }, [patientId]);
+  }, [patientId, selectedDate]);
 
   // Handle trying to cancel an appointment given a selected appointment:
   const handleCancel = (appointmentID) => {
@@ -162,12 +186,12 @@ export const UserHomePage = () => {
                     const backgroundColor = backgroundColors[index % backgroundColors.length];
 
                     return(
-                      <div  className={styles["row"]} style={{backgroundColor: backgroundColor}} key={upcomingApp.AppointmentID} onClick={()=>handleCancel(upcomingApp.AppointmentID)}>
+                      <div  className={styles["row"]} style={{backgroundColor: backgroundColor}} key={index} onClick={()=>handleCancel(upcomingApp.AppointmentID)}>
                         {/* Date: */}
                         <div className={styles['date-f']}>
                           <div className={styles['date-10']}>
                             <div className={styles['date-11']}>
-                              <span className={styles['date-text']} key={index}>{upcomingApp.DateOnly}</span>
+                              <span className={styles['date-text']}>{upcomingApp.DateOnly}</span>
                             </div>
                           </div>
                         </div>
@@ -218,12 +242,15 @@ export const UserHomePage = () => {
               <span  className={styles['past-appointments']}>Past Appointments</span>
               <div  className={styles['filter']}>
                 <span  className={styles['date-filter']}>Date Filter</span>
-                <div  className={styles['form']}>
-                  <div  className={styles['text-wrap']}>
-                    <span  className={styles['selected-option']}>No Filter Selected</span>
-                  </div>
-                  <div  className={styles['keyboard-arrow-down']} />
-                </div>
+                {/* Filter by date: */}
+                <input
+                    className={styles["date-input"]}
+                    type="date"
+                    id="date"
+                    max={new Date().toISOString().split("T")[0]}
+                    value={selectedDate}
+                    onChange={handleDateChange}
+                  />
               </div>
               <div  className={styles['upcoming-appointment-table-35']}>
                 <div  className={styles['table-36']}>
@@ -277,14 +304,14 @@ export const UserHomePage = () => {
                     </div>
                   </div>
                 {/* Display Past Appointments */}
-                {pastAppointments.map((pastApp,index)=> {
+                {pastAppointments.length > 0 ? pastAppointments.map((pastApp,index)=> {
                   const backgroundColors = ['white', '#eeeeff']; // Add more colors as needed
 
                   // Select a background color based on the index
                   const backgroundColor = backgroundColors[index % backgroundColors.length];
 
                   return (
-                    <div className={styles['row-55']} style={{backgroundColor: backgroundColor}} key={pastApp.AppointmentID}>
+                    <div className={styles['row-55']} style={{backgroundColor: backgroundColor}} key={index}>
                       {/* Date: */}
                       <div className={styles['date-56']}>
                         <div className={styles['date-57']}>
@@ -334,7 +361,17 @@ export const UserHomePage = () => {
                       </div>
                     </div>
                   );
-                })}
+                }): (
+                  <div className={styles['row-55']} >
+                    <div className={styles['date-56']}>
+                      <div className={styles['date-57']}>
+                        <div className={styles['date-58']}>
+                          <span className={styles['date-59']}>No Past Appointments Found</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
