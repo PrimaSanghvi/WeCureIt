@@ -403,11 +403,15 @@ export const UserHomePage = () => {
                     {appToCancel.Address}
                   </span>
                 </p>
-                {cancelFee &&
                 <div>
                   <p className={styles['this-appointment-has']}>
                     <span className={styles['text-wrapper-5']}>This appointment has been</span>
                     <span className={styles['text-wrapper-6']}> canceled</span>
+                  </p>
+                </div>
+                {cancelFee &&
+                <div>
+                  <p className={styles['this-appointment-has']}>
                     <span className={styles['text-wrapper-5']}>
                       .<br />
                       $50 cancellation fee was charged to your payment
