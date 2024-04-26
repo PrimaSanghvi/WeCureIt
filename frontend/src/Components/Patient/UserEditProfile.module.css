@@ -787,8 +787,8 @@
     height: 0px;
     top: 16px;
     left: 211px;
-    /* background: url(../assets/images/d24192a1-827a-476d-aaf0-1e73afacbfa3.png)
-      no-repeat center; */
+    background: url(../../assets/images/edit-2.svg)
+      no-repeat center; 
     background-size: cover;
     z-index: 72;
   }
@@ -872,8 +872,14 @@
     padding: 10px 0 10px 10px;
     border: 1px solid #d9d9d9;
     z-index: 67;
-    overflow: hidden;
+    overflow: auto;
     border-radius: 10px;
+    color: black; 
+  font-family: "Poppins", Helvetica;
+  font-size: 15px;
+  font-weight: 500;
+  width: 100%; 
+  height: 40px; 
   }
   .frame-26 {
     display: flex;
@@ -885,6 +891,7 @@
     position: relative;
     width: 107px;
     z-index: 68;
+    
   }
   .name-27 {
     flex-shrink: 0;
@@ -949,6 +956,12 @@
     z-index: 37;
     overflow: hidden;
     border-radius: 10px;
+    color: black; 
+  font-family: "Poppins", Helvetica;
+  font-size: 15px;
+  font-weight: 500;
+  width: 100%; 
+  height: 40px; 
   }
   .frame-2b {
     display: flex;
@@ -1068,8 +1081,7 @@
     height: 34.767px;
     top: 248px;
     left: 185px;
-    /* background: url(../assets/images/dc029b07-10d2-4b30-82d9-e795f3941ff8.png)
-      no-repeat center; */
+    background: url(../../assets/images/edit.svg);
     background-size: cover;
     z-index: 3;
     overflow: hidden;
@@ -1097,8 +1109,8 @@
     height: 34.767px;
     top: 315px;
     left: 185px;
-    /* background: url(../assets/images/76299bb4-aa75-4570-b784-ee4b593cd2b4.png)
-      no-repeat center; */
+    background: url(../../assets/images/edit-1.svg);
+    
     background-size: cover;
     z-index: 7;
     overflow: hidden;
@@ -1126,8 +1138,7 @@
     height: 34.767px;
     top: 393px;
     left: 185px;
-    /* background: url(../assets/images/c19b8fc6-506b-42f3-aa26-da0da51d84c5.png)
-      no-repeat center; */
+    background: url(../../assets/images/edit-1.svg);
     background-size: cover;
     z-index: 11;
     overflow: hidden;

@@ -560,3 +560,18 @@ class DocScheduleSerializerFilter(serializers.ModelSerializer):
     class Meta:
         model = Doc_schedule
         fields = ('schedule_id', 'doctor', 'facility', 'speciality', 'days_visiting', 'visiting_hours_start', 'visiting_hours_end')
+
+class AppointmentSerializer2(serializers.ModelSerializer):
+    name = serializers.CharField(source='facility_id.name')
+    addressLine1 = serializers.CharField(source='facility_id.addressLine1')
+    city = serializers.CharField(source='facility_id.city')
+    state = serializers.CharField(source='facility_id.state')
+    zipCode = serializers.IntegerField(source='facility_id.zipCode')
+    first_name = serializers.CharField(source='patient_id.first_name')
+    last_name = serializers.CharField(source='patient_id.last_name')
+    patient_id = serializers.CharField(source='patient_id.patient_id')
+    
+    class Meta:
+        model = Appointments
+        fields = ('start_time', 'end_time', 'name', 'addressLine1',
+                  'city', 'state', 'zipCode', 'first_name', 'last_name', 'patient_id')

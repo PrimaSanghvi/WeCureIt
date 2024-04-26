@@ -146,6 +146,7 @@ useEffect(() => {
               </a>
             
             //<Link to={{ pathname: `/doctorHomepage/${atientId}/medical_info/`,
+           
                         
               
           );

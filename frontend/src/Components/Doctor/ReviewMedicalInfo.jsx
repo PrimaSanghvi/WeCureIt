@@ -19,7 +19,7 @@ export default function Main() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const{data1,data2,data3,data4,data5} = location.state;
+  const{data1,data2,data3,data4,data5} = location.state || {};
   const [ifshowcreate,setifshowcreate] = useState(false);
   const [docf, setdocf] = useState("");
   const [docl, setdocl] = useState("");
