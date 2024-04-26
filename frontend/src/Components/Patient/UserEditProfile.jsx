@@ -220,17 +220,16 @@ const editsavedpreference = () =>{
             </div>
 
             <div className={styles['frame-5']}>
-              <div className={styles['frame-6']}>
+              
               <input className={styles["input" ]}
                  value={addressLine1}
                  onChange={(e) => setAddressLine1(e.target.value)}
                  onBlur = {validateAddress}
                  placeholder=" Address Line 1" type="text" />
                   {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
-              </div>
+              
             </div>
             <div className={styles['frame-7']}>
-              {/* <div className={styles['frame-8']}> */}
               <input className={styles["input" ]}
                 value={addressLine2}
                 onChange={(e) => setAddressLine2(e.target.value)}
@@ -243,40 +242,40 @@ const editsavedpreference = () =>{
               <span className={styles['city']}>City</span>
             </div>
             <div className={styles['frame-b']}>
-              <div className={styles['frame-c']}>
+              
               <input className={styles["input"]} 
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 onBlur = {validateAddress}
                 placeholder=" City Name" type="text" />
                  {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
-              </div>
+              
             </div>
             <div className={styles['frame-d']}>
               <span className={styles['state']}>State</span>
             </div>
             <div className={styles['frame-e']}>
-              <div className={styles['frame-f']}>
+              
               <input className={styles["input"]} 
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 onBlur = {validateAddress}
                 placeholder=" State Name" type="text" />
                 {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
-              </div>
+              
             </div>
             <div className={styles['frame-10']}>
               <span className={styles['zip-code']}>Zip-Code</span>
             </div>
             <div className={styles['frame-11']}>
-              <div className={styles['frame-12']}>
+              
               <input className={styles["input"]} 
                 value={zipCode}
                 onChange={(e) => setZipCode(e.target.value)}
                 onBlur = {validateAddress}
                 placeholder="Zip-Code" type="text" />
                 {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
-              </div>
+              
             </div>
           </div>
           <div className={styles['frame-14']}>
@@ -284,7 +283,7 @@ const editsavedpreference = () =>{
               <span className={styles['email-address']}>Email address</span>
             </div>
             <div className={styles['frame-16']}>
-              <div className={styles['frame-17']}>
+              
               <input className={styles["input" ]}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -292,7 +291,7 @@ const editsavedpreference = () =>{
                   placeholder="Enter your email"
                   type="text"/>
                    {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
-              </div>
+              
             </div>
           </div>
           <div className={styles['frame-18']}>
@@ -300,7 +299,7 @@ const editsavedpreference = () =>{
               <span className={styles['reset-password']}>Reset Password</span>
             </div>
             <div className={styles['frame-1a']}>
-              <div className={styles['frame-1b']}>
+              
               <input className={styles["input" ]}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -308,7 +307,7 @@ const editsavedpreference = () =>{
                   onBlur = {validatePassword}
                   type="text"/>
                {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}     
-              </div>
+              
             </div>
           </div>
           <div className={styles['frame-1d']}>
@@ -316,7 +315,7 @@ const editsavedpreference = () =>{
               <span className={styles['name']}>Re-enter a Password</span>
             </div>
             <div className={styles['frame-1f']}>
-              <div className={styles['frame-20']}>
+              
               <input className={styles["input" ]}
                   value={reenteredPassword}
                   onChange={(e) => setReenteredPassword(e.target.value)}
@@ -324,7 +323,7 @@ const editsavedpreference = () =>{
                   onBlur={validatePassword}
                   type="text"/>
                      {confrimPasswordError && <div style={{ color: 'red' }}>{confrimPasswordError}</div>}
-              </div>
+              
             </div>
           </div>
           <div className={styles['buttons']}>
@@ -339,27 +338,23 @@ const editsavedpreference = () =>{
               <span className={styles['name-24']}>Last Name</span>
             </div>
             <div className={styles['frame-25']}>
-              <div className={styles['frame-26']}>
               <input className={styles["input"]} 
                   value={last_name}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Enter your Last Name" type="text" />
-              </div>
             </div>
           </div>
           <div className={styles['frame-28']}>
             <div className={styles['frame-29']}>
               <span className={styles['first-name']}>First Name</span>
             </div>
-            <div className={styles['frame-2a']}>
-              <div className={styles['frame-2b']}>
-              <input className={styles["input" ]}
+            <input className={styles['frame-2a']}
                   type='text'
                   value={first_name}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Enter your First Name" />
-              </div>
-            </div>
+                  placeholder="Enter your First Name" 
+              
+            />
           </div>
         </div>
         <div className={styles['buttons-2c']} >
@@ -372,11 +367,11 @@ const editsavedpreference = () =>{
         </div>
       </div>
       <span className={styles['edit-profile-30']}>Edit Profile</span>
-      <img className={styles['edit']} alt = "Edit" src = '/src/assets/edit.svg'/>
+      <div className={styles['edit']}  />
       <span className={styles['edit-payment-method']} onClick={editpayment} >Edit Payment Method</span>
-      <img className={styles['edit-31']} alt = "Edit" src = '/src/assets/edit-1.svg'/>
+      <div className={styles['edit-31']}/>
       <span className={styles['edit-saved-preferences']} onClick={editsavedpreference}>Edit Saved Preferences</span>
-      <img className={styles['edit-32']} alt = "Edit" src = '/src/assets/edit-2.svg'/>
+      <div className={styles['edit-32']} />
     </div>
   );
 }
