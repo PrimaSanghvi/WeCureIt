@@ -15,10 +15,8 @@ import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import './CalView.css';
 import './DoctorHomePage.css'
 import axios from "axios";
-import { useParams , Link, useNavigate } from 'react-router-dom';
+import { useParams , useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-
-
 
 function DoctorHomePage() {
   const days = ["S", "M", "T", "W", "T", "F", "S"];
@@ -91,6 +89,8 @@ useEffect(() => {
       return { backgroung: '#e7e7ff'}
     }
   }
+
+  // eslint-disable-next-line
   const CheckboxCellRenderer = ({ params }) => {
     const [isChecked, setIsChecked] = useState(params.value); // Initialize state based on params
     console.log("inside");
@@ -114,13 +114,14 @@ useEffect(() => {
   // Column Definitions: Defines & controls grid columns.
   // eslint-disable-next-line
   const [colDefs, setColDefs] = useState([
-    
-    { field: 'PatientName', headerName: 'Patient Name', minWidth: 10 },
-    { field: 'DateTime', headerName: 'Date & Time', minWidth: 70, maxWidth: 150 },
+    { field: "PatientName", minWidth: 95, maxWidth: 100},
+    { field: "DateOnly", headerName: "Date", minWidth: 70, maxWidth: 150 },
+    { field: "TimeOnly", headerName: "Time", minWidth: 130, maxWidth: 190},
     {
       field: 'PatientMedicalInformation',
       headerName: 'Medical Info',
-      minWidth: 120,
+      minWidth: 100,
+      maxWidth: 150,
       cellRenderer: (params) => {
         const patientId = params.value.patient_id; 
         console.log("params:",params.value);
@@ -139,39 +140,42 @@ useEffect(() => {
       };
           return (
             
+              // eslint-disable-next-line
               <a target="_blank" rel="noopener noreferrer" onClick={handleClick}>
                 Medical History
               </a>
             
-            //<Link to={{ pathname: `/doctorHomepage/${patientId}/medical_info/`,
+            //<Link to={{ pathname: `/doctorHomepage/${atientId}/medical_info/`,
                         
               
           );
       },
-  },
-    {
-      field: 'Completed',
-      headerName: 'Completed',
-      cellRendererFramework: CheckboxCellRenderer, // Use the wrapper component here
-      minWidth: 120,
-    },
+    }
+    // {
+    //   field: 'Completed',
+    //   headerName: 'Completed',
+    //   cellRendererFramework: CheckboxCellRenderer, // Use the wrapper component here
+    //   minWidth: 120,
+    // }
   ]);
   
 
   // eslint-disable-next-line
   const [colDefsup, setColDefsup] = useState([
     { field: "PatientName", minWidth: 10},
-    { field: "DateTime", minWidth: 70, maxWidth: 150 },
-    {
-      field: 'PatientMedicalInformation',
-      headerName: 'Medical Info',
-      minWidth: 120,
-      cellRenderer: (params) => (
-        <a href={params.value} target="_blank" rel="noopener noreferrer">
-          Medical History
-        </a>
-      ),
-    },
+    { field: "DateOnly", headerName: "Date", minWidth: 100, maxWidth: 150 },
+    { field: "TimeOnly", headerName: "Time", minWidth: 130, maxWidth: 190},
+    // { field: "DateTime", minWidth: 70, maxWidth: 150 },
+    // {
+    //   field: 'PatientMedicalInformation',
+    //   headerName: 'Medical Info',
+    //   minWidth: 120,
+    //   cellRenderer: (params) => (
+    //     <a href={params.value} target="_blank" rel="noopener noreferrer">
+    //       Medical History
+    //     </a>
+    //   )
+    // },
     { field: "Location", minWidth: 120}
   ]);
 
@@ -221,11 +225,14 @@ useEffect(() => {
 
   return (
     <div className='main-container'>
-      <div className='section'>
-          <div className='topBar'>
-            <span>WeCureIT</span>
-          </div>
+      <div  className='top-bar'>
+        <div  className='frame'>      
+          <div className='main-container3'>
+            <span className='we-cure-it'>WeCureIt</span>
+          <div className='vector' />
+        </div>
       </div>
+    </div>
       <div className='main-container1'>
         <div className="text-3">
           <span>{months[today.month()]} {[today.date()]}, {today.year()}</span>
@@ -352,19 +359,18 @@ useEffect(() => {
         </div>
         <div className="appointmentinfo">
   {todaysAppointments && todaysAppointments.length > 0 ? (
-    <div className="wrapper">
-      <div style={containerStyle} className="ag-theme-quartz">
-        <AgGridReact
-          rowData={todaysAppointments}
-          columnDefs={colDefs} // Ensure colDefs matches the structure of your API response
-          rowStyle={rowStyle}
-          getRowClass={getRowStyle}
-          autoSizeStrategy={autoSizeStrategy}
-          onGridSizeChanged={onGridSizeChanged}
-          
-        />
-      </div>
-    </div>
+     <div className="wrapper">
+     <div style={containerStyle} className={"ag-theme-quartz"}>
+         <AgGridReact 
+           rowData={todaysAppointments} 
+           columnDefs={colDefs}
+           rowStyle={rowStyle}
+           getRowClass={getRowStyle}
+           autoSizeStrategy={autoSizeStrategy}
+           onGridSizeChanged={onGridSizeChanged}
+         />
+       </div>
+   </div>
   ) : (
     <p className="no-appointments">No Appointments Today!</p>
   )}

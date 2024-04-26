@@ -233,7 +233,8 @@ const formattedDate = `${today.getFullYear()}-${month}-${today.getDate()}`;
       <div className={styles["row-cell-28"]}>
         <div className={styles["icon-left-29"]} />
       </div>
-    </div></div>
+    </div>
+    </div>
   </>
 ) : null}
           

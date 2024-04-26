@@ -112,7 +112,7 @@ class UpcomingAppointmentsView(APIView):
 class DoctorScheduleView(APIView):
     def get(self, request, doctor_id, selected_date):
         try:
-            selected_date_obj = datetime.datetime.strptime(selected_date, '%Y-%m-%d').date()
+            selected_date_obj = datetime.strptime(selected_date, '%Y-%m-%d').date()
             day_of_week = selected_date_obj.strftime('%A')
         except ValueError:
             return Response({'error': 'Invalid date format'}, status=status.HTTP_400_BAD_REQUEST)
@@ -446,7 +446,7 @@ class NewRecView(APIView):
             return Response({'detail': 'No data found'}, status=status.HTTP_200_OK)
         
         # Serialize the records
-        serializer = Patient_record(records, many=True)
+        serializer = PatientMedicalRecSerialier(records, many=True)
         
         # Return the serialized data
         return Response(serializer.data, status=status.HTTP_200_OK)
