@@ -11,6 +11,7 @@ import FacilityHome from './Components/Admin/FacilityHome';
 import FacilityEdit from './Components/Admin/FacilityEdit';
 import { UserEditPreference, UserEditSaved } from './Components/Patient/UserEditPreference';
 import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
+import HomePage from './Components/HomePage/HomePage';
 
 
 const App = () => {
@@ -18,8 +19,8 @@ const App = () => {
     <Router>
     <div>
         <Routes>
-   
-        <Route path="/" element={<LoginPage />}/>
+        <Route path="/" element={<HomePage />}/>
+        <Route path="/login" element={<LoginPage />}/>
         <Route path="/signUp" element={<SignupPage />}/>
         <Route path="/creditCardDetails" element={<SignupPage2 />}/>
         <Route path="/patientHomepage/:patientId" element={<UserHomePage />}/>
