@@ -20,8 +20,8 @@ function HomePage() {
           <img src={logo} alt="WeCureIt" className={styles['logo']} />
           <span className={styles['logoTitle']}>WeCureIT</span>
           <div className={styles['tabs']}>
-            <button className={styles['tab1']}><a href='#works'>How it Works?</a></button>
-            <button className={styles['tab2']}><a href='#about'>About Us</a></button>
+          <a href='#works'><button className={styles['tab1']}>How it Works?</button></a>
+          <a href='#about'><button className={styles['tab2']}>About Us</button></a>
           </div>
           <div>
           <Link to="/login"><button className={styles['login']} ><label>Login</label></button></Link>
