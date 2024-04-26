@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import styles from "./ViewAppointment.module.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Main() {
@@ -73,23 +73,36 @@ export default function Main() {
       patient_id: '1',
     }
   ]);
-  /*
+  // doctor_id is needed 
+  // date is required
+
+  const params = useParams();
+  const doctorId = params.doctorId;
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  // console.log(selectedDate);
+  // When you call .toISOString() on a Date object, 
+  //it converts the date to UTC (Coordinated Universal Time), //not the local time zone 
+  selectedDate.setHours(0, 0, 0, 0);
+ let dateFormated = selectedDate.toISOString().substring(0,10);
+  // console.log(dateFormated);
   useEffect(() => {
-    // Define the function that fetches data
     const fetchData = async () => {
-      try {
-        // Replace 'https://api.example.com/data' with the actual API endpoint
-        const response = await axios.get('https://api.example.com/data');
-        setData(response.data); // Set the data in state
-      } catch (error) {
-        setError(error); // If there's an error, set it in state
-      } finally {
-        setLoading(false); // Set loading to false regardless of outcome
-      }
+        setLoading(true);
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/doctorAppointments/?doctor_id=${doctorId}&date=${dateFormated}`);
+            setData(response.data);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    fetchData(); // Call the function to fetch data
-  }, []);*/
+    fetchData();
+}, [doctorId, dateFormated]);
+
+
   const handleMedicalInfo = (id) =>{
     navigate(`/doctorHomepage/${id}/medical_info/`);
   };
@@ -131,10 +144,10 @@ export default function Main() {
           </div>
         ))}
           <div className={styles["frame-9"]} onClick={() => updateWeek(-7)}>
-            <div className={styles["arrow"]} />
+          &laquo;
           </div>
           <div className={styles["frame-a"]} onClick={() => updateWeek(7)}>
-            <div className={styles["arrow-b"]} />
+          &raquo; 
           </div>
         </div>
       </div>
@@ -156,9 +169,9 @@ export default function Main() {
           </div>
           <span className={styles["time"]}>Time: {user.start_time}-{user.end_time}</span>
           <span className={styles["nancy-smith"]}>{user.first_name} {user.last_name}</span>
-          <button className={styles["icon-left"]} onClick={()=>handleMedicalInfo(user.patient_id)}>
+          {/* <button className={styles["icon-left"]} onClick={()=>handleMedicalInfo(user.patient_id)}>
             <span className={styles["medical-info"]}>Medical Info</span>
-          </button>
+          </button> */}
         </div>
           );
         })}

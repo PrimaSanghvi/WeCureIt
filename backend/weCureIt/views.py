@@ -342,4 +342,18 @@ class SpecialtyDetail(APIView):
         except Facility.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-       
+from rest_framework import generics
+class DoctorAppointmentsView(generics.ListAPIView):
+    serializer_class = AppointmentSerializer
+
+    def get_queryset(self):
+        doctor_id = self.request.query_params.get('doctor_id')
+        date = self.request.query_params.get('date')
+        if doctor_id and date:
+            return Appointments.objects.filter(
+                doctor_id=doctor_id,
+                date=date
+            ).select_related('facility_id', 'patient_id')
+        else:
+            # Handle bad request or return empty queryset
+            return Appointments.objects.none()

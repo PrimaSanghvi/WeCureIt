@@ -198,3 +198,18 @@ class PatientMedicalRecSerialier(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='facility_id.name')
+    addressLine1 = serializers.CharField(source='facility_id.addressLine1')
+    city = serializers.CharField(source='facility_id.city')
+    state = serializers.CharField(source='facility_id.state')
+    zipCode = serializers.IntegerField(source='facility_id.zipCode')
+    first_name = serializers.CharField(source='patient_id.first_name')
+    last_name = serializers.CharField(source='patient_id.last_name')
+    patient_id = serializers.CharField(source='patient_id.patient_id')
+    
+    class Meta:
+        model = Appointments
+        fields = ('start_time', 'end_time', 'name', 'addressLine1',
+                  'city', 'state', 'zipCode', 'first_name', 'last_name', 'patient_id')

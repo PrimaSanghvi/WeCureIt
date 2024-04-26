@@ -73,7 +73,7 @@ button {
   top: 5.83%;
   left: 0;
   color: #1a1a1a;
-  font-family: ?????, var(--default-font-family);
+  
   font-size: 31px;
   font-weight: 400;
   line-height: 90px;
@@ -611,16 +611,14 @@ button {
   overflow: hidden;
   border-radius: 20px;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  color: #000; /* Ensure text color contrasts with background */
+  font-size: 24px; /* Adjust font size to fit inside the div */
+  display: flex;
+  align-items: center; /* Vertically center the text */
+  justify-content: center; /* Horizontally center the text */
+  padding: 5px; /* Add padding if necessary */
 }
-.arrow {
-  position: relative;
-  width: 12px;
-  margin: 17px 0 0 11px;
-  background: url(../../assets/images/7ebaf288-6053-4ba8-b8f2-faa04d16809a.png)
-    no-repeat center;
-  background-size: cover;
-  z-index: 50;
-}
+
 .frame-a {
   position: absolute;
   width: 34px;
@@ -632,6 +630,12 @@ button {
   overflow: hidden;
   border-radius: 20px;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000; /* Adjust the color to ensure visibility */
+  font-size: 24px; /* Adjust font size to fit */
+  padding: 2px; /* Optional: Adds a little padding inside the box */
 }
 .arrow-b {
   position: relative;
