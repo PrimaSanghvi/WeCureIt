@@ -346,7 +346,7 @@ export const UserEditProfile = () => {
                   placeholder="Re-enter password"
                   onBlur={validatePassword}
                   type="text"/>
-                     {confrimPasswordError && <div style={{ color: 'red' }}>{confrimPasswordError}</div>}
+                     {confirmPasswordError && <div style={{ color: 'red' }}>{confirmPasswordError}</div>}
               
             </div>
             

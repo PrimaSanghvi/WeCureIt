@@ -219,7 +219,7 @@ def run():
     # -- Patient A --
     startTime = datetime.time(10, 0, 0)
     endTime = datetime.time(11, 0, 0)
-    appDate = datetime.date(2024, 4, 29)
+    appDate = datetime.date(2024, 5, 18)
     patientAppAFuture = Appointments(patient_id = patientA,
                                facility_id = facA,
                                doctor_id = docA,
@@ -247,7 +247,7 @@ def run():
     # Future
     startTime = datetime.time(9, 0, 0)
     endTime = datetime.time(9, 30, 0)
-    appDate = datetime.date(2024, 4, 29)
+    appDate = datetime.date(2024, 5, 25)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
                                doctor_id = docB,
@@ -261,7 +261,7 @@ def run():
 
     startTime = datetime.time(9, 0, 0)
     endTime = datetime.time(9, 30, 0)
-    appDate = datetime.date(2024, 5, 1)
+    appDate = datetime.date(2024, 5, 28)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
                                doctor_id = docB,
@@ -275,7 +275,7 @@ def run():
 
     startTime = datetime.time(16, 0, 0)
     endTime = datetime.time(16, 30, 0)
-    appDate = datetime.date(2024, 5, 2)
+    appDate = datetime.date(2024, 5, 15)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
                                doctor_id = docB,
