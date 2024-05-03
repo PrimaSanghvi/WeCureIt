@@ -114,12 +114,16 @@ export default function UserAppointment() {
   // put the call schedule request here
   const handleChangeTimeLength = (event) => {
     setTimeLength(event.target.value);
-    // use selectedSchedule & timeLength to call the backend endpoint
+    
+    /* use selectedSchedule & timeLength to call the backend endpoint
+     * call the backend to find the time slots available
+     */
   };
 
-  // a temp list to show the option
-  // just for display
-  // please use your own timeslots from the endpoint
+  /* a temp list to show the option
+   * just for display
+   * please use your own timeslots from the endpoint
+   */
   const timeSlots = [
     "10:00 AM - 10:15 AM",
     "10:30 AM - 10:45 AM",
@@ -132,9 +136,9 @@ export default function UserAppointment() {
   };
 
   const [showConfirm, setShowConfirm] = useState(false);
-  // confirm the slot, put your post schedule request here
-  /////
-  /////
+  /* confirm the slot is successfully selected
+   * u may need patientId, selectedTimeSlot, selectedSchedule in ur post request  
+   */ 
   const handleScheduleSubmit = () => {
     // put your post schedule request here
     setShowPopup(false);
@@ -156,7 +160,52 @@ export default function UserAppointment() {
     setShowConfirm(false);
     setSelectedSchedule(null);
     setSelectedTimeSlot("");
+    
   };
+
+  /* the recommendation pop-up page 
+   * current logic:
+   * when a timeslot is selected, fill the tiemSlot from backend 
+   * if the timeSlot is null, which means there is no time slot available
+   * we give the patient an alternative option
+   * we will search the timeSlot in the backend using
+   * Specialty, Date, TimeLength...
+   * still needs discussion
+   */
+
+  const [showRecommendation, setShowRecommendation] = useState(false);
+  
+  const timeRecommend = {
+    date: "April 1, 2024",
+    timeSlot: "10:00 AM - 10:15 AM",
+    doctor: "Dr. Abigail Map",
+    facilityObj: {
+      name: "GWU",
+      addressLine1: "2041 Georgia Ave NW",
+      addressLine2: "Washington D.C. 20060",
+    }
+  };
+
+
+  const handleDeclineRecommendation = () =>{
+    setShowRecommendation(false);
+  }
+
+  /* When accept current recommendation,
+   * post it to the Appointment for the patient
+   * close the current pop-up page
+   * I did not write a confirm page here
+   * So i clean the data here 
+   */
+  const handleAcceptRecommendation = () =>{
+    console.log(timeRecommend);
+    setShowRecommendation(false);
+    // if u have a confirm page, clean the data in the confirm page
+    setSelectedSchedule(null);
+    setTimeLength(null);
+    setSelectedTimeSlot("");
+
+  }
   return (
     <div className={styles["main-container"]}>
       <div className={styles["top-bar"]}>
@@ -463,6 +512,48 @@ export default function UserAppointment() {
           </button>
         </div>
       )}
+
+{showRecommendation && (
+        <div className={styles["pop-up-recommendation"]}>
+       
+        <div className={styles["recommendation-information"]}>
+          <span className={styles["recommendation-detail"]}>
+            {timeRecommend.date}
+            <br />
+            {timeRecommend.timeSlot}
+            <br />
+            {timeRecommend.doctor}
+            <br />
+            {timeRecommend.facilityObj.name}
+            <br />
+            {timeRecommend.facilityObj.addressLine1}
+            <br />
+            {timeRecommend.facilityObj.addressLine2}
+            <br />
+            Would you lke to select this appointment? <br />
+          </span>
+        </div>
+
+        <div className={styles["rectangle-recommendation"]}>
+            <span
+              className={styles["cancel-button"]}
+              onClick={handleDeclineRecommendation}
+            >
+              Decline
+            </span>
+          </div>
+          <div className={styles["rectangle-recommendation-c"]}>
+            <span className={styles["confirm"]} onClick={handleAcceptRecommendation}>
+              Accept
+            </span>
+          </div>
+       
+      </div>
+      )}
+
+
+
+
     </div>
   );
 }
