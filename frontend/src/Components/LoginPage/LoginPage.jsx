@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styles from './LoginPage.module.css';
 import axios from 'axios'; 
-import loginimg from '../../../src/assets/images/LoginImg.png'
 import logo from '../../../src/assets/images/Logo.png';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';

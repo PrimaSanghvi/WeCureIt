@@ -1,12 +1,8 @@
 import React from 'react';
 import styles from './HomePage.module.css';
 import logo from '../../../src/assets/images/Logo.png';
-import profile from '../../../src/assets/images/profile.png';
-import axios from 'axios'; 
 //import Image from './LoginImg.png';
-import { Link, Navigate } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import createicon from '../../../src/assets/createuser.png';
 import searchicon from '../../../src/assets/search-icon.png';
 import dateicon from '../../../src/assets/dateicon.svg';
