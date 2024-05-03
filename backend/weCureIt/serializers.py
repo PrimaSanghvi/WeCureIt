@@ -126,6 +126,19 @@ class AppointmentSerializer(serializers.ModelSerializer):
         end_time = obj.end_time.strftime("%I:%M %p")
 
         return f"{start_time} - {end_time}"
+    
+    def to_internal_value(self, data):
+        time_range = data.get('start_time', '')
+        start, end = [datetime.datetime.strptime(t.strip(), '%I:%M %p').time() for t in time_range.split('-')]
+        data['start_time'] = start
+        data['end_time'] = end
+        return super().to_internal_value(data)
+
+    def validate_date(self, value):
+        # You can include date validation here if needed
+        if value < datetime.datetime.now().date():
+            raise serializers.ValidationError("Date cannot be in the past.")
+        return value
 
 class DocScheduleSerializer(serializers.ModelSerializer):
     facility_name = serializers.SerializerMethodField()
@@ -626,44 +639,6 @@ class AvailableDoctorsSerializer(serializers.Serializer):
             current_time += datetime.timedelta(minutes=duration + 10)  # Proceed to the next potential time slot
 
         return available_slots
-    
-class AllDoctorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Doctor
-        fields = ('doctor_id', 'first_name', 'last_name', 'speciality_id', 'email', 'password', 'phone_number', 'is_active')
-## here i update the address => addressLine1
-class AllFacilitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Facility
-        fields = ('facility_id', 'name', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'rooms_no', 'phone_number', 'is_active')
-
-    
-class DocScheduleSerializerFilter(serializers.ModelSerializer):
-    doctor = AllDoctorSerializer(source='doctor_id', read_only=True)
-    facility = AllFacilitySerializer(source='facility_id', many=True, read_only=True)
-    speciality = SpecialitySerializer(source='speciality_id', many=True, read_only=True)
-
-    class Meta:
-        model = Doc_schedule
-        fields = ('schedule_id', 'doctor', 'facility', 'speciality', 'days_visiting', 'visiting_hours_start', 'visiting_hours_end')
-
-class AppointmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Appointments
-        fields = ['appointment_id','patient_id', 'facility_id', 'doctor_id', 'speciality_id', 'schedule_id', 'patient_rec_id', 'start_time', 'end_time', 'date']
-
-    def to_internal_value(self, data):
-        time_range = data.get('start_time', '')
-        start, end = [datetime.datetime.strptime(t.strip(), '%I:%M %p').time() for t in time_range.split('-')]
-        data['start_time'] = start
-        data['end_time'] = end
-        return super().to_internal_value(data)
-
-    def validate_date(self, value):
-        # You can include date validation here if needed
-        if value < datetime.datetime.now().date():
-            raise serializers.ValidationError("Date cannot be in the past.")
-        return value
     
 class AvailableSlotsSerializer(serializers.Serializer):
     speciality_id = serializers.IntegerField(required=False, allow_null=True)
