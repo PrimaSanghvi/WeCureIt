@@ -101,4 +101,7 @@ urlpatterns = [
     path('api/patientCancelAppointment/<int:pk>/', views.PatientCancelAppointmentView.as_view(), name='cancel_appointment'),
     path('api/doctorAppointments/', views.DoctorAppointmentsView.as_view(), name = 'doctor-appointments'),
 
+    path('api/available-appointment/', views.AvailableDoctorsView.as_view(), name='available-doctors'),
+    path('api/book-appointments/', views.CreateAppointmentView.as_view(), name='create-appointment'),
+    path('api/recommend-slot/', views.SlotRecommendationView.as_view(), name='recommend-slot'),
 ]

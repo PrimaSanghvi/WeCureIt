@@ -13,6 +13,7 @@ import { UserEditPayment } from './Components/Patient/UserEditPayment';
 import { UserEditPreference } from './Components/Patient/UserEditPreference';
 import UserAppointment from './Components/Patient/UserAppointment';
 import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
+import HomePage from './Components/HomePage/HomePage';
 import AddSchedule from "./Components/Doctor/AddSchedule";
 import AddScheduleHome from "./Components/Doctor/AddScheduleHome";
 import ViewMedicalRec from "./Components/Doctor/ViewMedicalRec";
@@ -25,8 +26,7 @@ const App = () => {
     <Router>
     <div>
         <Routes>
-   
-        <Route path="/" element={<LoginPage />}/>
+        <Route path="/" element={<HomePage />}/>
         <Route path="/login" element={<LoginPage />}/>
         <Route path="/signUp" element={<SignupPage />}/>
         <Route path="/creditCardDetails" element={<SignupPage2 />}/>
@@ -47,6 +47,7 @@ const App = () => {
         <Route path ="/doctorHomepage/:patientId/medical_info/" element = {<ReviewMedicalInfo />}/>
         <Route path="/patient/appointment" element={<UserAppointment />}/>
         <Route path ="/doctorHomepage/:doctorId/viewappointment" element = {<ViewAppointment />}/>
+        <Route path = "/schedule/appointment/:patientId" element={<UserAppointment />} />
       </Routes>
     </div>
 </Router>
