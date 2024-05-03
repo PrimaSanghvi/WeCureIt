@@ -1,184 +1,95 @@
+/* Top Company Header & Side Menu*/
 :root {
-    --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
-      "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
-      "Source Han Sans CN", sans-serif;
-  }
+  --default-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
+    "Source Han Sans CN", sans-serif;
+}
+
+.main-container, .main-container * {
+  box-sizing: border-box;
+  width: 100%
+}
+
+input, select, textarea, button {
+  outline: 0;
+}
+
+.main-container {
+  position: relative;
+  width: 1512px;
+  height: 982px;
+  margin: 0 auto;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  position: relative;
+  background-color:  #e3ebff;
+  width: 1512px;
+  height: 103px;
+  margin: 0 0 0 0;
+}
+
+.frame {
+  flex-shrink: 0;
+  position: relative;
+  width: 1460.894px;
+  height: 103px;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.main-container2 {
+  position: absolute;
+  left: 4%;
+  width: 213.245px;
+  height: 103px;
+  margin: 0 auto;
+}
+
+.company-name-icon {
+  position: relative;
+  width: 213.245px;
+  height: 103px;
+  margin: 0 0 0 0;
+  z-index: 3;
+}
+
+.we-cure-it {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  height: 87.38%;
+  top: 5.83%;
+  left: 0;
+  color: #1a1a1a;
   
-  .main-container {
-    overflow: hidden;
-  }
-  
-  .main-container,
-  .main-container * {
-    box-sizing: border-box;
-  }
-  
-  input,
-  select,
-  textarea,
-  button {
-    outline: 0;
-  }
-  
-  .main-container {
-    position: relative;
-    width: 1512px;
-    height: 982px;
-    margin: 0 auto;
-    background: #ffffff;
-    overflow: hidden;
-  }
-  
-  .top-bar {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    position: relative;
-    background-color:  #e3ebff;
-    width: 1512px;
-    height: 103px;
-    margin: 0 0 0 0;
-  }
-  
-  .frame {
-    flex-shrink: 0;
-    position: relative;
-    width: 1460.894px;
-    height: 103px;
-    z-index: 2;
-    overflow: hidden;
-  }
-  
-  .main-container2 {
-    position: absolute;
-    left: 4%;
-    width: 213.245px;
-    height: 103px;
-    margin: 0 auto;
-  }
-  
-  .company-name-icon {
-    position: absolute;
-    width: 213.245px;
-    height: 103px;
-    top: 0;
-    left: 0;
-    z-index: 3;
-  }
-  .we-cure-it {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    position: absolute;
-    height: 87.38%;
-    top: 5.83%;
-    left: 0;
-    color: #1a1a1a;
-    
-    font-size: 31px;
-    font-weight: 400;
-    line-height: 90px;
-    text-align: left;
-    white-space: nowrap;
-    z-index: 4;
-  }
-  .vector {
-    position: absolute;
-    width: 24.28%;
-    height: 51.53%;
-    top: 24.24%;
-    left: 73.99%;
-    background: url(../../assets/images/Logo.png)
-      no-repeat center;
-    background-size: 100% 100%;
-    z-index: 3;
-  }
-  
-  .create-appointment-button {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex-wrap: nowrap;
-    position: absolute;
-    width: 202px;
-    height: 74px;
-    top: 16px;
-    right: 224px;
-    z-index: 10;
-    overflow: hidden;
-    border-radius: 60px;
-  }
-  .create-appointment-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: nowrap;
-    flex-shrink: 0;
-    gap: 10px;
-    position: relative;
-    width: 202px;
-    height: 67px;
-    padding: 16px 16px 16px 16px;
-    cursor: pointer;
-    background: #ffbfab;
-    border: none;
-    z-index: 11;
-    overflow: hidden;
-    border-radius: 60px;
-  }
-  .frame-1 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: nowrap;
-    flex-shrink: 0;
-    gap: 9px;
-    position: relative;
-    width: 154px;
-    z-index: 12;
-  }
-  .create-new-appointment {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-shrink: 0;
-    flex-basis: auto;
-    position: relative;
-    width: 154px;
-    height: 26px;
-    color: #1a1a1a;
-    
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 26px;
-    text-align: right;
-    white-space: nowrap;
-    z-index: 13;
-  }
-  .profile {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    top: 31px;
-    left: 1355.894px;
-    z-index: 8;
-    border-radius: 500px;
-  }
-  .unsplash-ctagwpbqg {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    top: 0;
-    left: 0;
-    background: url(../../assets/images/profile.png)
-      no-repeat center;
-    background-size: cover;
-    z-index: 9;
-    border-radius: 500px;
-  }
+  font-size: 31px;
+  font-weight: 400;
+  line-height: 90px;
+  text-align: left;
+  white-space: nowrap;
+  z-index: 4;
+}
+
+.vector {
+  position: absolute;
+  width: 24.28%;
+  height: 51.53%;
+  top: 24.24%;
+  left: 73.99%;
+  background: url(../../assets/images/Logo.png)
+    no-repeat center;
+  background-size: 100% 100%;
+  z-index: 3;
+}
   
   .rectangle {
     position: relative;
@@ -241,12 +152,14 @@
   }
   .edit {
     position: absolute;
-    width: 40.865px;
-    height: 36.783px;
-    top: 241px;
-    left: 43px;
+    width: 45.861px;
+    height: 34.767px;
+    top: 244px;
+    left: 38px;
+    background: url(../../assets/images/4bc38fe6-9a0d-4721-b9b5-840e787b8d09.png)
+    no-repeat center;
     background-size: cover;
-    z-index: 11;
+    z-index: 80;
     overflow: hidden;
   }
   .full-table {
@@ -324,8 +237,8 @@
     position: relative;
     width: 20.002px;
     height: 20.002px;
-    background: url(../../assets/facilityicon.svg)
-      no-repeat center;
+    /* background: url(../../assets/facilityicon.svg)
+      no-repeat center; */
     background-size: cover;
     z-index: 21;
     overflow: hidden;
@@ -395,8 +308,8 @@
     width: 20px;
     height: 20px;
     margin: 1px 0 0 3px;
-    background: url(../../assets/edit-note.svg)
-      no-repeat center;
+    /* background: url(../../assets/edit-note.svg)
+      no-repeat center; */
     background-size: 100% 100%;
     z-index: 27;
   }
@@ -469,8 +382,8 @@
     width: 20px;
     height: 20px;
     margin: 1px 0 0 3px;
-    background: url(../../assets/edit-note.svg)
-      no-repeat center;
+    /* background: url(../../assets/edit-note.svg)
+      no-repeat center; */
     background-size: 100% 100%;
     z-index: 33;
   }
@@ -544,8 +457,8 @@
     height: 24px;
     top: 50%;
     left: 50%;
-    background: url(../../assets/checked.svg)
-      no-repeat center;
+    /* background: url(../../assets/checked.svg)
+      no-repeat center; */
     background-size: cover;
     transform: translate(-50%, -50%);
     z-index: 39;
@@ -1129,8 +1042,8 @@
     position: relative;
     width: 495px;
     height: 423px;
-    background: url(../../assets/images/chair.png)
-      no-repeat center;
+    /* background: url(../../assets/images/chair.png)
+      no-repeat center; */
     background-size: cover;
     z-index: 82;
   }
@@ -1997,6 +1910,8 @@
     height: 109px;
     top: 35.901px;
     left: 187px;
+    /* background: url(../assets/images/ec09a5fe-2415-45d0-8480-0851bbc66851.png)
+      no-repeat center; */
     background-size: cover;
     z-index: 146;
     border-radius: 20px;
@@ -2266,6 +2181,8 @@
     height: 108.901px;
     top: 36px;
     left: 187px;
+    /* background: url(../assets/images/bf47f434-775e-4bd2-be59-0288794fb56c.png)
+      no-repeat center; */
     background-size: cover;
     z-index: 168;
     border-radius: 20px;
@@ -2708,6 +2625,8 @@
   height: 106.5px;
   top: 36px;
   left: 187px;
+  /* background: url(../assets/images/ef761c1e-43bf-4663-b027-54da0a47155a.png)
+    no-repeat center; */
   background-size: cover;
   z-index: 97;
   border-radius: 20px;
@@ -2961,6 +2880,8 @@
   height: 109.5px;
   top: 36px;
   left: 187px;
+  /* background: url(../assets/images/5f6589d0-5637-4ea6-b946-25e906bb0b19.png)
+    no-repeat center; */
   background-size: cover;
   z-index: 118;
   border-radius: 20px;
@@ -3152,3 +3073,50 @@
 }
 
 
+.no-facilities-message {
+  font-weight: bold;
+  text-align: center;
+  margin: 0; /* Remove margin if you want the text exactly in the center of the div */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+.container-for-no-facilities {
+  position: relative;
+  /* ... other styles ... */
+}
+
+.edit-29 {
+  position: absolute;
+  width: 40.865px;
+  height: 36.783px;
+  top: 307.058px;
+  left: 43px;
+  background: url(../../assets/images/674d49b6-c979-4103-a52e-ce84853463fb.png)
+    no-repeat center;
+  background-size: cover;
+  z-index: 84;
+  overflow: hidden;
+}
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  flex-basis: auto;
+  position: absolute;
+  width: 280px;
+  height: 53px;
+  top: calc(50% - 90px);
+  left: calc(90px);
+  font-family: Poppins, var(--default-font-family);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 52.5px;
+  text-align: center;
+  white-space: nowrap;
+  z-index: 82;
+}

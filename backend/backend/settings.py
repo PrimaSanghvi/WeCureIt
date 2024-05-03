@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -80,11 +81,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': 'wecuredata',
-       'USER': 'postgres',
-       'PASSWORD': 'Rutpatel@03',
+       'NAME': 'WeCureItDB',
+       'USER': 'laurenhahn',
+       'PASSWORD': '54321',
        'HOST': 'localhost',
-       'PORT': '5433',
+       'PORT': '5432',
    }
 }
 

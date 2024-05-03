@@ -1,34 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./FacilityHome.module.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useParams } from 'react-router-dom';
 
 export default function FacilityHome() {
-  // Get List from APi-Get
-  const FacilityList = [
-    {
-      facility_id: 1,
-      name: "The George Washington University Hospital",
-      address1: "900 23rd St. NW",
-      address2: "Washington D.C.,20037",
-    },
-    {
-      facility_id: 2,
-      name: "Holy Cross Hospital",
-      address1: "1500 Forest Glen Road",
-      address2: "Silver Spring MD 20910",
-    },
-  ];
+  
+  const [FacilityList, setFacilityList] = useState([]);
+  const [specialityList, setspecialitylist] = useState([]);
 
   const navigate = useNavigate();
+  const { adminId } = useParams(); 
 
-  const handleEdit = (facility_id) => {
-    console.log("here is a hit");
-    navigate(`/admin/facility/${facility_id}`); // This replaces the useHistory push method
+  // Fetch facilities when component mounts
+  useEffect(() => {
+    const fetchFacilities = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/facilities/'); 
+        setFacilityList(response.data);
+      } catch (error) {
+        console.error('Failed to fetch facilities:', error);
+      }
+    };
+    fetchFacilities();
+  }, []);
+
+  const activeFacilities = FacilityList.filter(facility => facility.is_active);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // console.log(doctor_editing)
+        const response = await axios.get('http://127.0.0.1:8000/api/specialties/');
+        const formattedData = response.data.map(item => ({
+          speciality_id: item.speciality_id,
+          name: item.name
+        }));
+        setspecialitylist(formattedData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, [])
+
+  const handleEdit = (facility) => {
+    navigate(`/admin/editFacility/${facility.facility_id}`, { state: { facility, adminId } });
   };
 
   const editdoctors = () => {
     //change the code to the real page of doctor page
-    window.location.href = "/admin/doctor";
+    navigate(`/addDoctors/${adminId}`);
     console.log("transfer to doctor arrangement");
   };
   // to remove a certain facility
@@ -40,24 +63,48 @@ export default function FacilityHome() {
   const [removalSuccess, setRemovalSuccess] = useState(false);
 
   const handleRemoveClick = (facilityId) => {
-    const facility = FacilityList.find((f) => f.facility_id === facilityId);
-    console.log("test remove");
-    setFacilityToBeRemoved(facility);
-    setShowConfirmationRemove(true);
+    try {
+      const facility = FacilityList.find((f) => f.facility_id === facilityId);
+      setFacilityToBeRemoved(facility)
+      setShowConfirmationRemove(true);
+     
+      // Optionally refresh the list or update the state to reflect the change
+    } catch (error) {
+      console.error('Error deactivating facility:', error.response ? error.response.data : error.message);
+    }
   };
   // the command is confirmed, send delete command to the backend
-  const handleRemoveConfirm = () => {
-    console.log(
-      `Facility with ID ${facilityToBeRemoved.facility_id} is cancelled successfully!`
-    );
-    //send the post request to the api to cancel the data
-    // render the sucessful info page
-    setRemovalSuccess(true);
+  const handleRemoveConfirm = async() => {
+    try {
+      var facilityId = facilityToBeRemoved.facility_id
+      const response = await axios.patch(`http://127.0.0.1:8000/api/facilities/deactivate/${facilityId}/`);
+      console.log('Facility deactivated:', response.data);
+      console.log(
+        `Facility with ID ${facilityToBeRemoved.facility_id} is cancelled successfully!`
+      );
+
+      //send the post request to the api to cancel the data
+      // render the sucessful info page
+      setRemovalSuccess(true);
+      // window.location.href = `/admin/facility/${adminId}/`;
+     
+      // Optionally refresh the list or update the state to reflect the change
+    } catch (error) {
+      console.error('Error deactivating facility:', error.response ? error.response.data : error.message);
+    }
   };
-  const handleRemoveCancel = () => {
+  const handleRemoveCancelBefore = () => {
     setShowConfirmationRemove(false);
     setFacilityToBeRemoved(null);
-    setRemovalSuccess(false); // Reset the success state for the next removal
+    setRemovalSuccess(false); // Reset the success state for the next removal 
+  };
+
+  const handleRemoveCancelAfter = () => {
+    console.log("AFTER");
+    setShowConfirmationRemove(false);
+    setFacilityToBeRemoved(null);
+    setRemovalSuccess(false); // Reset the success state for the next removal 
+    window.location.href = `/admin/facility/${adminId}/`;
   };
 
   //handle the show add facility popup page
@@ -67,76 +114,186 @@ export default function FacilityHome() {
   };
   const handleAddFacilityCancel = () => {
     setShowAddFacility(false);
+    navigate(`/admin/facility/${adminId}/`)
+    setSelectedSpecialties([])
+    setSelectedSpecialityIds([])
+
   };
 
-  // handle the dualListBox
-  const [availableSpecialties, setAvailableSpecialties] = useState([
-    "Cardiology",
-    "Pediatrics",
-    "Psychiatry",
-    "Internal Medicine",
-    "Obstetrics and Gynecology (OB/GYN)",
-  ]);
-
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
-  const [selectedAvailable, setSelectedAvailable] = useState([]);
-  const [selectedSelected, setSelectedSelected] = useState([]);
+  const [selectedAvailable, setSelectedAvailable] = useState("");
+  const [selectedSelected, setSelectedSelected] = useState("");
+  const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
 
   const handleAdd = () => {
-    setSelectedSpecialties([...selectedSpecialties, ...selectedAvailable]);
-    // setAvailableSpecialties(availableSpecialties.filter(specialty => !selectedAvailable.includes(specialty)));
-    setSelectedAvailable([]);
+
+    const speciality = specialityList.find(s => s.name === selectedAvailable);
+
+    if (speciality && !selectedSpecialityIds.includes(speciality.speciality_id)) {
+      setSelectedSpecialityIds([...selectedSpecialityIds, speciality.speciality_id]);
+      setSelectedSpecialties([...selectedSpecialties, selectedAvailable]);
+      setSelectedAvailable("");
+  } else if (!selectedAvailable) {
+      alert('Please select a speciality first.');
+  } else {
+      alert('This speciality is already in the list.');
+  }
   };
 
   const handleRemove = () => {
-    // setAvailableSpecialties([...availableSpecialties, ...selectedSelected]);
-    setSelectedSpecialties(
-      selectedSpecialties.filter(
-        (specialty) => !selectedSelected.includes(specialty)
-      )
-    );
-    setSelectedSelected([]);
+    const speciality = specialityList.find(s => s.name === selectedSelected);
+    if (speciality) {
+      setSelectedSpecialityIds(selectedSpecialityIds.filter(id => id !== speciality.speciality_id));
+      setSelectedSpecialties(selectedSpecialties.filter(item => item !== selectedSelected));
+      setSelectedSelected(""); 
+    }
   };
 
   //set the input field
-  const [facility, setFacility] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
+  const [name, setFacilityName] = useState("");
+  const [addressLine1, setAddress1] = useState("");
+  const [addressLine2, setAddress2] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [zipcode, setZipcode] = useState("");
-  const [roomnumber, setRoomnumber] = useState("");
-  const [phone, setPhone] = useState("");
+  const [zipCode, setZipcode] = useState("");
+  const [rooms_no, setRoomnumber] = useState("");
+  const [phone_number, setPhone] = useState("");
 
-  const handleSubmitFacility = () => {
-    console.log("the submisson is sent!");
-    console.log(facility);
-    console.log(selectedSpecialties);
+  const handleSubmitFacility = () => 
+  {
+    // const specialityIds = selectedSpecialties.map(speciality => speciality.speciality_id);
+
+    const formData = {
+      name,
+      phone_number,
+      rooms_no,
+      addressLine1,
+      addressLine2,
+      state,
+      city,
+      zipCode,
+      speciality_id: selectedSpecialityIds,
+      is_active:true,
+    }
+   console.log(JSON.stringify(formData));
+
+   if (Object.keys(formData).length !== 0) {
+    console.log(JSON.stringify(formData));
+    axios.post('http://127.0.0.1:8000/api/facilities/create/', formData)
+        .then(response => {
+          
+            console.log('Form submitted successfully!', response.data);
+            window.location.href = `/admin/facility/${adminId}/`
+            
+        })
+        .catch(error => {
+            console.error('Error submitting form:', error);
+        });
+        // window.location.href = "/AddDoctors"
+}
   };
 
   //Manage the rooms for the selected facility
-  const [showRooms, setShowRooms] = useState(false);
-  const [facilityToBeEditRoom, setFacilityToBeEditRoom] = useState(null);
-  const handleRoomClick = (facilityId) => {
-    const facility = FacilityList.find((f) => f.facility_id === facilityId);
-    setShowRooms(true);
-    setFacilityToBeEditRoom(facility);
-  };
-  // handle the date filter and the room
-  const [roomsData, setRoomsData] = useState({
-    "03/23/2024": { available: [1, 2, 3, 4], unavailable: [5] },
-    "03/24/2024": { available: [1, 2, 3], unavailable: [4, 5] },
-    // ... other dates with room availabilities
-  });
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedAvailableRoom, setSelectedAvailableRoom] = useState(null);
-  const [selectedUnavailableRoom, setSelectedUnavailableRoom] = useState(null);
-
   // Function to convert date from YYYY-MM-DD to MM/DD/YYYY
   const convertDateFormat = (isoDate) => {
     if (!isoDate) return '';
     const [year, month, day] = isoDate.split('-');
     return `${month}/${day}/${year}`;
+  };
+
+  const [showRooms, setShowRooms] = useState(false);
+  const [facilityToBeEditRoom, setFacilityToBeEditRoom] = useState(null);
+
+  // handle the date filter and the room
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedAvailableRoom, setSelectedAvailableRoom] = useState(null);
+  const [selectedUnavailableRoom, setSelectedUnavailableRoom] = useState(null);
+  const [selectedRoomId, setSelectedRoomId] = useState('');
+ 
+  const formattedDate = convertDateFormat(selectedDate);
+
+  const [roomsData, setRoomsData] = useState({});
+
+  // Get the available and unavailable rooms for the selected date
+  const availableRooms = roomsData[formattedDate]?.available || [];
+  const unavailableRooms = roomsData[formattedDate]?.unavailable || [];
+
+  const getRoomsDB = async (facilityRoom) => {
+    try {
+      const { data: response } = await axios.get(`http://127.0.0.1:8000/api/rooms/`);
+
+      var availableFacilityRooms = []
+      var unavailableFacilityRooms = []
+
+      if (Object.keys(response).length <= 0) {
+        // No data in ManageRooms DB = All rooms are available
+        // Only show available and unavailabe rooms when a date is set:
+        availableFacilityRooms = []
+        unavailableFacilityRooms = []
+        if (selectedDate !== '') {
+          for (let i = 1; i <= facilityRoom.rooms_no; i++) {
+            availableFacilityRooms.push(i);
+          }
+          setRoomsData({
+            [formattedDate]: { available: availableFacilityRooms, unavailable: unavailableFacilityRooms },
+          });
+
+        }
+      } else {        
+        if ((facilityRoom) && (selectedDate !== '')) {
+          for (let i = 0; i < response.length; i++) {
+            if ((response[i]['facility_id'] === facilityRoom.facility_id) && (selectedDate === response[i]['date'])) {
+              // Unavailable room exists for the selected date:
+              availableFacilityRooms = []
+              unavailableFacilityRooms = []
+
+              for (let j = 1; j <= facilityRoom.rooms_no; j++) {
+                if (response[i]['unavailable_room'].includes(j)) {
+                  unavailableFacilityRooms.push(j);
+                } else {
+                  availableFacilityRooms.push(j);
+                }
+              }
+
+              setRoomsData({
+                [formattedDate]: { available: availableFacilityRooms, unavailable: unavailableFacilityRooms }
+              });
+
+              setSelectedRoomId(response[i]['room_id']);
+
+              return
+            }
+          }
+
+          // All rooms considered available:
+          availableFacilityRooms = []
+          unavailableFacilityRooms = []
+          for (let i = 1; i <= facilityRoom.rooms_no; i++) {
+            availableFacilityRooms.push(i);
+          }
+          setRoomsData({
+            [formattedDate]: { available: availableFacilityRooms, unavailable: unavailableFacilityRooms },
+          });
+          
+          setSelectedRoomId('');
+        }
+
+      }
+    } catch (error) {
+      console.error('Failed to fetch rooms from DB:', error);
+    }
+  }
+
+  // Update available rooms everytime the selected date gets changed:
+  useEffect(() => {
+    getRoomsDB(facilityToBeEditRoom);
+    // eslint-disable-next-line
+  }, [selectedDate,]);
+
+  const handleRoomClick = (facilityId) => {
+    const facility = FacilityList.find((f) => f.facility_id === facilityId);
+    setShowRooms(true);
+    setFacilityToBeEditRoom(facility);
   };
 
   // When the date is changed, update the selected date
@@ -146,13 +303,9 @@ export default function FacilityHome() {
     // Reset room selection when date changes
     setSelectedAvailableRoom(null);
     setSelectedUnavailableRoom(null);
+    setSubmissionMsg('');
+    setErrorSubmissionMsg('');
   };
-
-  const formattedDate = convertDateFormat(selectedDate);
-
-  // Get the available and unavailable rooms for the selected date
-  const availableRooms = roomsData[formattedDate]?.available || [];
-  const unavailableRooms = roomsData[formattedDate]?.unavailable || [];
 
   // Function to move a room from available to unavailable
   const moveToUnavailable = () => {
@@ -179,29 +332,68 @@ export default function FacilityHome() {
       setSelectedUnavailableRoom(null);
     }
   };
-  const handelSubmitManageRooms = () =>{
-    console.log(facilityToBeEditRoom);
-    console.log('edit the rooms successfully!');
-    console.log(formattedDate);
-    console.log(availableRooms);
-    console.log(unavailableRooms);
 
+  const [submissionMsg, setSubmissionMsg] = useState('');
+  const [errorSubmissionMsg, setErrorSubmissionMsg] = useState('');
+
+  const handelSubmitManageRooms = () =>{
+    var unavailable_room = unavailableRooms;
+    var date = selectedDate;
+    var facility_id = facilityToBeEditRoom.facility_id;
+
+    const roomsForm = {
+      unavailable_room,
+      date,
+      facility_id
+    };
+    // Case #1: Originally all available, now certain rooms are unavailable
+    if ((selectedRoomId === '') && (unavailableRooms.length > 0)) {
+      axios.post('http://127.0.0.1:8000/api/updateRooms/', roomsForm)
+      .then(response => {
+        console.log("Form submitted successfully:", response.data);
+        setSubmissionMsg("Room Availability Successfully Updated")
+      })
+    } else if ((selectedRoomId !== '') && (unavailableRooms.length > 0)) {
+      // Case #2: Originally some unavailable rooms, now there are still unavailable rooms:
+      axios.patch(`http://127.0.0.1:8000/api/updateRooms/${selectedRoomId}/`, roomsForm)
+      .then(response => {
+        console.log("Form submitted successfully:", response.data);
+        setSubmissionMsg("Room Availability Successfully Updated")
+      })
+    } else if ((selectedRoomId !== '') && (unavailableRooms.length === 0)) {
+      // Case #3: Originally some unavailable rooms, now all are available:
+      axios.delete(`http://127.0.0.1:8000/api/updateRooms/${selectedRoomId}/`, roomsForm)
+      .then(response => {
+        console.log("Form submitted successfully:", response.data);
+        setSubmissionMsg("Room Availability Successfully Updated")
+      })
+    } else {
+      setErrorSubmissionMsg("Please provide valid inputs");
+    }
   }
+
   const handleRoomCancel = () => {
     setShowRooms(false);
     setFacilityToBeEditRoom(null);
+    setSelectedDate('');
+    setSelectedAvailable(null);
+    setSelectedUnavailableRoom(null);
+    setRoomsData({});
+    setSelectedRoomId('');
+    setSubmissionMsg('');
+    setErrorSubmissionMsg('');
   };
 
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["main-container2"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["vector"]} />
-          </div>
+    <div className={styles['main-container']}>
+      <div  className={styles['top-bar']}>
+        <div  className={styles['frame']}>      
+          <div className={styles['main-container2']}>
+            <span className={styles['we-cure-it']}>WeCureIt</span>
+          <div className={styles['vector']} />
         </div>
       </div>
+    </div>
 
       <div className={styles["rectangle"]}>
         <span className={styles["remove-button"]} onClick={handleAddClick}>
@@ -221,8 +413,8 @@ export default function FacilityHome() {
                 <div className={styles["frame-5"]}>
                   <input
                     className={styles["input"]}
-                    value={facility}
-                    onChange={(e) => setFacility(e.target.value)}
+                    value={name}
+                    onChange={(e) => setFacilityName(e.target.value)}
                     placeholder="facility name"
                     type="text"
                   />
@@ -235,7 +427,7 @@ export default function FacilityHome() {
                 <div className={styles["frame-9"]}>
                   <input
                     className={styles["input"]}
-                    value={address1}
+                    value={addressLine1}
                     onChange={(e) => setAddress1(e.target.value)}
                     placeholder=" Address Line 1"
                     type="text"
@@ -244,7 +436,7 @@ export default function FacilityHome() {
                 <div className={styles["frame-b"]}>
                   <input
                     className={styles["input"]}
-                    value={address2}
+                    value={addressLine2}
                     onChange={(e) => setAddress2(e.target.value)}
                     placeholder=" Address Line 2"
                     type="text"
@@ -280,7 +472,7 @@ export default function FacilityHome() {
                 <div className={styles["frame-16"]}>
                   <input
                     className={styles["input"]}
-                    value={zipcode}
+                    value={zipCode}
                     onChange={(e) => setZipcode(e.target.value)}
                     placeholder="Zip code"
                     type="text"
@@ -299,7 +491,7 @@ export default function FacilityHome() {
                   <div className={styles["frame-1d"]}>
                     <input
                       className={styles["input"]}
-                      value={roomnumber}
+                      value={rooms_no}
                       onChange={(e) => setRoomnumber(e.target.value)}
                       placeholder="Rooms available"
                       type="text"
@@ -315,7 +507,7 @@ export default function FacilityHome() {
                   <div className={styles["frame-21"]}>
                     <input
                       className={styles["input"]}
-                      value={phone}
+                      value={phone_number}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="(000)000-0000"
                       type="text"
@@ -342,25 +534,28 @@ export default function FacilityHome() {
                       <div className={styles["frame-2b"]}>
                         <div className={styles["group-2c"]}>
                           <div className={styles["group-2d"]}>
-                            {availableSpecialties.map((specialty) => (
+                            {specialityList.map((specialty,index) => {
+                              return(
                               <span
-                                key={specialty}
+                                key={index}
                                 className={
                                   styles[
                                     `${
-                                      selectedAvailable.includes(specialty)
+                                      selectedAvailable.includes(specialty.name)
                                         ? "item-selected"
                                         : "item"
                                     }`
                                   ]
                                 }
                                 onClick={() =>
-                                  setSelectedAvailable([specialty])
+                                  setSelectedAvailable(specialty.name)
                                 }
                               >
-                                {specialty}
+                                {specialty.name}
                               </span>
-                            ))}
+                            )
+                              }
+                              )}
                           </div>
                         </div>
                       </div>
@@ -403,9 +598,11 @@ export default function FacilityHome() {
                       <div className={styles["frame-3a"]}>
                         <div className={styles["group-3b"]}>
                           <div className={styles["group-3c"]}>
-                            {selectedSpecialties.map((specialty) => (
+                            {selectedSpecialties.map((specialty,index) =>
+                            {
+                              return(
                               <span
-                                key={specialty}
+                                key={index}
                                 className={
                                   styles[
                                     `${
@@ -415,11 +612,12 @@ export default function FacilityHome() {
                                     }`
                                   ]
                                 }
-                                onClick={() => setSelectedSelected([specialty])}
+                                onClick={() => setSelectedSelected(specialty)}
                               >
                                 {specialty}
                               </span>
-                            ))}
+                              )
+                              })}
                           </div>
                         </div>
                       </div>
@@ -515,7 +713,7 @@ export default function FacilityHome() {
             </div>
           </div>
 
-          {FacilityList.map((facility, index) => (
+          {activeFacilities.length > 0 ? activeFacilities.map((facility, index) => (
             <div
               key={facility.facility_id}
               className={styles[`${index % 2 === 0 ? "row" : "row-1b"}`]}
@@ -538,7 +736,7 @@ export default function FacilityHome() {
                   <button className={styles["icon-left"]}>
                     <span
                       className={styles["edit-information"]}
-                      onClick={() => handleEdit(facility.facility_id)}
+                      onClick={() => handleEdit(facility)}
                     >
                       Edit Information
                     </span>
@@ -571,7 +769,9 @@ export default function FacilityHome() {
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+          <div className = {styles["no-facilities-message"]}>No Facilities Found</div>
+          )}
           {showConfirmationRemove && facilityToBeRemoved && (
             <div className={styles["pop-up-remove"]}>
               <div className={styles["bench-accounting-nvzvopqwg-unsplash"]} />
@@ -601,7 +801,7 @@ export default function FacilityHome() {
                     <div className={styles["cancel-button-4"]}>
                       <span
                         className={styles["cancel-button-5"]}
-                        onClick={handleRemoveCancel}
+                        onClick={handleRemoveCancelBefore}
                       >
                         Cancel
                       </span>
@@ -625,7 +825,7 @@ export default function FacilityHome() {
                     <div className={styles["cancel-button-4"]}>
                       <span
                         className={styles["cancel-button-5"]}
-                        onClick={handleRemoveCancel}
+                        onClick={handleRemoveCancelAfter}
                       >
                         Close
                       </span>
@@ -647,6 +847,7 @@ export default function FacilityHome() {
                     className={styles["date-input"]}
                     type="date"
                     id="date"
+                    min = {new Date().toISOString().split("T")[0]}
                     value={selectedDate}
                     onChange={handleDateChange}
                   />
@@ -721,6 +922,10 @@ export default function FacilityHome() {
                 </div>
               </div>
               <div className={styles["group-18-rooms"]}>
+                <div className={styles['message']}>
+                  {submissionMsg && <div style={{ color: 'green' }}>{submissionMsg}</div>}
+                  {errorSubmissionMsg && <div style={{ color: 'red' }}>{errorSubmissionMsg}</div>}
+                </div>
                 <button className={styles["save-availability-button-rooms"]}>
                   <div className={styles["save-availability-button-19-rooms"]}>
                     <span
@@ -752,6 +957,7 @@ export default function FacilityHome() {
       <span className={styles["add-manage-facility-span"]}>
         Add/Manage Facility
       </span>
+      <div className={styles["edit-29"]}></div>
     </div>
   );
 }
