@@ -2396,3 +2396,66 @@
     z-index: 87;
     border-radius: 10px;
   }
+
+  .pop-up-recommendation {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    position: fixed;
+    width: 1169px;
+    height: 524px;
+    top: 255px;
+    left: 212px;
+    background: #efeff1;
+    z-index: 900;
+    overflow: hidden;
+    border-radius: 35px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+  }
+  .recommendation-information {
+    flex-shrink: 0;
+    position: absolute;
+    width: 400px;
+    height: 144px;
+    top: 18px;
+    left: 335px;
+    font-family: Poppins, var(--default-font-family);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 48px;
+    text-align: center;
+    z-index: 91;
+  }
+  .recommendation-detail {
+    position: relative;
+    color: #000000;
+    font-family: Poppins, var(--default-font-family);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 48px;
+    text-align: center;
+  }
+
+  .rectangle-recommendation {
+    flex-shrink: 0;
+    position: relative;
+    width: 180.89px;
+    height: 56px;
+    left: 28%;
+    top: 30%;
+    background: #d64e4e;
+    z-index: 33;
+    border-radius: 10px;
+  }
+
+  .rectangle-recommendation-c {
+    flex-shrink: 0;
+    position: relative;
+    width: 180.885px;
+    height: 56px;
+    left: 32%;
+    top: 30%;
+    background: #4f7831;
+    z-index: 29;
+    border-radius: 10px;
+  }
