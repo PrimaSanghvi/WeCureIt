@@ -87,7 +87,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
         model = Appointments
         fields = ('appointment_id', 'PatientName', 'DateTime', 'Location', 'patient_rec_id','patient_id',
                   'speciality_id','facility_id', 'DoctorName', 'SpecialityType', 'Address', 'start_time', 'end_time', 'date',
-                  'DateOnly', 'TimeOnly')
+                  'DateOnly', 'TimeOnly', 'doctor_id', 'schedule_id')
 
     def get_PatientName(self, obj):
         return f"{obj.patient_id.first_name} {obj.patient_id.last_name}"
