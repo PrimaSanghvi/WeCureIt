@@ -116,7 +116,7 @@ class Appointments(models.Model):
     doctor_id = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     speciality_id = models.ForeignKey(Speciality, on_delete=models.CASCADE)
     schedule_id =  models.ForeignKey(Doc_schedule, on_delete=models.CASCADE)
-    patient_rec_id = models.ForeignKey(Patient_record, on_delete=models.CASCADE)
+    patient_rec_id = models.ForeignKey(Patient_record, on_delete=models.CASCADE, null=True)  # Allow null
     start_time = models.TimeField()
     end_time = models.TimeField()
     date = models.DateField(default=timezone.now)  

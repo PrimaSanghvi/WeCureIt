@@ -21,7 +21,7 @@ export default function Main() {
             email: email.toUpperCase(),
             password: password,
         };
-    
+        console.log(payload)
         const patientLoginPromise = axios.post('http://127.0.0.1:8000/api/patientLogin/', payload);
         const doctorLoginPromise = axios.post('http://127.0.0.1:8000/api/doctorLogin/', payload);
         const adminLoginPromise = axios.post('http://127.0.0.1:8000/api/adminLogin/', payload);

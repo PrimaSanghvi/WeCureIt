@@ -47,6 +47,7 @@ const App = () => {
         <Route path ="/doctorHomepage/:patientId/medical_info/" element = {<ReviewMedicalInfo />}/>
         <Route path="/patient/appointment" element={<UserAppointment />}/>
         <Route path ="/doctorHomepage/:doctorId/viewappointment" element = {<ViewAppointment />}/>
+        <Route path = "/schedule/appointment/:patientId" element={<UserAppointment />} />
       </Routes>
     </div>
 </Router>
