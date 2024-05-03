@@ -43,5 +43,8 @@ urlpatterns = [
    path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
     path('api/facilities/update/<int:pk>/',views.FacilityUpdateView.as_view(), name='facility-update'),
     path('api/facilities/deactivate/<int:pk>/', views.FacilityDeactivateView.as_view(), name='deactivate-facility'),
-    path('api/available-doctors/', views.AvailableDoctorsView.as_view(), name='available-doctors'),
+    path('api/available-appointment/', views.AvailableDoctorsView.as_view(), name='available-doctors'),
+    path('api/findAvailableSchedule/', views.DocScheduleListView.as_view() , name='search_available_schedule'),
+    path('api/book-appointments/', views.CreateAppointmentView.as_view(), name='create-appointment'),
+    path('api/recommend-slot/', views.SlotRecommendationView.as_view(), name='recommend-slot'),
 ]
