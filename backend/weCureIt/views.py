@@ -112,7 +112,7 @@ class UpcomingAppointmentsView(APIView):
 class DoctorScheduleView(APIView):
     def get(self, request, doctor_id, selected_date):
         try:
-            selected_date_obj = datetime.datetime.strptime(selected_date, '%Y-%m-%d').date()
+            selected_date_obj = datetime.strptime(selected_date, '%Y-%m-%d').date()
             day_of_week = selected_date_obj.strftime('%A')
         except ValueError:
             return Response({'error': 'Invalid date format'}, status=status.HTTP_400_BAD_REQUEST)
@@ -446,7 +446,7 @@ class NewRecView(APIView):
             return Response({'detail': 'No data found'}, status=status.HTTP_200_OK)
         
         # Serialize the records
-        serializer = Patient_record(records, many=True)
+        serializer = PatientMedicalRecSerialier(records, many=True)
         
         # Return the serialized data
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -541,3 +541,79 @@ class DocScheduleListView(generics.ListAPIView):
                             })
 
         return Response(flattened_data)
+    
+class PatientUpcomingAppointmentsView(APIView):
+    """
+    View to get upcoming appointments for a specific patient:
+    """
+    def get(self, request, patient_id):
+        today = timezone.now().astimezone(timezone.get_default_timezone()).date().strftime('%Y-%m-%d')
+        currentTime = datetime.now().strftime("%H:%M:%S")
+
+        appointments = Appointments.objects.filter(
+            patient_id = patient_id,
+            date__gte = today
+        ).select_related('patient_id', 'facility_id').order_by('date', 'start_time')
+
+        serializer = AppointmentSerializer(appointments, many=True)
+
+        upcomingAppointments = []
+        for app in serializer.data:
+            if (app['date'] == today):
+                if (app['end_time'] >= currentTime):
+                    upcomingAppointments.append(app)
+                else:
+                    continue
+            else:
+                upcomingAppointments.append(app)
+        return Response(upcomingAppointments)
+    
+class PatientPastAppointmentsView(APIView):
+    """
+    View to get past appointments for a specific patient:
+    """
+    def get(self, request, patient_id):
+        today = timezone.now().astimezone(timezone.get_default_timezone()).date().strftime('%Y-%m-%d')
+        currentTime = datetime.now().strftime("%H:%M:%S")
+
+        appointments = Appointments.objects.filter(
+            patient_id = patient_id,
+            date__lte= today
+        ).select_related('patient_id', 'facility_id').order_by('date', 'start_time')
+
+        serializer = AppointmentSerializer(appointments, many=True)
+
+        pastAppointments = []
+        for app in serializer.data:
+            if (app['date'] == today):
+                if (app['end_time'] >= currentTime):
+                    continue
+                else:
+                    pastAppointments.append(app)
+            else:
+                pastAppointments.append(app)
+
+        return Response(pastAppointments)
+    
+class PatientCancelAppointmentView(APIView):
+    def delete(self, request, pk, format=None):
+        query = Appointments.objects.get(pk=pk)
+        query.delete()
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class DoctorAppointmentsView(generics.ListAPIView):
+    serializer_class = AppointmentSerializer2
+
+    def get_queryset(self):
+        doctor_id = self.request.query_params.get('doctor_id')
+        date = self.request.query_params.get('date')
+        if doctor_id and date:
+            return Appointments.objects.filter(
+                doctor_id=doctor_id,
+                date=date
+            ).select_related('facility_id', 'patient_id')
+        else:
+            # Handle bad request or return empty queryset
+            return Appointments.objects.none()

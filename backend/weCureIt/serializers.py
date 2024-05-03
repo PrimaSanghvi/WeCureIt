@@ -74,12 +74,19 @@ class AppointmentSerializer(serializers.ModelSerializer):
     PatientName = serializers.SerializerMethodField()
     Location = serializers.SerializerMethodField()
     DateTime = serializers.SerializerMethodField()
+    DoctorName = serializers.SerializerMethodField()
+    SpecialityType = serializers.SerializerMethodField()
+    Address = serializers.SerializerMethodField()
+    DateOnly = serializers.SerializerMethodField()
+    TimeOnly = serializers.SerializerMethodField()
     # Assuming you will handle PatientMedicalInformation through a separate mechanism
     # since it might involve fetching or displaying more detailed records
 
     class Meta:
         model = Appointments
-        fields = ('appointment_id', 'PatientName', 'DateTime', 'Location', 'patient_rec_id','patient_id','speciality_id','facility_id')
+        fields = ('appointment_id', 'PatientName', 'DateTime', 'Location', 'patient_rec_id','patient_id',
+                  'speciality_id','facility_id', 'DoctorName', 'SpecialityType', 'Address', 'start_time', 'end_time', 'date',
+                  'DateOnly', 'TimeOnly')
 
     def get_PatientName(self, obj):
         return f"{obj.patient_id.first_name} {obj.patient_id.last_name}"
@@ -98,6 +105,26 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     # Concatenating the formatted date with the formatted start and end times.
         return f"{appointment_date} {start_time} - {end_time}"
+    
+    def get_DoctorName(self, obj):
+        return f"{obj.doctor_id.first_name} {obj.doctor_id.last_name}"
+    
+    def get_SpecialityType(self, obj):
+        return obj.speciality_id.name
+    
+    def get_Address(self, obj):
+        return f"{obj.facility_id.addressLine1} {obj.facility_id.city} {obj.facility_id.state}, {obj.facility_id.zipCode}"
+    
+    def get_DateOnly(self, obj):
+        appointment_date = obj.date.strftime("%m/%d/%Y")  # Correctly formats the date
+
+        return f"{appointment_date}"
+
+    def get_TimeOnly(self, obj):
+        start_time = obj.start_time.strftime("%I:%M %p")
+        end_time = obj.end_time.strftime("%I:%M %p")
+
+        return f"{start_time} - {end_time}"
 
 class DocScheduleSerializer(serializers.ModelSerializer):
     facility_name = serializers.SerializerMethodField()
@@ -533,3 +560,18 @@ class DocScheduleSerializerFilter(serializers.ModelSerializer):
     class Meta:
         model = Doc_schedule
         fields = ('schedule_id', 'doctor', 'facility', 'speciality', 'days_visiting', 'visiting_hours_start', 'visiting_hours_end')
+
+class AppointmentSerializer2(serializers.ModelSerializer):
+    name = serializers.CharField(source='facility_id.name')
+    addressLine1 = serializers.CharField(source='facility_id.addressLine1')
+    city = serializers.CharField(source='facility_id.city')
+    state = serializers.CharField(source='facility_id.state')
+    zipCode = serializers.IntegerField(source='facility_id.zipCode')
+    first_name = serializers.CharField(source='patient_id.first_name')
+    last_name = serializers.CharField(source='patient_id.last_name')
+    patient_id = serializers.CharField(source='patient_id.patient_id')
+    
+    class Meta:
+        model = Appointments
+        fields = ('start_time', 'end_time', 'name', 'addressLine1',
+                  'city', 'state', 'zipCode', 'first_name', 'last_name', 'patient_id')

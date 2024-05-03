@@ -62,14 +62,11 @@ export default function FacilityHome() {
   // to render the successful delete page
   const [removalSuccess, setRemovalSuccess] = useState(false);
 
-  const handleRemoveClick = async(facilityId) => {
+  const handleRemoveClick = (facilityId) => {
     try {
       const facility = FacilityList.find((f) => f.facility_id === facilityId);
       setFacilityToBeRemoved(facility)
       setShowConfirmationRemove(true);
-
-      const response = await axios.patch(`http://127.0.0.1:8000/api/facilities/deactivate/${facilityId}/`);
-      console.log('Facility deactivated:', response.data);
      
       // Optionally refresh the list or update the state to reflect the change
     } catch (error) {
@@ -77,19 +74,37 @@ export default function FacilityHome() {
     }
   };
   // the command is confirmed, send delete command to the backend
-  const handleRemoveConfirm = () => {
-    console.log(
-      `Facility with ID ${facilityToBeRemoved.facility_id} is cancelled successfully!`
-    );
-    //send the post request to the api to cancel the data
-    // render the sucessful info page
-    setRemovalSuccess(true);
-    window.location.href = `/admin/facility/${adminId}/`;
+  const handleRemoveConfirm = async() => {
+    try {
+      var facilityId = facilityToBeRemoved.facility_id
+      const response = await axios.patch(`http://127.0.0.1:8000/api/facilities/deactivate/${facilityId}/`);
+      console.log('Facility deactivated:', response.data);
+      console.log(
+        `Facility with ID ${facilityToBeRemoved.facility_id} is cancelled successfully!`
+      );
+
+      //send the post request to the api to cancel the data
+      // render the sucessful info page
+      setRemovalSuccess(true);
+      // window.location.href = `/admin/facility/${adminId}/`;
+     
+      // Optionally refresh the list or update the state to reflect the change
+    } catch (error) {
+      console.error('Error deactivating facility:', error.response ? error.response.data : error.message);
+    }
   };
-  const handleRemoveCancel = () => {
+  const handleRemoveCancelBefore = () => {
     setShowConfirmationRemove(false);
     setFacilityToBeRemoved(null);
     setRemovalSuccess(false); // Reset the success state for the next removal 
+  };
+
+  const handleRemoveCancelAfter = () => {
+    console.log("AFTER");
+    setShowConfirmationRemove(false);
+    setFacilityToBeRemoved(null);
+    setRemovalSuccess(false); // Reset the success state for the next removal 
+    window.location.href = `/admin/facility/${adminId}/`;
   };
 
   //handle the show add facility popup page
@@ -786,7 +801,7 @@ export default function FacilityHome() {
                     <div className={styles["cancel-button-4"]}>
                       <span
                         className={styles["cancel-button-5"]}
-                        onClick={handleRemoveCancel}
+                        onClick={handleRemoveCancelBefore}
                       >
                         Cancel
                       </span>
@@ -810,7 +825,7 @@ export default function FacilityHome() {
                     <div className={styles["cancel-button-4"]}>
                       <span
                         className={styles["cancel-button-5"]}
-                        onClick={handleRemoveCancel}
+                        onClick={handleRemoveCancelAfter}
                       >
                         Close
                       </span>

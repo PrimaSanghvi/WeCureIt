@@ -96,4 +96,9 @@ urlpatterns = [
     # GET request
     # 
     path('api/findAvailableSchedule/', views.DocScheduleListView.as_view(), name='search_available_schedule'),
+    path('api/patientUpcomingAppointment/<int:patient_id>/', views.PatientUpcomingAppointmentsView.as_view(), name='patient_upcoming_appointment'),
+    path('api/patientPastAppointment/<int:patient_id>/', views.PatientPastAppointmentsView.as_view(), name='patient_past_appointment'),
+    path('api/patientCancelAppointment/<int:pk>/', views.PatientCancelAppointmentView.as_view(), name='cancel_appointment'),
+    path('api/doctorAppointments/', views.DoctorAppointmentsView.as_view(), name = 'doctor-appointments'),
+
 ]

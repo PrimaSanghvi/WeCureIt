@@ -5,8 +5,6 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
-import clickedEditSVG from '../../../src/assets/edit.svg';
-import unclickedEditSVG from '../../../src/assets/edit-1.svg'
 
 export const UserEditProfile = () => {
   const { patientId } = useParams();
@@ -253,11 +251,10 @@ export const UserEditProfile = () => {
                  onChange={(e) => setAddressLine1(e.target.value)}
                  onBlur = {validateAddress}
                  placeholder=" Address Line 1" type="text" />
-                {/* {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>} */}
+                {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
               
             </div>
             <div className={styles['frame-7']}>
-              {/* <div className={styles['frame-8']}> */}
               <input className={styles["input" ]}
                 value={addressLine2}
                 onChange={(e) => setAddressLine2(e.target.value)}
@@ -275,7 +272,7 @@ export const UserEditProfile = () => {
                 onChange={(e) => setCity(e.target.value)}
                 onBlur = {validateAddress}
                 placeholder=" City Name" type="text" />
-                 {/* {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>} */}
+                 {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
               
             </div>
             <div className={styles['frame-d']}>
@@ -288,7 +285,7 @@ export const UserEditProfile = () => {
                 onChange={(e) => setState(e.target.value)}
                 onBlur = {validateAddress}
                 placeholder=" State Name" type="text" />
-                {/* {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>} */}
+                {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
               
             </div>
             <div className={styles['frame-10']}>
@@ -301,7 +298,7 @@ export const UserEditProfile = () => {
                 onChange={(e) => setZipCode(e.target.value)}
                 onBlur = {validateAddress}
                 placeholder="Zip-Code" type="text" />
-                {/* {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>} */}
+                {formErrors.zipCode && <div style={{ color: 'red' }}>{formErrors.zipCode}</div>}
               
             </div>
           </div>
@@ -310,15 +307,15 @@ export const UserEditProfile = () => {
               <span className={styles['email-address']}>Email address</span>
             </div>
             <div className={styles['frame-16']}>
-              <div className={styles['frame-17']}>
+              
               <input className={styles["input" ]}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={validateEmail} 
                   placeholder="Enter your email"
                   type="text"/>
-                   {/* {emailError && <div style={{ color: 'red' }}>{emailError}</div>} */}
-              </div>
+                   {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
+              
             </div>
           </div>
           <div className={styles['frame-18']}>
@@ -326,15 +323,15 @@ export const UserEditProfile = () => {
               <span className={styles['reset-password']}>Reset Password</span>
             </div>
             <div className={styles['frame-1a']}>
-              <div className={styles['frame-1b']}>
-              <input
-        className={styles["input"]}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Enter password"
-        type="password"
-      />  
-              </div>
+              
+              <input className={styles["input" ]}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Reset password"
+                  onBlur = {validatePassword}
+                  type="text"/>
+               {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}     
+              
             </div>
           </div>
           <div className={styles['frame-1d']}>
@@ -343,15 +340,14 @@ export const UserEditProfile = () => {
             </div>
             <div className={styles['frame-1f']}>
               
-            <input
-        className={styles["input"]}
-        value={reenteredPassword}
-        onChange={(e) => setReenteredPassword(e.target.value)}
-        placeholder="Re-enter password"
-        onBlur={validatePassword}
-        type="password"
-      />
-      {/* {confirmPasswordError && <div style={{ color: 'red' }}>{confirmPasswordError}</div>} */}
+              <input className={styles["input" ]}
+                  value={reenteredPassword}
+                  onChange={(e) => setReenteredPassword(e.target.value)}
+                  placeholder="Re-enter password"
+                  onBlur={validatePassword}
+                  type="text"/>
+                     {confrimPasswordError && <div style={{ color: 'red' }}>{confrimPasswordError}</div>}
+              
             </div>
             
           </div>
@@ -367,27 +363,23 @@ export const UserEditProfile = () => {
               <span className={styles['name-24']}>Last Name</span>
             </div>
             <div className={styles['frame-25']}>
-              <div className={styles['frame-26']}>
               <input className={styles["input"]} 
                   value={last_name}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Enter your Last Name" type="text" />
-              </div>
             </div>
           </div>
           <div className={styles['frame-28']}>
             <div className={styles['frame-29']}>
               <span className={styles['first-name']}>First Name</span>
             </div>
-            <div className={styles['frame-2a']}>
-              <div className={styles['frame-2b']}>
-              <input className={styles["input" ]}
+            <input className={styles['frame-2a']}
                   type='text'
                   value={first_name}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Enter your First Name" />
-              </div>
-            </div>
+                  placeholder="Enter your First Name" 
+              
+            />
           </div>
         </div>
         <div className={styles['buttons-2c']} >
@@ -402,11 +394,11 @@ export const UserEditProfile = () => {
 
       {/* SIDE MENU OPTIONS: */}
       <span className={styles['edit-profile-30']}>Edit Profile</span>
-      <img className={styles['edit']} alt = "Edit" src = {clickedEditSVG}/>
+      <div className={styles['edit']}  />
       <span className={styles['edit-payment-method']} onClick={editpayment} >Edit Payment Method</span>
-      <img className={styles['edit-31']} alt = "Edit" src = {unclickedEditSVG}/>
+      <div className={styles['edit-31']}/>
       <span className={styles['edit-saved-preferences']} onClick={editsavedpreference}>Edit Saved Preferences</span>
-      <img className={styles['edit-32']} alt = "Edit" src = {unclickedEditSVG}/>
+      <div className={styles['edit-32']} />
     </div>
   );
 }

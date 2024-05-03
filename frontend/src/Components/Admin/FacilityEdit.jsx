@@ -345,7 +345,7 @@ export default function FacilityEdit() {
         </div>
       </div>
       <div className={styles["flex-row-de"]}>
-        <span className={styles["create-facility"]} onClick={handleSubmit}>Edit Facility</span>
+        <span className={styles["create-facility"]} onClick={handleSubmit}>Save Changes</span>
         <div className={styles["frame-3b"]}>
           <div className={styles["frame-3c"]}>
             <div className={styles["frame-3d"]}></div>
