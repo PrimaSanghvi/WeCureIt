@@ -1923,11 +1923,12 @@
     position: relative;
     min-width: 0;
     height: 232px;
-    padding: 0 12px 0 12px;
+    padding: 30px 12px 10px 12px;
     background: #ffffff;
     border: 1px solid #9d9d9d;
     z-index: 19;
     border-radius: 8px;
+    overflow-y: auto;
   }
   .select-appointment-length {
     flex-shrink: 0;
