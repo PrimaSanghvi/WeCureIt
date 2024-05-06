@@ -31,7 +31,7 @@ class Patient(models.Model):
 
 class PatientCreditCard(models.Model):
     patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    card_number = models.CharField(max_length=19, primary_key = True)
+    card_number = models.CharField(max_length=255, primary_key = True)
     card_holder_name =  models.CharField(max_length=100)
     cvv =  models.IntegerField()
     addressLine1 = models.CharField(max_length=254)
@@ -114,7 +114,7 @@ class Appointments(models.Model):
     facility_id = models.ForeignKey(Facility, on_delete=models.CASCADE)
     doctor_id = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     speciality_id = models.ForeignKey(Speciality, on_delete=models.CASCADE)
-    schedule_id =  models.ForeignKey(Doc_schedule, on_delete=models.CASCADE)
+    schedule_id =  models.ForeignKey(Doc_schedule, on_delete=models.CASCADE, null=True)
     patient_rec_id = models.ForeignKey(Patient_record, on_delete=models.CASCADE, null=True)  # Allow null
     start_time = models.TimeField()
     end_time = models.TimeField()
