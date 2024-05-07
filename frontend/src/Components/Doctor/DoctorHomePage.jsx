@@ -34,7 +34,7 @@ function DoctorHomePage() {
   // fix the page navigation 
   
   const navigateToAppiontments = () => {
-    navigate('/doctorHomepage/:doctorId/viewappointment');
+    navigate(`/doctorHomepage/${doctorId}/viewappointment`);
   };
    
   const fetchScheduleForSelectedDate = async (selectedDate) => {
