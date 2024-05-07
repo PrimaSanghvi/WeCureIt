@@ -14,10 +14,13 @@ export default function Main() {
   // }
   const [selectedDate, setSelectedDate] = useState(new Date());
   let newDate = new Date()
+  // eslint-disable-next-line
   let date = newDate.getDate();
+  // eslint-disable-next-line
   let year = newDate.getFullYear();
   const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const monthname = ['January','February','March','April','May','June','July','August','September','October','November','December']
+  // eslint-disable-next-line
   const actualmonth = monthname[newDate.getMonth()]
   // eslint-disable-next-line
   const weekDayName = weekDays[newDate.getDay()];
