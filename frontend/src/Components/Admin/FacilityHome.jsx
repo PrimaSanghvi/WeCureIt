@@ -377,10 +377,10 @@ export default function FacilityHome() {
 
   const handleRoomCancel = () => {
     setShowRooms(false);
-    setFacilityToBeEditRoom(null);
+    // setFacilityToBeEditRoom(null);
     setSelectedDate('');
-    setSelectedAvailable(null);
-    setSelectedUnavailableRoom(null);
+    // setSelectedAvailable(null);
+    // setSelectedUnavailableRoom(null);
     setRoomsData({});
     setSelectedRoomId('');
     setSubmissionMsg('');
