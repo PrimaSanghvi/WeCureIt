@@ -14,10 +14,13 @@ import { generateDate, months } from "./calendar";
 import cn from "./cn";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import './CalView.css';
+import logo from '../../../src/assets/images/Logo.png';
 import './DoctorHomePage.css'
 import axios from "axios";
 import { useParams , useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 function DoctorHomePage() {
   const days = ["S", "M", "T", "W", "T", "F", "S"];
@@ -233,14 +236,27 @@ useEffect(() => {
 
   return (
     <div className='main-container'>
-      <div  className='top-bar'>
-        <div  className='frame'>      
-          <div className='main-container3'>
-            <span className='we-cure-it'>WeCureIt</span>
-          <div className='vector' />
-        </div>
+      <div className='section'>
+          <div className='topBar'>
+            <img src={logo} alt="WeCureIt" className='logo'/>
+            <span className='logoTitle'>WeCureIT</span>
+            <div className="tabs">
+              <button className="tab1">View/Add Schedule</button>
+              <button className="tab2">View Appointment</button>
+            </div>
+            {/* <div>
+              <button className="profile"><img src={profile} alt="WeCureIt" className='profilepic'/></button>
+            </div> */}
+          <div  className='profile'>
+                  <div className='dropdown'>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className='dropdown-content'>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                    </div>
+          </div>
       </div>
-    </div>
       <div className='main-container1'>
         <div className="text-3">
           <span>{months[today.month()]} {[today.date()]}, {today.year()}</span>

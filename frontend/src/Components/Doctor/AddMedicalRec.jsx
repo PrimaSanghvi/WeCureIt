@@ -2,7 +2,8 @@ import { useEffect,useState } from "react";
 import styles from "./AddMedicalRec.module.css";
 import axios from "axios"; 
 import { useLocation,useNavigate } from 'react-router-dom';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 
 export default function Main() {
@@ -23,7 +24,8 @@ export default function Main() {
 
   const [patientData, setPatientData] = useState('');
   const location = useLocation();
-  const{data1,data2} = location.state;
+  const{data1,data2} = location.state || {};
+
   
 
 
@@ -96,6 +98,7 @@ export default function Main() {
     };
     
     fetchData(); // Fetch data when component mounts or when patient_rec_id changes
+    // eslint-disable-next-line
   }, []);
   
 
@@ -104,7 +107,20 @@ export default function Main() {
     
     <div className={styles["main-container"]}>
       <div className={styles["top-bar"]}>
-        <div className={styles["top-bar-background"]} />
+        
+        <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
+                    
+                    <div  className={styles['profile']}>
+                      <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
       </div>
       <div className={styles["contents"]}>
         <div className={styles["records"]}>

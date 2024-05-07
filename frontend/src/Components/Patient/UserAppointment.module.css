@@ -39,6 +39,7 @@ button {
   width: 1512px;
   height: 103px;
   margin: 0 0 0 0;
+  overflow: visible;
 }
 
 .frame {
@@ -47,7 +48,7 @@ button {
   width: 1460.894px;
   height: 103px;
   z-index: 2;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .main-container2 {
@@ -83,18 +84,61 @@ button {
   white-space: nowrap;
   z-index: 4;
 }
-.vector-cross {
+.vector99 {
   position: absolute;
   width: 24.28%;
   height: 51.53%;
   top: 24.24%;
   left: 73.99%;
-  /* background: url(../../assets/images/Logo.png)
-    no-repeat center; */
+  background: url(../../assets/images/Logo.png)
+    no-repeat center;
   background-size: 100% 100%;
   z-index: 3;
 }
-
+.create-appointment-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  position: absolute;
+  width: 202px;
+  height: 74px;
+  top: 16px;
+  right: 224px;
+  z-index: 10;
+  overflow: hidden;
+  border-radius: 60px;
+}
+.create-appointment-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  gap: 10px;
+  position: relative;
+  width: 150px;
+  height: 67px;
+  padding: 16px 16px 16px 16px;
+  cursor: pointer;
+  background: #ffbfab;
+  border: none;
+  z-index: 11;
+  overflow: hidden;
+  border-radius: 60px;
+}
+.frame-1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  gap: 9px;
+  position: relative;
+  width: 154px;
+  z-index: 12;
+}
 .schedule-appointment {
   display: block;
   position: relative;
@@ -3117,3 +3161,50 @@ box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
     text-align: center;
   }
 
+  .profile {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 31px;
+    left: 1355.894px;
+    z-index: 8;
+    border-radius: 500px;
+    overflow: visible;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 100;
+    right: 0; 
+    top: 100%;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    visibility: visible; 
+    opacity: 1; 
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  .dropbtn::before {
+    font-family: 'FontAwesome';
+    content: '\f007'; 
+    margin-right: 8px;
+  }
+  

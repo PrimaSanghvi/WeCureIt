@@ -89,6 +89,7 @@ const handleRemove = () => {
     console.log("transfer to doctor arrangement");
   };
 
+  const [emailError, setEmailError] = useState('');
   const handleSubmit = async(e) =>{
     e.preventDefault();
     const doctor_id = doctor_editing.doctor_id;
@@ -102,29 +103,46 @@ const handleRemove = () => {
 
     console.log('specialityIds',specialityIds);
 
-    const updateddoctor = {
-      doctor_id,
-      first_name,
-      last_name,
-      email,
-      password,
-      phone_number,
-      is_active,
-      speciality_id: specialityIds
-    }
-   
-  
-    
-    console.log(updateddoctor)
-    try {
-      // Send a PUT request to update the doctor's is_active status
-    await axios.put(`http://127.0.0.1:8000/api/removedoctor/${doctor_editing.doctor_id}/`, updateddoctor);
-  // If the request is successful, update the doctor list in the state
-    } catch (error) {
-  // Handle errors
-    console.error('Error removing doctor:', error);
-  }
-    
+    // Ensure that email is unique:
+    const payload = {
+      email: email.toUpperCase(),
+      validEmail: false
+    };
+
+    // Get all emails to see if the admin can use the email:
+    axios.post(`http://127.0.0.1:8000/api/allEmails/`, payload)
+    .then(response => {
+      console.log('Response data:', response.data);
+
+      // Email taken:
+      if (response.data["validEmail"]) {
+        setEmailError("Email is already taken! Please use a different email.")
+      } else {
+        const updateddoctor = {
+          doctor_id,
+          first_name,
+          last_name,
+          email,
+          password,
+          phone_number,
+          is_active,
+          speciality_id: specialityIds
+        }
+       
+      
+        
+        console.log(updateddoctor)
+        axios.put(`http://127.0.0.1:8000/api/removedoctor/${doctor_editing.doctor_id}/`, updateddoctor)
+        .then(response => {
+          console.log('Form submitted successfully!', response.data);
+        })
+        .catch(error => {
+          console.error('Error submitting form:', error);
+        });
+
+        setEmailError('');
+      }
+    })
   };
   
   
@@ -233,9 +251,9 @@ const handleRemove = () => {
         </div>
         
         <input className={styles["frame-26"]} placeholder = {email}
-         type="text" value ={email} onChange={(e)=>setemail(e.target.value)}
+         type="text" value ={email} onChange={(e)=>setemail(e.target.value ? e.target.value.toUpperCase() : '')}
         />
-        
+        {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
       </div>
       <button className={styles["frame-28"]} onClick={handleSubmit}>
         <div className={styles["frame-29"]}>

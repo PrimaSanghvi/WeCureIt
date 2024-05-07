@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import styles from "./UserAppointment.module.css";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserAppointment() {
   const { patientId } = useParams();
@@ -16,7 +19,9 @@ export default function UserAppointment() {
   const [selectedDate, setSelectedDate] = useState("");
 
   const[selectedDoctorId, setSelectedDoctorId] = useState();
+  // eslint-disable-next-line
   const[selectedFacilityId, setSelectedFacilityId] = useState();
+  // eslint-disable-next-line
   const[selectedSpecialityId, setSelectedSpecialityId] = useState();
 
   const[selectedScheduleDoctorId, setSelectedScheduleDoctorId] = useState();
@@ -315,7 +320,10 @@ const createTimeSlots = (data) => {
   };
   const [showRecommendation, setShowRecommendation] = useState(false);
   
-
+  const navigate = useNavigate();
+  const navigateHome = () => {
+    navigate(`/patientHomepage/${patientId}`);
+  }
 
   
   const handleDeclineRecommendation = async() =>{
@@ -392,7 +400,7 @@ const createTimeSlots = (data) => {
    * still needs discussion
    */
 
-  
+  // eslint-disable-next-line
   const timeRecommend = {
     date: "April 1, 2024",
     timeSlot: "10:00 AM - 10:15 AM",
@@ -405,14 +413,33 @@ const createTimeSlots = (data) => {
   };
 
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["main-container2"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["vector-cross"]} />
-          </div>
+    <div  className={styles['main-container']}>
+    <div  className={styles['top-bar']}>
+     
+      <div  className={styles['frame']}>
+       
+      <div className={styles['main-container2']}>
+        <span className={styles['we-cure-it']}>WeCureIt</span>
+        <div className={styles['vector99']} />
+      </div>
+        <div  className={styles['create-appointment-button']}>
+          <button  className={styles['create-appointment-btn']} >
+            <div  className={styles['frame-1']}>
+              <span onClick={navigateHome}>
+                Home Page
+              </span>
+            </div>
+          </button>
         </div>
+        <div  className={styles['profile']}>
+                       <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                         <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                         </div>
+                       </div>
+                    </div>
+      </div>
       </div>
 
       <span className={styles["schedule-appointment"]}>
