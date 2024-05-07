@@ -366,11 +366,11 @@ input, select, textarea, button {
   flex-shrink: 0;
   position: relative;
   min-width: 0;
-  height: auto;
+  height: 317px;
   background: #ffffff;
   border: 1px solid #e7e7ed;
-  z-index: 87;
-  overflow: hidden;
+  z-index: 17;
+  overflow: auto;
   border-radius: 4px;
 }
 .header {

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Popup from 'reactjs-popup';
 import styles from './AddSchedule.module.css';
-import logo from '/src/assets/images/Logo.png';
-import profile from '/src/assets/images/profile.png';
+import logo from '../../../assets/images/Logo.png';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import DualListBox from 'react-dual-listbox';
 import 'react-dual-listbox/lib/react-dual-listbox.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { useParams , useNavigate } from 'react-router-dom';
 
 function CustomNoRowsOverlay() {
   return (
@@ -34,6 +36,7 @@ function CustomNoRowsOverlaySpecialities() {
   );
 }
 // Custom header component with icon and text
+// eslint-disable-next-line
 const CustomHeaderComponent = ({ text, icon }) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
     <img src={icon} alt="Icon" style={{ marginRight: '5px', width: '20px', height: '20px' }} />
@@ -50,15 +53,19 @@ function AddSchedule() {
   const [selectedSpecialties, setSelectedSpecialties] = useState([]); // Separate state for specialties
   const [selectedFacilities, setSelectedFacilities] = useState([]); // Separate state for facilities
   const [rowData, setRowData] = useState([]);
+  // eslint-disable-next-line
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
     // Update filtered data whenever selectedFromDate or selectedToDate or selectedDays changes
     filterData();
+    // eslint-disable-next-line
   }, [selectedFromDate, selectedToDate, selectedDays]);
 
   const filterData = () => {
+    // eslint-disable-next-line
     const fromDate = new Date(selectedFromDate);
+    // eslint-disable-next-line
     const toDate = new Date(selectedToDate);
 
     // Filter rowData to include only rows with days matching the selectedDays
@@ -132,6 +139,7 @@ function AddSchedule() {
     return params.node.rowIndex % 2 === 0 ? { background: 'white' } : { background: '#eeeeff' };
   };
 
+  // eslint-disable-next-line
   const addRowToGrid = () => {
     const newRow = {
       days: selectedDays.join(', '),
@@ -172,6 +180,15 @@ function AddSchedule() {
     { value: 'holycross', label: 'Holy Cross Hospital' },
   ];
 
+  const navigate = useNavigate();
+  const { doctorId } = useParams(); 
+  const navigateToAppiontments = () => {
+    navigate(`/doctorHomepage/${doctorId}/viewappointment`);
+  };
+  const navigateHome = () => {
+    navigate(`/doctorHomepage/${doctorId}`);
+  };
+
   return (
     <div className={styles['main-container']}>
       <div className='section'>
@@ -179,12 +196,18 @@ function AddSchedule() {
           <img src={logo} alt="WeCureIt" className={styles['logo']} />
           <span className={styles['logoTitle']}>WeCureIT</span>
           <div className={styles['tabs']}>
-            <button className={styles['tab1']}>View/Add Schedule</button>
-            <button className={styles['tab2']}>View Appointment</button>
+            <button className={styles['tab1']} onClick={navigateHome}>Home Page</button>
+            <button className={styles['tab2']} onClick={navigateToAppiontments}>View Appointment</button>
           </div>
-          <div>
-            <button className={styles['profile']}><img src={profile} alt="WeCureIt" className='profilepic' /></button>
-          </div>
+          <div  className='profile'>
+                  <div className='dropdown'>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className='dropdown-content'>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                      </div>
+                      
         </div>
       </div>
       <div className={styles['main-container2']}>

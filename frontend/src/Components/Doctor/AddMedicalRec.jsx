@@ -98,6 +98,7 @@ export default function Main() {
     };
     
     fetchData(); // Fetch data when component mounts or when patient_rec_id changes
+    // eslint-disable-next-line
   }, []);
   
 

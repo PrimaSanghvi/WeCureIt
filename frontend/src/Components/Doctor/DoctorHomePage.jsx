@@ -14,6 +14,7 @@ import { generateDate, months } from "./calendar";
 import cn from "./cn";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import './CalView.css';
+import logo from '../../../src/assets/images/Logo.png';
 import './DoctorHomePage.css'
 import axios from "axios";
 import { useParams , useNavigate } from 'react-router-dom';
@@ -32,6 +33,15 @@ function DoctorHomePage() {
   const [selectedDateSchedule, setSelectedDateSchedule] = useState(null);
 
   const navigate = useNavigate();
+
+  // fix the page navigation 
+  
+  const navigateToAppiontments = () => {
+    navigate(`/doctorHomepage/${doctorId}/viewappointment`);
+  };
+ const navigateToAddschedule= () => {
+    navigate(`/doctorHomepage/${doctorId}/addschedule`);
+  };
    
   const fetchScheduleForSelectedDate = async (selectedDate) => {
     const formattedDate = format(selectedDate, 'yyyy-MM-dd'); // Format the date as required by your backend
@@ -229,12 +239,17 @@ useEffect(() => {
 
   return (
     <div className='main-container'>
-      <div  className='top-bar'>
-        <div  className='frame'>      
-          <div className='main-container3'>
-            <span className='we-cure-it'>WeCureIt</span>
-          <div className='vector' />
-
+      <div className='section'>
+          <div className='topBar'>
+            <img src={logo} alt="WeCureIt" className='logo'/>
+            <span className='logoTitle'>WeCureIT</span>
+            <div className="tabs">
+              <button className="tab1" onClick={navigateToAddschedule}>View/Add Schedule</button>
+              <button className="tab2" onClick={navigateToAppiontments}>View Appointment</button>
+            </div>
+            {/* <div>
+              <button className="profile"><img src={profile} alt="WeCureIt" className='profilepic'/></button>
+            </div> */}
           <div  className='profile'>
                   <div className='dropdown'>
                         <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
@@ -243,9 +258,8 @@ useEffect(() => {
                         </div>
                       </div>
                     </div>
-        </div>
+          </div>
       </div>
-    </div>
       <div className='main-container1'>
         <div className="text-3">
           <span>{months[today.month()]} {[today.date()]}, {today.year()}</span>
@@ -368,7 +382,7 @@ useEffect(() => {
       </div>
       <div className='main-container2'>
         <div className='text-1'>Today's Appointment
-        <button className="viewAppoint" onClick={"./LoginPage"}><label className="text-15">View all appointments</label></button>
+        <button className="viewAppoint" onClick={navigateToAppiontments}><label className="text-15">View all appointments</label></button>
         </div>
         <div className="appointmentinfo">
   {todaysAppointments && todaysAppointments.length > 0 ? (

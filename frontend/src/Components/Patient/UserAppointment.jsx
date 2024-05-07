@@ -4,6 +4,7 @@ import axios from "axios";
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserAppointment() {
   const { patientId } = useParams();
@@ -18,7 +19,9 @@ export default function UserAppointment() {
   const [selectedDate, setSelectedDate] = useState("");
 
   const[selectedDoctorId, setSelectedDoctorId] = useState();
+  // eslint-disable-next-line
   const[selectedFacilityId, setSelectedFacilityId] = useState();
+  // eslint-disable-next-line
   const[selectedSpecialityId, setSelectedSpecialityId] = useState();
 
   const[selectedScheduleDoctorId, setSelectedScheduleDoctorId] = useState();
@@ -162,6 +165,7 @@ const createTimeSlots = (data) => {
   return slots;
 };
   // the time length for the user to choose
+  const [timeLengthValue, setTimeLengthValue] = useState(); 
   const [timeLength, setTimeLength] = useState(null);
   const timeLengthList = [
     { timeLength: "15 min" },
@@ -171,7 +175,8 @@ const createTimeSlots = (data) => {
   // put the call schedule request here
   const formattedDate = formatDate(selectedDate);
   const handleChangeTimeLength =  async (event) => {
-    const timeLengthValue = event.target.value.split(" ")[0];
+  const timeLengthValue = event.target.value.split(" ")[0];
+  setTimeLengthValue(timeLengthValue);
     setTimeLength(event.target.value);
     //console.log(selectedSchedule);
     const scheduleInfo = {
@@ -217,30 +222,81 @@ const createTimeSlots = (data) => {
 
    
   const [showConfirm, setShowConfirm] = useState(false);
- 
+  const[recDoctorID,setRecDoctorID ] = useState("");
+  // const[recDate, setRecDate] = useState("");
+  // const[recTimeSlot, setRecTimeSlot] = useState("");
+  const[recFacilityID, setRecFacilityID] = useState("");
+  const[docName, setDocName] = useState("");
+  const[facilityName, setFacilityName] = useState("");
+  const[facilityAdd1, setFacilityAdd1] = useState("");
+  const[facilityAdd2, setFacilityAdd2] = useState("");
+  const[facilityCity, setFacilityCity] = useState("");
+  const[facilityState, setFacilityState] = useState("");
+  const[facilityZipCode, setFacilityZipCode] = useState("");
+
   const handleScheduleSubmit = async() => {
     // put your post schedule request here
 
-    const appointmentData = {
-      date : selectedDate,
-      start_time : selectedTimeSlot,
-      schedule_id : 1,
-      facility_id : selectedScheduleFacilityId,
-      doctor_id : selectedScheduleDoctorId,
-      speciality_id : selectedScheduleSpecialityId,
-      patient_id : patientId
-   }
+  
+    const formattedDate = formatDate(selectedDate);
+   const recommendData = {
+    date : formattedDate,
+    time_slot : selectedTimeSlot,
+    facility_id : selectedScheduleFacilityId,
+    doctor_id : selectedScheduleDoctorId,
+    speciality_id : selectedScheduleSpecialityId,
+    appointment_length : timeLengthValue
 
+   }
    try {
-    console.log(JSON.stringify(appointmentData))
-    const response = await axios.post('http://127.0.0.1:8000/api/book-appointments/', appointmentData);
-    console.log('Appointment Created:', response.data);
-    setShowPopup(false);
-    setShowConfirm(true);
-    // clear the current status
-    setTimeLength("");
-    return response.data;
-  } catch (error) {
+    console.log(JSON.stringify(recommendData))
+
+    const response = await axios.post('http://127.0.0.1:8000/api/recommend-slot/', recommendData);
+    console.log('Recommended Slot:', response.data.doctor_name);
+    if (response.data && response.data.recommendations && response.data.recommendations.length > 0) 
+    {
+      const recommendation = response.data.recommendations[0]; // Access the first recommendation
+  
+      setDocName(recommendation.doctor_name)
+      setFacilityName(recommendation.facility_name)
+      setFacilityAdd1(recommendation.facility_addressLine1)
+      setFacilityAdd2(recommendation.facility_addressLine2)
+      setFacilityCity(recommendation.facility_city)
+      setFacilityState(recommendation.facility_state)
+      setFacilityZipCode(recommendation.facility_zipcode)
+      setRecFacilityID(recommendation.facility_id)
+      setRecDoctorID(recommendation.doctor_id);
+      setShowConfirm(false)
+      setShowPopup(false);
+      setShowRecommendation(true); 
+    }
+    else
+    {
+      const appointmentData = {
+        date : selectedDate,
+        start_time : selectedTimeSlot,
+        facility_id : selectedScheduleFacilityId,
+        doctor_id : selectedScheduleDoctorId,
+        speciality_id : selectedScheduleSpecialityId,
+        patient_id : patientId
+     }
+     try {
+     console.log(JSON.stringify(appointmentData))
+      const response = await axios.post('http://127.0.0.1:8000/api/book-appointments/', appointmentData);
+      console.log('Appointment Created:', response.data);
+      setShowPopup(false);
+      setShowConfirm(true);
+      // clear the current status
+      setTimeLength("");
+      return response.data;
+    }
+    catch (error) {
+      console.error('Error creating appointment:', error.response ? error.response.data : error.message);
+      throw error; // Re-throw to handle it according to your needs (e.g., show a message to the user)
+    }
+   }
+  }
+    catch (error) {
     console.error('Error creating appointment:', error.response ? error.response.data : error.message);
     throw error; // Re-throw to handle it according to your needs (e.g., show a message to the user)
   }
@@ -258,10 +314,81 @@ const createTimeSlots = (data) => {
   // close the confirmation page
   const handleCloseClick = () => {
     setShowConfirm(false);
+    setRecShowConfirm(false);
     setSelectedSchedule(null);
     setSelectedTimeSlot("");
-    
   };
+  const [showRecommendation, setShowRecommendation] = useState(false);
+  
+  const navigate = useNavigate();
+  const navigateHome = () => {
+    navigate(`/patientHomepage/${patientId}`);
+  }
+
+  
+  const handleDeclineRecommendation = async() =>{
+    setShowRecommendation(false);
+   
+    const appointmentData = {
+      date : selectedDate,
+      start_time : selectedTimeSlot,
+      facility_id : selectedScheduleFacilityId,
+      doctor_id : selectedScheduleDoctorId,
+      speciality_id : selectedScheduleSpecialityId,
+      patient_id : patientId
+   }
+   try {
+   console.log(JSON.stringify(appointmentData))
+    const response = await axios.post('http://127.0.0.1:8000/api/book-appointments/', appointmentData);
+    console.log('Appointment Created:', response.data);
+    setShowPopup(false);
+    setShowConfirm(true);
+    // clear the current status
+    setTimeLength("");
+    return response.data;
+  } catch (error) {
+    console.error('Error creating appointment:', error.response ? error.response.data : error.message);
+    throw error; // Re-throw to handle it according to your needs (e.g., show a message to the user)
+  }
+
+  }
+
+  /* When accept current recommendation,
+   * post it to the Appointment for the patient
+   * close the current pop-up page
+   * I did not write a confirm page here
+   * So i clean the data here 
+   */
+  const[recShowConfirm, setRecShowConfirm] = useState(false);
+  const handleAcceptRecommendation = async() =>{
+    setShowRecommendation(false);
+    const appointmentData = {
+      date : selectedDate,
+      start_time : selectedTimeSlot,
+      facility_id : recFacilityID,
+      doctor_id : recDoctorID,
+      speciality_id : selectedScheduleSpecialityId,
+      patient_id : patientId
+   }
+   try {
+    console.log(JSON.stringify(appointmentData))
+     const response = await axios.post('http://127.0.0.1:8000/api/book-appointments/', appointmentData);
+     console.log('Appointment Created:', response.data);
+     setShowPopup(false);
+     setRecShowConfirm(true);
+     setTimeLength("");
+     //setShowRecommendation(false);
+    // if u have a confirm page, clean the data in the confirm page
+    //setSelectedSchedule("");
+    //setSelectedTimeSlot("");
+     return response.data;     
+   } catch (error) {
+     console.error('Error creating appointment:', error.response ? error.response.data : error.message);
+     throw error; // Re-throw to handle it according to your needs (e.g., show a message to the user)
+   }
+
+  }
+
 
   /* the recommendation pop-up page 
    * current logic:
@@ -273,8 +400,7 @@ const createTimeSlots = (data) => {
    * still needs discussion
    */
 
-  const [showRecommendation, setShowRecommendation] = useState(false);
-  
+  // eslint-disable-next-line
   const timeRecommend = {
     date: "April 1, 2024",
     timeSlot: "10:00 AM - 10:15 AM",
@@ -286,43 +412,34 @@ const createTimeSlots = (data) => {
     }
   };
 
-
-  const handleDeclineRecommendation = () =>{
-    setShowRecommendation(false);
-  }
-
-  /* When accept current recommendation,
-   * post it to the Appointment for the patient
-   * close the current pop-up page
-   * I did not write a confirm page here
-   * So i clean the data here 
-   */
-  const handleAcceptRecommendation = () =>{
-    console.log(timeRecommend);
-    setShowRecommendation(false);
-    // if u have a confirm page, clean the data in the confirm page
-    setSelectedSchedule(null);
-    setTimeLength(null);
-    setSelectedTimeSlot("");
-
-  }
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["main-container2"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["vector-cross"]} />
-            <div  className={styles['profile']}>
-                      <div className={styles['dropdown']}>
-                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
-                        <div className={styles['dropdown-content']}>
-                          <a href="/">Logout</a>
-                        </div>
-                      </div>
-                    </div>
-          </div>
+    <div  className={styles['main-container']}>
+    <div  className={styles['top-bar']}>
+     
+      <div  className={styles['frame']}>
+       
+      <div className={styles['main-container2']}>
+        <span className={styles['we-cure-it']}>WeCureIt</span>
+        <div className={styles['vector99']} />
+      </div>
+        <div  className={styles['create-appointment-button']}>
+          <button  className={styles['create-appointment-btn']} >
+            <div  className={styles['frame-1']}>
+              <span onClick={navigateHome}>
+                Home Page
+              </span>
+            </div>
+          </button>
         </div>
+        <div  className={styles['profile']}>
+                       <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                         <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                         </div>
+                       </div>
+                    </div>
+      </div>
       </div>
 
       <span className={styles["schedule-appointment"]}>
@@ -622,22 +739,57 @@ const createTimeSlots = (data) => {
         </div>
       )}
 
+{recShowConfirm && (
+        <div className={styles["pop-up-remove"]}>
+          <div className={styles["bench-accounting-nvzvopqwg-unsplash"]} />
+
+          <div className={styles["remove-information"]}>
+            <span className={styles["are-you-sure-wish-remove"]}>
+              {selectedSchedule.date}
+              <br />
+              {selectedTimeSlot}
+              <br />
+              {docName}
+              <br />
+              {selectedSchedule.specialty}
+              <br />
+              {facilityName}
+              <br />
+            {facilityAdd1}  {facilityAdd2} {facilityCity} {facilityState} {facilityZipCode}
+            <br/>
+              was successfully reserved! <br />
+            </span>
+          </div>
+          <button className={styles["close-button"]}>
+            <div className={styles["cancel-button-4"]}>
+              <span
+                className={styles["cancel-button-5"]}
+                onClick={handleCloseClick}
+              >
+                Close
+              </span>
+              <div className={styles["rectangle-6"]} />
+            </div>
+          </button>
+        </div>
+      )}
+
 {showRecommendation && (
         <div className={styles["pop-up-recommendation"]}>
        
         <div className={styles["recommendation-information"]}>
           <span className={styles["recommendation-detail"]}>
-            {timeRecommend.date}
+            {selectedSchedule.date}
             <br />
-            {timeRecommend.timeSlot}
+            {selectedTimeSlot}
             <br />
-            {timeRecommend.doctor}
+            {"Dr. " + docName}
             <br />
-            {timeRecommend.facilityObj.name}
+            {facilityName}
             <br />
-            {timeRecommend.facilityObj.addressLine1}
+            {facilityAdd1}
             <br />
-            {timeRecommend.facilityObj.addressLine2}
+            {facilityAdd2} {facilityCity} {facilityState} {facilityZipCode}
             <br />
             Would you lke to select this appointment? <br />
           </span>
@@ -659,9 +811,6 @@ const createTimeSlots = (data) => {
        
       </div>
       )}
-
-
-
 
     </div>
   );
