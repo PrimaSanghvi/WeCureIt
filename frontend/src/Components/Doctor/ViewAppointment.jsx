@@ -50,32 +50,6 @@ export default function Main() {
   };
 
   const [data, setData] = useState([
-    {
-      id: 1,
-      start_time: '10:30:00',
-      end_time: '10:45:00',
-      name: 'GWU',
-      addressLine1: '900 23rd St NW',  
-      city: 'D.C',
-      state: 'Washington',
-      zipCode: '20037',
-      first_name: 'Nancy',
-      last_name: 'Smith',
-      patient_id: '2',
-    },
-    {
-      id: 2,
-      start_time: '11:00:00',
-      end_time: '11:30:00',
-      name: 'GWU',
-      addressLine1: '900 23rd St NW',  
-      city: 'D.C',
-      state: 'Washington',
-      zipCode: '20037',
-      first_name: 'Cyrus',
-      last_name: 'Harmon',
-      patient_id: '1',
-    }
   ]);
   // doctor_id is needed 
   // date is required
@@ -142,7 +116,7 @@ export default function Main() {
       </div>
     </div>
       <div className={styles["frame-1"]}>
-        <span className={styles["today-march"]}>Today, {actualmonth} {date}, {year}</span>
+        <span className={styles["today-march"]}>Selected Day:  {monthname[selectedDate.getMonth()]} {selectedDate.getDate()}, {selectedDate.getFullYear()}</span>
         <div className={styles["flex-row-f"]}>
           
           {weekDates.map((date) => (
