@@ -18,6 +18,7 @@ export default function Main() {
   const [respiratory_rate, setInputrespiratoryrate] = useState("");
   const [current_medications, setInputmedicine] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [warning, setWarning] = useState('');
   // the appintmentinfo may get by the review patient info page which is not
   //implemented yet, you can change to the real data once you get the info by that review patient info page
   
@@ -48,7 +49,6 @@ export default function Main() {
     
     // Check if ischecked is true
     if (isChecked) {
-      // Here you can handle the form submission, such as sending the data to your backend
       const patient_id = data1;
       const doctor_id = data2;
       const formData = {
@@ -63,10 +63,14 @@ export default function Main() {
         doctor_id,
         patient_id
       };
-   
-      // Check if formData is not empty
-      if (Object.keys(formData).length !== 0) {
-        console.log(JSON.stringify(formData));
+  
+      // Check for empty values in formData
+      const emptyFields = Object.keys(formData).filter(key => !formData[key]);
+      if (emptyFields.length > 0) {
+        alert(`Please fill in all fields: ${emptyFields.join(', ')}`);
+        
+      } else {
+        setWarning('');
         axios.post('http://127.0.0.1:8000/api/patientmedicalcreate/', formData)
           .then(response => {
             console.log('Form submitted successfully!', response.data);
@@ -78,11 +82,10 @@ export default function Main() {
           navigate(-1);  
       }
     } else {
-      console.log('ischecked is false, form not submitted');
+      alert('please check the checkbox');
     }
-    
-    
   };
+  
   
 
   useEffect(() => {
@@ -222,6 +225,7 @@ export default function Main() {
             </div>
           </div>
         </div>
+        
         <button className={styles["submit-button"]} onClick={handleSubmit}>
           <span className={styles["submit-button-b"] }>Submit</span>
           <div className={styles["rectangle-c"]} />
