@@ -14,8 +14,7 @@ import { generateDate, months } from "./calendar";
 import cn from "./cn";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
 import './CalView.css';
-import logo from '/src/assets/images/Logo.png';
-import profile from '/src/assets/images/profile.png';
+import logo from '../../../src/assets/images/Logo.png';
 import './DoctorHomePage.css'
 import axios from "axios";
 import { useParams , useNavigate } from 'react-router-dom';
@@ -245,9 +244,9 @@ useEffect(() => {
               <button className="tab1">View/Add Schedule</button>
               <button className="tab2">View Appointment</button>
             </div>
-            <div>
+            {/* <div>
               <button className="profile"><img src={profile} alt="WeCureIt" className='profilepic'/></button>
-            </div>
+            </div> */}
           <div  className='profile'>
                   <div className='dropdown'>
                         <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
