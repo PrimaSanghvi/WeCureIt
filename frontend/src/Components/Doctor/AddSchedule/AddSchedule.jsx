@@ -189,6 +189,10 @@ function AddSchedule() {
     navigate(`/doctorHomepage/${doctorId}`);
   };
 
+  const todayDate = new Date();
+  todayDate.setDate(1);
+  todayDate.setMonth(todayDate.getMonth() + 2);
+
   return (
     <div className={styles['main-container']}>
       <div className='section'>
@@ -222,6 +226,7 @@ function AddSchedule() {
                   placeholder='YYYY-MM-DD'
                   type='date'
                   value={selectedFromDate}
+                  min = {todayDate.toISOString().split("T")[0]}
                   onChange={(e) => setSelectedFromDate(e.target.value)} />
               </div>
               <div className={styles['inputcont2']}>
@@ -231,6 +236,7 @@ function AddSchedule() {
                   placeholder='YYYY-MM-DD'
                   type='date'
                   value={selectedToDate}
+                  min = {todayDate.toISOString().split("T")[0]}
                   onChange={(e) => setSelectedToDate(e.target.value)} />
               </div>
               <table className={styles['table']}>
