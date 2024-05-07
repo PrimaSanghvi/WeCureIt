@@ -3,6 +3,9 @@ import styles from "./FacilityHome.module.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+    
 
 export default function FacilityHome() {
   
@@ -391,6 +394,14 @@ export default function FacilityHome() {
           <div className={styles['main-container2']}>
             <span className={styles['we-cure-it']}>WeCureIt</span>
           <div className={styles['vector']} />
+          <div  className={styles['profile']}>
+                      <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                    </div>
         </div>
       </div>
     </div>

@@ -2,6 +2,8 @@ import { useEffect,useState } from 'react';
 import styles from "./ViewMedicalRec.module.css";
 import axios from 'axios'; 
 import {useLocation,useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 export default function Main() {
  //the patient_rec_id is passed by the review patient info page which is not implemented by my end
@@ -11,7 +13,7 @@ export default function Main() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { data1} = location.state;
+  const { data1 } = location.state || {};
   
 
     
@@ -40,24 +42,22 @@ export default function Main() {
   return (
     <div className={styles["main-container"]}>
       <div className={styles["top-bar"]}>
-        <div className={styles["top-bar-bg"]} />
-        <div className={styles["frame"]}>
-          <div className={styles["company-name-icon"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["medical-cross"]}>
-              <div className={styles["group"]}>
-                <div className={styles["vector-stroke"]} />
-              </div>
-            </div>
-          </div>
-          <div className={styles["profile"]}>
-            <div className={styles["unsplash-ctagwpbqg"]} />
-          </div>
-          <div className={styles["tabs"]}>
-            <span className={styles["view-add-schedule"]}>View/Add Schedule</span>
-            <span className={styles["modify-schedule"]}>View Appointments</span>
-          </div>
-        </div>
+        
+      <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
+                    
+                    <div  className={styles['profile']}>
+                      <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
       </div>
       <div className={styles["contents"]}>
         <div className={styles["records"]}>

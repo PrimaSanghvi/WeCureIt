@@ -18,6 +18,8 @@ import './DoctorHomePage.css'
 import axios from "axios";
 import { useParams , useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 function DoctorHomePage() {
   const days = ["S", "M", "T", "W", "T", "F", "S"];
@@ -232,6 +234,15 @@ useEffect(() => {
           <div className='main-container3'>
             <span className='we-cure-it'>WeCureIt</span>
           <div className='vector' />
+
+          <div  className='profile'>
+                  <div className='dropdown'>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className='dropdown-content'>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                    </div>
         </div>
       </div>
     </div>
