@@ -1,10 +1,22 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.hashers import check_password
-from django.db.models import Q,Subquery, OuterRef
-from datetime import timedelta
+from django.db.models import Q
 import datetime
 from django.db.models import Sum
+from cryptography.fernet import Fernet
+import os
+from cryptography.fernet import Fernet
+from base64 import urlsafe_b64encode, urlsafe_b64decode
+
+from cryptography.fernet import Fernet
+
+
+# Generate a key for encryption and decryption
+key = Fernet.generate_key()
+cipher = Fernet(key)
+
+
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,6 +44,20 @@ class PatientCreditCardSerializer(serializers.ModelSerializer):
         model = PatientCreditCard
         fields = ('patient_id','card_number', 'card_holder_name', 'cvv','addressLine1','addressLine2','city','state','zipCode', 'expiry_date')
 
+    def create(self, validated_data):
+        # Encrypt and encode the card number
+        card_number = validated_data['card_number'].encode()  # Ensure it's bytes
+        encrypted_card_number = cipher.encrypt(card_number)
+        validated_data['card_number'] = urlsafe_b64encode(encrypted_card_number).decode()  # Store as a string
+        return super().create(validated_data)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        encrypted_card_number = urlsafe_b64decode(representation['card_number'].encode())  # Decode from base64 to bytes
+        decrypted_card_number = cipher.decrypt(encrypted_card_number).decode()  # Decrypt and convert bytes to string
+        representation['card_number'] = decrypted_card_number
+        return representation
+    
 class EmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
     validEmail = serializers.BooleanField()
@@ -59,7 +85,7 @@ class DoctorLoginSerializer(serializers.Serializer):
 
     def validate(self, data):
         try:
-            doctor = Doctor.objects.get(email=data.get("email"))
+            doctor = Doctor.objects.get(email=data.get("email"), is_active = True)
             print("Doctor found: ", doctor.email)
             if not check_password(data.get("password"), doctor.password):
                 raise serializers.ValidationError("Invalid login credentials")
@@ -208,7 +234,7 @@ class AdminLoginSerializer(serializers.Serializer):
 
     def validate(self, data):
         try:
-            admin = AdminTable.objects.get(email=data.get("email"))
+            admin = AdminTable.objects.get(email=data.get("email"), is_active = True)
             print("Admin found: ", admin.email)
             if not check_password(data.get("password"), admin.password):
                 raise serializers.ValidationError("Invalid login credentials")
@@ -563,41 +589,6 @@ class AvailableDoctorsSerializer(serializers.Serializer):
         return available_doctors
 
 
-    # def calculate_time_slots(self, date, appointments, duration):
-    #     work_start = datetime.time(9, 0)
-    #     work_end = datetime.time(17, 0)
-    #     start_datetime = datetime.datetime.combine(date, work_start)
-    #     end_datetime = datetime.datetime.combine(date, work_end)
-
-    #     current_time = start_datetime
-    #     available_slots = []
-
-    #     while current_time + datetime.timedelta(minutes=duration) <= end_datetime:
-    #         end_time = current_time + datetime.timedelta(minutes=duration)
-    #         next_possible_start = end_time + datetime.timedelta(minutes=10)  # Next possible start time including buffer
-
-    #         # Check for appointment overlaps, ensuring a 10-minute break between end of last appointment and start of new one.
-    #         if not any((app.start_time <= current_time.time() < app.end_time) or (app.start_time < next_possible_start.time() <= app.end_time) for app in appointments):
-    #             available_slots.append({'start': current_time.time().strftime('%H:%M'), 'end': end_time.time().strftime('%H:%M')})
-            
-    #         # Move to the next time slot, trying to align as closely as possible with end times of existing appointments
-    #         if appointments:
-    #             # Finding the closest next start time after the last appointment and buffer period
-    #             last_appointment_end = max((app.end_time for app in appointments if app.end_time <= next_possible_start.time()), default=None)
-    #             if last_appointment_end:
-    #                 # Adjust current time to be after the last appointment ends plus buffer
-    #                 adjusted_start_time = datetime.datetime.combine(date, last_appointment_end) + datetime.timedelta(minutes=10)
-    #                 if adjusted_start_time.time() > current_time.time():
-    #                     current_time = adjusted_start_time
-    #                 else:
-    #                     current_time += datetime.timedelta(minutes=duration + 10)
-    #             else:
-    #                 current_time += datetime.timedelta(minutes=duration + 10)
-    #         else:
-    #             current_time += datetime.timedelta(minutes=duration + 10)
-
-    #     return available_slots
-
     def calculate_time_slots(self, date, facility_id, work_start, work_end, appointments, duration):
         # work_start = datetime.time(9, 0)
         # work_end = datetime.time(17, 0)
@@ -830,14 +821,26 @@ class SlotRecommendationSerializer(serializers.Serializer):
     doctor_id = serializers.IntegerField()
 
     def validate_time_slot(self, value):
+        # Split the time slot into start and end times
+        times = value.split('-')
+        if len(times) != 2:
+            raise serializers.ValidationError("Time slot must include start and end time, separated by a dash.")
+
         try:
-            start_time, end_time = value.split('-')
-            datetime.datetime.strptime(start_time, '%H:%M')
-            datetime.datetime.strptime(end_time, '%H:%M')
+            # Try to parse as 24-hour format first
+            start_time = datetime.datetime.strptime(times[0].strip(), '%H:%M')
+            end_time = datetime.datetime.strptime(times[1].strip(), '%H:%M')
             return value
         except ValueError:
-            raise serializers.ValidationError("Incorrect time slot format, expected 'HH:MM-HH:MM'.")
+            # If it fails, assume it's 12-hour format and convert
+            try:
+                start_time = datetime.datetime.strptime(times[0].strip(), '%I:%M %p').strftime('%H:%M')
+                end_time = datetime.datetime.strptime(times[1].strip(), '%I:%M %p').strftime('%H:%M')
+                return f"{start_time}-{end_time}"
+            except ValueError:
+                raise serializers.ValidationError("Incorrect time slot format, expected 'HH:MM-HH:MM' or 'HH:MM AM/PM - HH:MM AM/PM'.")
 
+    
     def validate(self, attrs):
         # Validate if the slot is available at the selected facility
         start_time, end_time = attrs['time_slot'].split('-')
@@ -861,40 +864,53 @@ class SlotRecommendationSerializer(serializers.Serializer):
         speciality_id = validated_data['speciality_id']
         selected_facility_id = validated_data['facility_id']
         selected_doctor_id = validated_data['doctor_id']
-
-        # Filter facilities where any appointments are already booked (not necessarily by the selected doctor)
-        facilities_with_appointments = Facility.objects.filter(
-            appointments__date=date,
-            appointments__facility_id__is_active=True
-        ).distinct()
-
         recommendations = []
-        for facility in facilities_with_appointments:
-            # Exclude the initially selected facility and check for other doctors with the right specialty
-            available_doctors = Doctor.objects.exclude(doctor_id=selected_doctor_id).filter(
-                doc_schedule__facility_id=facility.facility_id,
-                doc_schedule__speciality_id=speciality_id,
-                doc_schedule__days_visiting__icontains=date.strftime("%A").lower(),
+        # Filter facilities where any appointments are already booked (not necessarily by the selected doctor)
+        if not Appointments.objects.filter(
+            doctor_id = selected_doctor_id,
+            facility_id = selected_facility_id,
+            date = date
+        ).exists():
+            
+            facilities_with_appointments = Facility.objects.filter(
+                appointments__date=date,
+                appointments__facility_id__is_active=True
             ).distinct()
 
-            for doctor in available_doctors:
-                # Check if the selected time slot is available at these facilities
-                if not Appointments.objects.filter(
-                    doctor_id=doctor.doctor_id,
-                    facility_id=facility.facility_id,
-                    date=date,
-                    start_time__lte=start_time,
-                    end_time__gte=end_time
-                ).exists():
-                    recommendations.append({
-                        'doctor_id': doctor.doctor_id,
-                        'doctor_name': f"{doctor.first_name} {doctor.last_name}",
-                        'facility_id': facility.facility_id,
-                        'facility_name': facility.name,
-                        'recommended_slot': validated_data['time_slot']
-                    })
+           
+            for facility in facilities_with_appointments:
+                # Exclude the initially selected facility and check for other doctors with the right specialty
+                available_doctors = Doctor.objects.exclude(doctor_id=selected_doctor_id).filter(
+                    doc_schedule__facility_id=facility.facility_id,
+                    doc_schedule__speciality_id=speciality_id,
+                    doc_schedule__days_visiting__icontains=date.strftime("%A").lower(),
+                is_active=True
+                ).distinct()
+
+                for doctor in available_doctors:
+                    # Check if the selected time slot is available at these facilities
+                    if Appointments.objects.filter(
+                        doctor_id=doctor.doctor_id,
+                        facility_id=facility.facility_id,
+                        date=date   
+                    ).exists():
+                        if not Appointments.objects.filter( start_time__lte=start_time,
+                        end_time__gte=end_time).exists() : 
+                            recommendations.append({
+                            'doctor_id': doctor.doctor_id,
+                            'doctor_name': f"{doctor.first_name} {doctor.last_name}",
+                            'facility_id': facility.facility_id,
+                            'facility_name': facility.name,
+                            'facility_addressLine1' : facility.addressLine1,
+                            'facility_addressLine2': facility.addressLine2,
+                            'facility_city': facility.city,
+                            'facility_state': facility.state,
+                            'facility_zipcode': facility.zipCode,
+                            'recommended_slot': validated_data['time_slot']
+                        })
 
         return recommendations
+
 
     # def save(self, **kwargs):
     #     validated_data = self.validated_data
