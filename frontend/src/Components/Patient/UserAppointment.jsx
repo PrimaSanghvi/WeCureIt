@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styles from "./UserAppointment.module.css";
+import axios from "axios";
+import { useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserAppointment() {
+  const { patientId } = useParams();
   const [specialties, setSpecialties] = useState([]);
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
 
@@ -12,6 +18,19 @@ export default function UserAppointment() {
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
 
+  const[selectedDoctorId, setSelectedDoctorId] = useState();
+  // eslint-disable-next-line
+  const[selectedFacilityId, setSelectedFacilityId] = useState();
+  // eslint-disable-next-line
+  const[selectedSpecialityId, setSelectedSpecialityId] = useState();
+
+  const[selectedScheduleDoctorId, setSelectedScheduleDoctorId] = useState();
+  const[selectedScheduleFacilityId, setSelectedScheduleFacilityId] = useState();
+  const[selectedScheduleSpecialityId, setSelectedScheduleSpecialityId] = useState();
+
+
+  const [timeSlots, setAvailableTimeSlot] = useState([]);
+
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/specialties/")
       .then((response) => response.json())
@@ -21,21 +40,30 @@ export default function UserAppointment() {
       .then((response) => response.json())
       .then((data) => setDoctors(data))
       .catch((error) => console.error("Error fetching data: ", error));
-    fetch("http://127.0.0.1:8000/api/allFacilityDetail/")
+    fetch("http://127.0.0.1:8000/api/facilities/")
       .then((response) => response.json())
       .then((data) => setFacilities(data))
       .catch((error) => console.error("Error fetching data: ", error));
   }, []);
   const handleChangeSpecilty = (event) => {
+    const index = event.target.selectedIndex;
+    const specialityId = event.target.options[index].getAttribute('data-id');
     setSelectedSpecialty(event.target.value);
+    setSelectedSpecialityId(specialityId);
   };
 
   const handleChangeFacility = (event) => {
+    const index = event.target.selectedIndex;
+    const facilityId = event.target.options[index].getAttribute('data-id');
     setSelectedFacility(event.target.value);
+    setSelectedFacilityId(facilityId);
   };
 
   const handleChangeDoctor = (event) => {
+    const index = event.target.selectedIndex;
+    const doctorId = event.target.options[index].getAttribute('data-id');
     setSelectedDoctor(event.target.value);
+    setSelectedDoctorId(doctorId);
   };
 
   const handleChangeDate = (event) => {
@@ -67,8 +95,10 @@ export default function UserAppointment() {
       queryParams.append("date", selectedDate);
     }
 
+    console.log("doctor",selectedDoctorId)
     // Construct the full URL with query parameters
     const requestURL = `http://127.0.0.1:8000/api/findAvailableSchedule/?${queryParams.toString()}`;
+    
     // Send the request to the API
     fetch(requestURL)
       .then((response) => response.json())
@@ -91,7 +121,9 @@ export default function UserAppointment() {
     return updatedList1;
   }
 
+  //console.log("schedules", schedules)
   const scheduleList = replaceFacilityNameWithObject(schedules, facilities);
+  // console.log(scheduleList)
   // when clicking on a specific row, add that row to the selected schedule.
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   // judge if there should be a pop up page
@@ -100,11 +132,40 @@ export default function UserAppointment() {
   // click on a row and add this row to the selected schedule
   const handleScheduleClick = (schedule) => {
     setSelectedSchedule(schedule);
+    setSelectedScheduleDoctorId(schedule.doctor_id)
+    setSelectedScheduleFacilityId(schedule.facilityObj.facility_id);
+    setSelectedScheduleSpecialityId(schedule.speciality_id);  // Assuming specialityId is correct
+
+    console.log("setSelectedScheduleDoctorId", schedule.doctor_id);
+    console.log("setSelectedScheduleFacilityId", schedule.facilityObj.facility_id);
+    console.log("setSelectedScheduleSpecialityId", schedule.speciality_id);
+    
     setShowPopup(true);
-    console.log(selectedSchedule);
+   
   };
 
+  const formatDate = (dateStr) => {
+    const parts = dateStr.split('-'); // Split the date by '-'
+    return `${parts[2]}/${parts[1]}/${parts[0]}`; // Reformat to DD/MM/YYYY
+};
+const formatTime12Hour = (time24) => {
+  const [hour, minute] = time24.split(':');
+  const hourAsNumber = parseInt(hour, 10);
+  const suffix = hourAsNumber >= 12 ? 'PM' : 'AM';
+  const formattedHour = ((hourAsNumber + 11) % 12 + 1);  // Convert 24h to 12h format
+  return `${formattedHour}:${minute} ${suffix}`;
+};
+const createTimeSlots = (data) => {
+  if (!data || data.length === 0) return [];
+  const slots = data[0].available_slots.map(slot => {
+      const startTime = formatTime12Hour(slot.start);
+      const endTime = formatTime12Hour(slot.end);
+      return `${startTime} - ${endTime}`;
+  });
+  return slots;
+};
   // the time length for the user to choose
+  const [timeLengthValue, setTimeLengthValue] = useState(); 
   const [timeLength, setTimeLength] = useState(null);
   const timeLengthList = [
     { timeLength: "15 min" },
@@ -112,39 +173,134 @@ export default function UserAppointment() {
     { timeLength: "60 min" },
   ];
   // put the call schedule request here
-  const handleChangeTimeLength = (event) => {
+  const formattedDate = formatDate(selectedDate);
+  const handleChangeTimeLength =  async (event) => {
+  const timeLengthValue = event.target.value.split(" ")[0];
+  setTimeLengthValue(timeLengthValue);
     setTimeLength(event.target.value);
+    //console.log(selectedSchedule);
+    const scheduleInfo = {
+       date : formattedDate,
+       appointment_length : timeLengthValue
+    }
+    if (selectedScheduleDoctorId) {
+      scheduleInfo.doctor_id = selectedScheduleDoctorId;
+  }
+  
+  if (selectedScheduleFacilityId) {
+      scheduleInfo.facility_id = selectedScheduleFacilityId;
+  }
+  
+  if (selectedScheduleSpecialityId) {
+      scheduleInfo.speciality_id = selectedScheduleSpecialityId;
+  }
     
-    /* use selectedSchedule & timeLength to call the backend endpoint
-     * call the backend to find the time slots available
-     */
-  };
+    console.log(JSON.stringify(scheduleInfo))
 
-  /* a temp list to show the option
-   * just for display
-   * please use your own timeslots from the endpoint
-   */
-  const timeSlots = [
-    "10:00 AM - 10:15 AM",
-    "10:30 AM - 10:45 AM",
-    "12:30 PM - 12:45 PM",
-    "2:15 PM - 2:30 PM",
-  ];
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/available-appointment/', scheduleInfo);     
+       // Assuming the response data has the schedule info
+      console.log(response.data)
+
+      setAvailableTimeSlot(createTimeSlots(response.data));
+    
+      
+
+    } catch (error) {
+      console.error("Error fetching schedule for selected date:", error);
+
+    }
+ 
+  };
+ 
+
+
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const handleTimeSlotChange = (event) => {
     setSelectedTimeSlot(event.target.value);
   };
 
+   
   const [showConfirm, setShowConfirm] = useState(false);
-  /* confirm the slot is successfully selected
-   * u may need patientId, selectedTimeSlot, selectedSchedule in ur post request  
-   */ 
-  const handleScheduleSubmit = () => {
+  const[recDoctorID,setRecDoctorID ] = useState("");
+  // const[recDate, setRecDate] = useState("");
+  // const[recTimeSlot, setRecTimeSlot] = useState("");
+  const[recFacilityID, setRecFacilityID] = useState("");
+  const[docName, setDocName] = useState("");
+  const[facilityName, setFacilityName] = useState("");
+  const[facilityAdd1, setFacilityAdd1] = useState("");
+  const[facilityAdd2, setFacilityAdd2] = useState("");
+  const[facilityCity, setFacilityCity] = useState("");
+  const[facilityState, setFacilityState] = useState("");
+  const[facilityZipCode, setFacilityZipCode] = useState("");
+
+  const handleScheduleSubmit = async() => {
     // put your post schedule request here
-    setShowPopup(false);
-    setShowConfirm(true);
-    // clear the current status
-    setTimeLength("");
+
+  
+    const formattedDate = formatDate(selectedDate);
+   const recommendData = {
+    date : formattedDate,
+    time_slot : selectedTimeSlot,
+    facility_id : selectedScheduleFacilityId,
+    doctor_id : selectedScheduleDoctorId,
+    speciality_id : selectedScheduleSpecialityId,
+    appointment_length : timeLengthValue
+
+   }
+   try {
+    console.log(JSON.stringify(recommendData))
+
+    const response = await axios.post('http://127.0.0.1:8000/api/recommend-slot/', recommendData);
+    console.log('Recommended Slot:', response.data.doctor_name);
+    if (response.data && response.data.recommendations && response.data.recommendations.length > 0) 
+    {
+      const recommendation = response.data.recommendations[0]; // Access the first recommendation
+  
+      setDocName(recommendation.doctor_name)
+      setFacilityName(recommendation.facility_name)
+      setFacilityAdd1(recommendation.facility_addressLine1)
+      setFacilityAdd2(recommendation.facility_addressLine2)
+      setFacilityCity(recommendation.facility_city)
+      setFacilityState(recommendation.facility_state)
+      setFacilityZipCode(recommendation.facility_zipcode)
+      setRecFacilityID(recommendation.facility_id)
+      setRecDoctorID(recommendation.doctor_id);
+      setShowConfirm(false)
+      setShowPopup(false);
+      setShowRecommendation(true); 
+    }
+    else
+    {
+      const appointmentData = {
+        date : selectedDate,
+        start_time : selectedTimeSlot,
+        facility_id : selectedScheduleFacilityId,
+        doctor_id : selectedScheduleDoctorId,
+        speciality_id : selectedScheduleSpecialityId,
+        patient_id : patientId
+     }
+     try {
+     console.log(JSON.stringify(appointmentData))
+      const response = await axios.post('http://127.0.0.1:8000/api/book-appointments/', appointmentData);
+      console.log('Appointment Created:', response.data);
+      setShowPopup(false);
+      setShowConfirm(true);
+      // clear the current status
+      setTimeLength("");
+      return response.data;
+    }
+    catch (error) {
+      console.error('Error creating appointment:', error.response ? error.response.data : error.message);
+      throw error; // Re-throw to handle it according to your needs (e.g., show a message to the user)
+    }
+   }
+  }
+    catch (error) {
+    console.error('Error creating appointment:', error.response ? error.response.data : error.message);
+    throw error; // Re-throw to handle it according to your needs (e.g., show a message to the user)
+  }
+
   };
 
   // close the pop-up page
@@ -158,10 +314,81 @@ export default function UserAppointment() {
   // close the confirmation page
   const handleCloseClick = () => {
     setShowConfirm(false);
+    setRecShowConfirm(false);
     setSelectedSchedule(null);
     setSelectedTimeSlot("");
-    
   };
+  const [showRecommendation, setShowRecommendation] = useState(false);
+  
+  const navigate = useNavigate();
+  const navigateHome = () => {
+    navigate(`/patientHomepage/${patientId}`);
+  }
+
+  
+  const handleDeclineRecommendation = async() =>{
+    setShowRecommendation(false);
+   
+    const appointmentData = {
+      date : selectedDate,
+      start_time : selectedTimeSlot,
+      facility_id : selectedScheduleFacilityId,
+      doctor_id : selectedScheduleDoctorId,
+      speciality_id : selectedScheduleSpecialityId,
+      patient_id : patientId
+   }
+   try {
+   console.log(JSON.stringify(appointmentData))
+    const response = await axios.post('http://127.0.0.1:8000/api/book-appointments/', appointmentData);
+    console.log('Appointment Created:', response.data);
+    setShowPopup(false);
+    setShowConfirm(true);
+    // clear the current status
+    setTimeLength("");
+    return response.data;
+  } catch (error) {
+    console.error('Error creating appointment:', error.response ? error.response.data : error.message);
+    throw error; // Re-throw to handle it according to your needs (e.g., show a message to the user)
+  }
+
+  }
+
+  /* When accept current recommendation,
+   * post it to the Appointment for the patient
+   * close the current pop-up page
+   * I did not write a confirm page here
+   * So i clean the data here 
+   */
+  const[recShowConfirm, setRecShowConfirm] = useState(false);
+  const handleAcceptRecommendation = async() =>{
+    setShowRecommendation(false);
+    const appointmentData = {
+      date : selectedDate,
+      start_time : selectedTimeSlot,
+      facility_id : recFacilityID,
+      doctor_id : recDoctorID,
+      speciality_id : selectedScheduleSpecialityId,
+      patient_id : patientId
+   }
+   try {
+    console.log(JSON.stringify(appointmentData))
+     const response = await axios.post('http://127.0.0.1:8000/api/book-appointments/', appointmentData);
+     console.log('Appointment Created:', response.data);
+     setShowPopup(false);
+     setRecShowConfirm(true);
+     setTimeLength("");
+     //setShowRecommendation(false);
+    // if u have a confirm page, clean the data in the confirm page
+    //setSelectedSchedule("");
+    //setSelectedTimeSlot("");
+     return response.data;     
+   } catch (error) {
+     console.error('Error creating appointment:', error.response ? error.response.data : error.message);
+     throw error; // Re-throw to handle it according to your needs (e.g., show a message to the user)
+   }
+
+  }
+
 
   /* the recommendation pop-up page 
    * current logic:
@@ -173,8 +400,7 @@ export default function UserAppointment() {
    * still needs discussion
    */
 
-  const [showRecommendation, setShowRecommendation] = useState(false);
-  
+  // eslint-disable-next-line
   const timeRecommend = {
     date: "April 1, 2024",
     timeSlot: "10:00 AM - 10:15 AM",
@@ -186,35 +412,34 @@ export default function UserAppointment() {
     }
   };
 
-
-  const handleDeclineRecommendation = () =>{
-    setShowRecommendation(false);
-  }
-
-  /* When accept current recommendation,
-   * post it to the Appointment for the patient
-   * close the current pop-up page
-   * I did not write a confirm page here
-   * So i clean the data here 
-   */
-  const handleAcceptRecommendation = () =>{
-    console.log(timeRecommend);
-    setShowRecommendation(false);
-    // if u have a confirm page, clean the data in the confirm page
-    setSelectedSchedule(null);
-    setTimeLength(null);
-    setSelectedTimeSlot("");
-
-  }
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["main-container2"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["vector-cross"]} />
-          </div>
+    <div  className={styles['main-container']}>
+    <div  className={styles['top-bar']}>
+     
+      <div  className={styles['frame']}>
+       
+      <div className={styles['main-container2']}>
+        <span className={styles['we-cure-it']}>WeCureIt</span>
+        <div className={styles['vector99']} />
+      </div>
+        <div  className={styles['create-appointment-button']}>
+          <button  className={styles['create-appointment-btn']} >
+            <div  className={styles['frame-1']}>
+              <span onClick={navigateHome}>
+                Home Page
+              </span>
+            </div>
+          </button>
         </div>
+        <div  className={styles['profile']}>
+                       <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                         <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                         </div>
+                       </div>
+                    </div>
+      </div>
       </div>
 
       <span className={styles["schedule-appointment"]}>
@@ -234,6 +459,7 @@ export default function UserAppointment() {
               <option
                 key={doctor.id}
                 value={`${doctor.first_name} ${doctor.last_name}`}
+                data-id={doctor.doctor_id}
               >
                 {doctor.first_name} {doctor.last_name}
               </option>
@@ -261,7 +487,7 @@ export default function UserAppointment() {
           >
             <option value="">No Preference</option>
             {facilities.map((facility) => (
-              <option key={facility.facility_id} value={facility.name}>
+              <option key={facility.facility_id} value={facility.name} data-id={facility.facility_id}>
                 {facility.name}
               </option>
             ))}
@@ -277,7 +503,7 @@ export default function UserAppointment() {
           >
             <option value="">Select a Specialty</option>
             {specialties.map((specialty) => (
-              <option key={specialty.id} value={specialty.name}>
+              <option key={specialty.id} value={specialty.name} data-id={specialty.specialty_id}>
                 {specialty.name}
               </option>
             ))}
@@ -428,7 +654,7 @@ export default function UserAppointment() {
             <button className={styles["form-5"]}>
               <div className={styles["text-wrap-6"]}>
                 <span className={styles["facility-selected"]}>
-                  {selectedSchedule.date}
+                  {selectedSchedule.facilityObj["name"]}
                 </span>
               </div>
             </button>
@@ -513,22 +739,57 @@ export default function UserAppointment() {
         </div>
       )}
 
+{recShowConfirm && (
+        <div className={styles["pop-up-remove"]}>
+          <div className={styles["bench-accounting-nvzvopqwg-unsplash"]} />
+
+          <div className={styles["remove-information"]}>
+            <span className={styles["are-you-sure-wish-remove"]}>
+              {selectedSchedule.date}
+              <br />
+              {selectedTimeSlot}
+              <br />
+              {docName}
+              <br />
+              {selectedSchedule.specialty}
+              <br />
+              {facilityName}
+              <br />
+            {facilityAdd1}  {facilityAdd2} {facilityCity} {facilityState} {facilityZipCode}
+            <br/>
+              was successfully reserved! <br />
+            </span>
+          </div>
+          <button className={styles["close-button"]}>
+            <div className={styles["cancel-button-4"]}>
+              <span
+                className={styles["cancel-button-5"]}
+                onClick={handleCloseClick}
+              >
+                Close
+              </span>
+              <div className={styles["rectangle-6"]} />
+            </div>
+          </button>
+        </div>
+      )}
+
 {showRecommendation && (
         <div className={styles["pop-up-recommendation"]}>
        
         <div className={styles["recommendation-information"]}>
           <span className={styles["recommendation-detail"]}>
-            {timeRecommend.date}
+            {selectedSchedule.date}
             <br />
-            {timeRecommend.timeSlot}
+            {selectedTimeSlot}
             <br />
-            {timeRecommend.doctor}
+            {"Dr. " + docName}
             <br />
-            {timeRecommend.facilityObj.name}
+            {facilityName}
             <br />
-            {timeRecommend.facilityObj.addressLine1}
+            {facilityAdd1}
             <br />
-            {timeRecommend.facilityObj.addressLine2}
+            {facilityAdd2} {facilityCity} {facilityState} {facilityZipCode}
             <br />
             Would you lke to select this appointment? <br />
           </span>
@@ -550,9 +811,6 @@ export default function UserAppointment() {
        
       </div>
       )}
-
-
-
 
     </div>
   );

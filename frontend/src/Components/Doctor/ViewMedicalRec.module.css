@@ -56,6 +56,7 @@ button {
   height: 103px;
   z-index: 32;
   overflow: hidden;
+  background-color:  #e3ebff;
 }
 .company-name-icon {
   position: absolute;
@@ -843,5 +844,87 @@ button {
   line-height: 19.364px;
   text-align: left;
 }
+.main-container2 {
+  position: absolute;
+  left: 4%;
+  width: 213.245px;
+  height: 103px;
+  margin: 0 auto;
+}
 
+.profile {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 31px;
+  left: 1355.894px;
+  z-index: 8;
+  border-radius: 500px;
+  overflow: visible;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 100;
+  right: 0; 
+  top: 100%;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  visibility: visible; 
+  opacity: 1; 
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropbtn::before {
+  font-family: 'FontAwesome';
+  content: '\f007'; 
+  margin-right: 8px;
+}
+
+.we-cure-it {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  height: 87.38%;
+  top: 5.83%;
+  left: 0;
+  color: #1a1a1a;
+  
+  font-size: 31px;
+  font-weight: 400;
+  line-height: 90px;
+  text-align: left;
+  white-space: nowrap;
+  z-index: 4;
+}
+.icon {
+  position: absolute;
+  width: 24.28%;
+  height: 51.53%;
+  top: 24.24%;
+  left: 73.99%;
+  background: url(../../assets/images/Logo.png)
+    no-repeat center;
+  background-size: 100% 100%;
+  z-index: 3;
+}
 

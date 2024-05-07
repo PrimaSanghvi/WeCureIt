@@ -3,13 +3,20 @@ import styles from './UserHomePage.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useParams, Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 import axios from "axios";
 import { format } from 'date-fns';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 
 export const UserHomePage = () => {
   const { patientId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
+  const navigateToAppointment = () =>
+  {
+    navigate(`/schedule/appointment/${patientId}`); 
+  }
+
   const message = location.state?.message;
 
   const [upcomingAppointments, setUpComingAppointments] = useState([]);
@@ -183,7 +190,7 @@ export const UserHomePage = () => {
                   <div className={styles['vector']} />
                 </div>
                   <div  className={styles['create-appointment-button']}>
-                    <button  className={styles['create-appointment-btn']}>
+                    <button  className={styles['create-appointment-btn']} onClick={navigateToAppointment}>
                       <div  className={styles['frame-1']}>
                         <span  className={styles['create-new-appointment']}>
                           Schedule Appointment

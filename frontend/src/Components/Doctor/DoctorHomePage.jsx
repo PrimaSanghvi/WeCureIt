@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+
 import dayjs from "dayjs";
 // import { createRoot } from 'react-dom/client';
 import {AgGridReact } from 'ag-grid-react'; // AG Grid Component
@@ -19,6 +20,8 @@ import './DoctorHomePage.css'
 import axios from "axios";
 import { useParams , useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 function DoctorHomePage() {
   const days = ["S", "M", "T", "W", "T", "F", "S"];
@@ -31,6 +34,12 @@ function DoctorHomePage() {
   const [selectedDateSchedule, setSelectedDateSchedule] = useState(null);
 
   const navigate = useNavigate();
+
+  // fix the page navigation 
+  
+  const navigateToAppiontments = () => {
+    navigate(`/doctorHomepage/${doctorId}/viewappointment`);
+  };
    
   const fetchScheduleForSelectedDate = async (selectedDate) => {
     const formattedDate = format(selectedDate, 'yyyy-MM-dd'); // Format the date as required by your backend
@@ -239,6 +248,14 @@ useEffect(() => {
             <div>
               <button className="profile"><img src={profile} alt="WeCureIt" className='profilepic'/></button>
             </div>
+          <div  className='profile'>
+                  <div className='dropdown'>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className='dropdown-content'>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                    </div>
           </div>
       </div>
       <div className='main-container1'>
@@ -363,7 +380,7 @@ useEffect(() => {
       </div>
       <div className='main-container2'>
         <div className='text-1'>Today's Appointment
-        <button className="viewAppoint" onClick={"./LoginPage"}><label className="text-15">View all appointments</label></button>
+        <button className="viewAppoint" onClick={navigateToAppiontments}><label className="text-15">View all appointments</label></button>
         </div>
         <div className="appointmentinfo">
   {todaysAppointments && todaysAppointments.length > 0 ? (

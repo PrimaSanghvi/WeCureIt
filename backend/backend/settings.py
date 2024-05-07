@@ -79,14 +79,14 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': 'WeCureItDB',
-       'USER': 'laurenhahn',
-       'PASSWORD': '54321',
-       'HOST': 'localhost',
-       'PORT': '5432',
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'WeCureItDB',
+        'USER': 'laurenhahn',
+        'PASSWORD': '54321',
+        'HOST': '127.0.0.1', 
+        'PORT': '5432',
+    }
 }
 
 # Password validation

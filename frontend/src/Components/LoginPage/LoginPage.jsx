@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styles from './LoginPage.module.css';
 import axios from 'axios'; 
-import loginimg from '../../../src/assets/images/LoginImg.png'
 import logo from '../../../src/assets/images/Logo.png';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +21,7 @@ export default function Main() {
             email: email.toUpperCase(),
             password: password,
         };
-    
+        console.log(payload)
         const patientLoginPromise = axios.post('http://127.0.0.1:8000/api/patientLogin/', payload);
         const doctorLoginPromise = axios.post('http://127.0.0.1:8000/api/doctorLogin/', payload);
         const adminLoginPromise = axios.post('http://127.0.0.1:8000/api/adminLogin/', payload);
