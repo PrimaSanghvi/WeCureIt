@@ -16,7 +16,9 @@ export default function UserAppointment() {
   const [selectedDate, setSelectedDate] = useState("");
 
   const[selectedDoctorId, setSelectedDoctorId] = useState();
+  // eslint-disable-next-line
   const[selectedFacilityId, setSelectedFacilityId] = useState();
+  // eslint-disable-next-line
   const[selectedSpecialityId, setSelectedSpecialityId] = useState();
 
   const[selectedScheduleDoctorId, setSelectedScheduleDoctorId] = useState();
@@ -392,7 +394,7 @@ const createTimeSlots = (data) => {
    * still needs discussion
    */
 
-  
+  // eslint-disable-next-line
   const timeRecommend = {
     date: "April 1, 2024",
     timeSlot: "10:00 AM - 10:15 AM",
