@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Popup from 'reactjs-popup';
 import styles from './AddSchedule.module.css';
-import logo from '/src/assets/images/Logo.png';
+import logo from '../../../src/assets/images/Logo.png';
 import profile from '/src/assets/images/profile.png';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-community/styles/ag-grid.css";
