@@ -83,7 +83,7 @@ export default function Main() {
     navigate(`/doctorHomepage/${id}/medical_info/`);
   };
 
-  console.log("selectedDate:",selectedDate.getFullYear())
+  
   return (
     <div className={styles["main-container"]}>
       <div className={styles["top-bar"]}>
