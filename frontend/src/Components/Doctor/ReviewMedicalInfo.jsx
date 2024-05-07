@@ -8,6 +8,8 @@ import styles from "./ReviewMedicalInfo.module.css";
 import { useParams,useLocation } from 'react-router-dom';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -98,24 +100,22 @@ const formattedDate = `${today.getFullYear()}-${month}-${today.getDate()}`;
   return (
     <div className={styles["main-container"]}>
       <div className={styles["top-bar"]}>
-        <div className={styles["top-bar-background"]} />
-        <div className={styles["frame"]}>
-          <div className={styles["company-name-icon"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["medical-cross"]}>
-              <div className={styles["group"]}>
-                <div className={styles["vector-stroke"]} />
-              </div>
-            </div>
-          </div>
-          <div className={styles["profile"]}>
-            <div className={styles["unsplash-ctagwpbqg"]} />
-          </div>
-          <div className={styles["tabs"]}>
-            <span className={styles["view-add-schedule"]}>View/Add Schedule</span>
-            <span className={styles["modify-schedule"]}>View Appointments</span>
-          </div>
-        </div>
+       
+        <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
+                    
+                    <div  className={styles['profile']}>
+                      <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
       </div>
       <div className={styles["medical-history"]}>
         <span className={styles["medical-history-of"]}>Medical History of </span>

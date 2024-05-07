@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react";
 import styles from "./ViewAppointment.module.css";
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 export default function Main() {
   let navigate = useNavigate();
@@ -109,25 +111,21 @@ export default function Main() {
   return (
     <div className={styles["main-container"]}>
       <div className={styles["top-bar"]}>
-        <div className={styles["top-bar-background"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["company-name-icon"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["medical-cross"]}>
-              <div className={styles["group"]}>
-                <div className={styles["vector"]} />
-              </div>
-            </div>
-          </div>
-          <div className={styles["profile"]}>
-            <div className={styles["unsplash-ctagwpbqg"]} />
-          </div>
-          <div className={styles["tabs"]}>
-            <span className={styles["view-add-schedule"]} onClick={transferDoctorAddSchedule}>View/Add Schedule</span>
-            <span className={styles["modify-schedule"]}>View Appointments</span>
-          </div>
-        </div>
-        </div>
+      <div  className={styles['frame']}>      
+                    <div className={styles['main-container2']}>
+                      <span className={styles['we-cure-it']}>WeCureIt</span>
+                    <div className={styles['icon']} />
+                    
+                    <div  className={styles['profile']}>
+                      <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                        <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
       </div>
       <div className={styles["frame-1"]}>
         <span className={styles["today-march"]}>Today, {actualmonth} {date}, {year}</span>
