@@ -345,7 +345,7 @@ export default function SignupPage() {
             <div className={styles['box-e']}>
               <span className={styles['text-13']}>Have an Account</span>
               <span className={styles['text-14']}>? </span>
-              <Link to="/">Login</Link>
+              <Link to="/login">Login</Link>
             </div>
           </div>
           <div className={styles['box-f']}>
