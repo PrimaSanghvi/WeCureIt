@@ -1,6 +1,4 @@
 import React, {
-  useCallback,
-  useMemo,
   useEffect,
   useState,
 } from "react";
@@ -17,7 +15,9 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 export default function Main() {
   const { patientId } = useParams();
   const [data, setData] = useState(null);
+  // eslint-disable-next-line
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -79,6 +79,7 @@ const formattedDate = `${today.getFullYear()}-${month}-${today.getDate()}`;
     };
 
     fetchData();
+    // eslint-disable-next-line
   }, [patientId]); 
 
   const handleview =async(info)=>{

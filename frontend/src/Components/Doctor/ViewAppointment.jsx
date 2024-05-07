@@ -7,10 +7,10 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 export default function Main() {
   let navigate = useNavigate();
-  const transferDoctorAddSchedule = () =>{
-    //change to real add/edit appointment page
-    navigate('/addschedule');
-  }
+  // const transferDoctorAddSchedule = () =>{
+  //   //change to real add/edit appointment page
+  //   navigate('/addschedule');
+  // }
   const [selectedDate, setSelectedDate] = useState(new Date());
   let newDate = new Date()
   let date = newDate.getDate();
@@ -18,6 +18,7 @@ export default function Main() {
   const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const monthname = ['January','February','March','April','May','June','July','August','September','October','November','December']
   const actualmonth = monthname[newDate.getMonth()]
+  // eslint-disable-next-line
   const weekDayName = weekDays[newDate.getDay()];
  
 
@@ -80,7 +81,9 @@ export default function Main() {
 
   const params = useParams();
   const doctorId = params.doctorId;
+  // eslint-disable-next-line
   const [error, setError] = useState('');
+  // eslint-disable-next-line
   const [loading, setLoading] = useState(true);
   // console.log(selectedDate);
   // When you call .toISOString() on a Date object, 
@@ -104,7 +107,7 @@ export default function Main() {
     fetchData();
 }, [doctorId, dateFormated]);
 
-
+  // eslint-disable-next-line
   const handleMedicalInfo = (id) =>{
     navigate(`/doctorHomepage/${id}/medical_info/`);
   };
