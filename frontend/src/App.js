@@ -18,6 +18,7 @@ import ViewMedicalRec from "./Components/Doctor/ViewMedicalRec";
 import AddMedicalRec from "./Components/Doctor/AddMedicalRec";
 import ReviewMedicalInfo from "./Components/Doctor/ReviewMedicalInfo";
 import ViewAppointment from "./Components/Doctor/ViewAppointment";
+import AddSchedule from "./Components/Doctor/AddSchedule/AddSchedule";
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
         <Route path="/patient/appointment" element={<UserAppointment />}/>
         <Route path ="/doctorHomepage/:doctorId/viewappointment" element = {<ViewAppointment />}/>
         <Route path = "/schedule/appointment/:patientId" element={<UserAppointment />} />
+        <Route path ="/doctorHomepage/:doctorId/addschedule" element = {<AddSchedule />}/>
       </Routes>
     </div>
 </Router>
