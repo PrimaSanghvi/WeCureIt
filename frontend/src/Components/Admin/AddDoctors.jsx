@@ -53,37 +53,55 @@
         }
       };
       
+      const [emailError, setEmailError] = useState('');
       const handleSubmit = (e) =>{
         e.preventDefault();
-    // Here you can handle the form submission, such as sending the data to your backend
-      
-        const formData = {
-          first_name,
-          last_name,
-          speciality_id: selectedSpecialityIds,
-          password,
-          phone_number,
-          email,
-          is_active:true,
-        }
-        console.log(formData)
-        if (Object.keys(formData).length !== 0) {
-          console.log(JSON.stringify(formData));
-          axios.post('http://127.0.0.1:8000/api/DoctorRegister/', formData)
-              .then(response => {
-                
-                  console.log('Form submitted successfully!', response.data);
-                  // Handle any post-submission logic here, like redirecting to another page
-                  
-              })
-              .catch(error => {
-                  console.error('Error submitting form:', error);
-              });
-              window.location.reload();
-      }
-      
-        
+        // Here you can handle the form submission, such as sending the data to your backend
+
+        // Ensure that email is unique:
+        const payload = {
+          email: email.toUpperCase(),
+          validEmail: false
+        };
+
+        // Get all emails to see if the admin can use the email:
+        axios.post(`http://127.0.0.1:8000/api/allEmails/`, payload)
+        .then(response => {
+          console.log('Response data:', response.data);
+
+          // Email taken:
+          if (response.data["validEmail"]) {
+            setEmailError("Email is already taken! Please use a different email.")
+          } else {
+            console.log("INSIDE ELSE")
+            const formData = {
+              first_name,
+              last_name,
+              speciality_id: selectedSpecialityIds,
+              password,
+              phone_number,
+              email,
+              is_active:true,
+            }
+    
+            if (Object.keys(formData).length !== 0) {
+              console.log(JSON.stringify(formData));
+              axios.post('http://127.0.0.1:8000/api/DoctorRegister/', formData)
+                  .then(response => {
+                    
+                      console.log('Form submitted successfully!', response.data);
+                      // Handle any post-submission logic here, like redirecting to another page
+                      
+                  })
+                  .catch(error => {
+                      console.error('Error submitting form:', error);
+                  });
+                  window.location.reload();
+            }
+          }
+        })
       };
+
       const transferfacility = () =>{
         //change to the real edit facility path
         window.location.href = `/admin/facility/${adminId}/`;
@@ -194,7 +212,7 @@
             <div className={styles["frame-3"]}>
               <div className={styles["frame-4"]}>
                 <input className={styles["enter-last-name"]} type = "text" value = {last_name}
-                 placeholder='Enter your lastname '
+                 placeholder='Enter your last name '
                  onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
@@ -206,7 +224,7 @@
             </div>
             <button className={styles["frame-7"]}>
               <div className={styles["frame-8"]}>
-                <input className={styles["enter-first-name"]}placeholder = "Enter your FirstName"
+                <input className={styles["enter-first-name"]}placeholder = "Enter your first name"
                 type="text" value ={first_name} onChange={(e)=>setFirstName(e.target.value)}/>
               </div>
             </button>
@@ -285,8 +303,9 @@
               <span className={styles["email-address"]}>Email address</span>
             </div>    
                 <input className={styles["frame-2c"]} placeholder='Enter your email'
-                 type="text" value ={email} onChange={(e)=>setemail(e.target.value)}
+                 type="text" value ={email} onChange={(e)=>setemail(e.target.value ? e.target.value.toUpperCase() : '')}
                 />
+                {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
           </div>
           <div className={styles["frame-2e"]}>
             <div className={styles["frame-2f"]}>
