@@ -39,6 +39,9 @@ function DoctorHomePage() {
   const navigateToAppiontments = () => {
     navigate(`/doctorHomepage/${doctorId}/viewappointment`);
   };
+ const navigateToAddschedule= () => {
+    navigate(`/doctorHomepage/${doctorId}/addschedule`);
+  };
    
   const fetchScheduleForSelectedDate = async (selectedDate) => {
     const formattedDate = format(selectedDate, 'yyyy-MM-dd'); // Format the date as required by your backend
@@ -241,8 +244,8 @@ useEffect(() => {
             <img src={logo} alt="WeCureIt" className='logo'/>
             <span className='logoTitle'>WeCureIT</span>
             <div className="tabs">
-              <button className="tab1">View/Add Schedule</button>
-              <button className="tab2">View Appointment</button>
+              <button className="tab1" onClick={navigateToAddschedule}>View/Add Schedule</button>
+              <button className="tab2" onClick={navigateToAppiontments}>View Appointment</button>
             </div>
             {/* <div>
               <button className="profile"><img src={profile} alt="WeCureIt" className='profilepic'/></button>
