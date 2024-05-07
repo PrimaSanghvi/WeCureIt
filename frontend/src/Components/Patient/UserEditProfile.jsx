@@ -325,7 +325,6 @@ export const UserEditProfile = () => {
             <div className={styles['frame-1a']}>
               
               <input className={styles["input" ]}
-                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Reset password"
                   onBlur = {validatePassword}
