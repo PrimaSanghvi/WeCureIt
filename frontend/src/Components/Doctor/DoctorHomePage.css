@@ -21,27 +21,114 @@ input, select, textarea, button {
   overflow: hidden;
 }
 
-.top-bar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  position: relative;
-  background-color:  #e3ebff;
-  width: 1512px;
-  height: 103px;
-  margin: 0 0 0 0;
-}
-
-.frame {
-  flex-shrink: 0;
-  position: relative;
-  width: 1460.894px;
-  height: 103px;
-  z-index: 2;
-  overflow: hidden;
-}
-
+.topBar{
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                flex-wrap: nowrap;
+                position: relative;
+                background-color:  #c0cef1;
+                width: 100%;
+                height: 103px;
+                margin: 0 0 0 0;
+            }
+            .logo{
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                top: 24.24%;
+                left:14%;
+                background-size: 100% 100%;
+                z-index: 3;
+              }
+              .logoTitle{
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                position: absolute;
+                height: 87.38%;
+                top: 5.83%;
+                left: 0;
+                color: #1a1a1a;
+                font-family: 'Times New Roman', Times, serif, var(--default-font-family);
+                font-size: 31px;
+                font-weight: 400;
+                line-height: 90px;
+                text-align: left;
+                margin-left: 30px;
+                white-space: nowrap;
+              }
+              .tab1{
+                position: relative;
+                justify-content: center;
+                height: 103px;
+                margin-left: 450px;
+                border-width: 0px;
+                background-color: #c0cef1;
+              }
+              .tab1:hover{
+                position: relative;
+                justify-content: center;
+                height: 103px;
+                margin-left: 450px;
+                background-color: #E7E7FF;
+                border-width: 0px 0px 10px 0px;
+                border-color: #8080ea;
+              }
+              .tab2{
+                position: relative;
+                justify-content: center;
+                height: 103px;
+                margin-left: 300px;
+                border-width: 0px;
+                background-color: #c0cef1;
+              }
+              .tab2:hover{
+                position: relative;
+                justify-content: center;
+                height: 103px;
+                margin-left: 300px;
+                background-color: #E7E7FF;
+                border-width: 0px 0px 10px 0px;
+                border-color: #8080ea;
+              }
+              .tab1{
+                justify-content: center;
+                position: relative;
+                color: #1a1a1a;
+                font-family: Noto Sans, var(--default-font-family);
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 24px;
+                text-align: center;
+                white-space: nowrap;
+              }
+              .tab2{
+                justify-content: center;
+                position: relative;
+                color: #1a1a1a;
+                font-family: Noto Sans, var(--default-font-family);
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 24px;
+                text-align: center;
+                white-space: nowrap;
+              }
+              .profilepic{
+                position: relative;
+                width: 50px;
+                height: 50px;
+              }
+              .profile{
+                position: relative;
+                height: 50px;
+                width: 50px;
+                border-radius: 30px;
+                margin-right: 40px;
+                margin-top: 20px;
+                border-width: 0px;
+                background-color: #c0cef1;
+              }
 .main-container3 {
   position: absolute;
   left: 4%;
@@ -50,43 +137,6 @@ input, select, textarea, button {
   margin: 0 auto;
 }
 
-.company-name-icon {
-  position: relative;
-  width: 213.245px;
-  height: 103px;
-  margin: 0 0 0 0;
-  z-index: 3;
-}
-
-.we-cure-it {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  position: absolute;
-  height: 87.38%;
-  top: 5.83%;
-  left: 0;
-  color: #1a1a1a;
-  
-  font-size: 31px;
-  font-weight: 400;
-  line-height: 90px;
-  text-align: left;
-  white-space: nowrap;
-  z-index: 4;
-}
-
-.vector {
-  position: absolute;
-  width: 24.28%;
-  height: 51.53%;
-  top: 24.24%;
-  left: 73.99%;
-  background: url(../../assets/images/Logo.png)
-    no-repeat center;
-  background-size: 100% 100%;
-  z-index: 3;
-}
     .main-container1 {
         position: relative;
         float: left;
@@ -299,6 +349,7 @@ input, select, textarea, button {
   padding: 20px;       /* Add some padding */
   box-sizing: border-box;
     }
+
     .profile {
       position: absolute;
       width: 40px;
@@ -345,3 +396,4 @@ input, select, textarea, button {
       content: '\f007'; 
       margin-right: 8px;
     }
+
