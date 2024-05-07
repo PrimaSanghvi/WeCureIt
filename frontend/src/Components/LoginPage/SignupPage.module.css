@@ -789,6 +789,7 @@ button {
     top: 0;
     left: 0;
     z-index: 63;
+    background: transparent;
 }
 .box-d {
     display: flex;
@@ -802,6 +803,22 @@ button {
     padding: 10px 0 10px 10px;
     background: #3a5b22;
     border: 1px solid #3a5b22;
+    z-index: 64;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.box-d2 {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 10px;
+    position: relative;
+    width: 404px;
+    height: 32px;
+    padding: 10px 0 10px 10px;
+    background: #808080;
+    border: 1px solid #808080;
     z-index: 64;
     overflow: hidden;
     border-radius: 10px;

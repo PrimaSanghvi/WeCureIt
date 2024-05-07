@@ -173,7 +173,7 @@ button {
 .section-5 {
     position: relative;
     width: 1410px;
-    height: 874px;
+    height: 100px;
     margin: 5px 0 0 102px;
     z-index: 1;
 }
@@ -194,7 +194,7 @@ button {
     gap: 10px;
     position: absolute;
     width: 606px;
-    height: 784px;
+    height: 100px;
     top: 54px;
     left: 0;
     z-index: 1;
@@ -203,7 +203,8 @@ button {
     flex-shrink: 0;
     position: relative;
     width: 606px;
-    height: 713.252px;
+    /* height: 713.252px; */
+    height:100px;
     z-index: 2;
 }
 .box-4 {
@@ -761,8 +762,11 @@ button {
     width: 404px;
     height: 32px;
     top: 0;
-    left: 0;
-    z-index: 4;
+    left: -10px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    z-index: 74;
 }
 .section-b {
     display: flex;
@@ -776,6 +780,22 @@ button {
     padding: 10px 0 10px 10px;
     background: #3a5b22;
     border: 1px solid #3a5b22;
+    z-index: 5;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.section-b2 {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 10px;
+    position: relative;
+    width: 404px;
+    height: 32px;
+    padding: 10px 0 10px 10px;
+    background: #808080;
+    border: 1px solid #808080;
     z-index: 5;
     overflow: hidden;
     border-radius: 10px;
@@ -1059,4 +1079,30 @@ button {
     text-align: left;
     white-space: nowrap;
     z-index: 52;
+}
+
+.note-credit-card {
+    color: #fa0101;
+    font-family: "Poppins-Bold", Helvetica;
+    font-size: 13px;
+    font-weight: 700;
+    left: 103px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 580px;
+    width: 400px;
+    height: 5px;
+  }
+
+.checkbox {
+    font-family: "Poppins-Bold", Helvetica;
+    font-size: 13px;
+    font-weight: 700;
+    left: 100px;
+    letter-spacing: 0;
+    line-height: normal;
+    position: absolute;
+    top: 690px;
+    width: 400px;
 }

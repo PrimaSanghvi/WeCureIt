@@ -23,9 +23,7 @@ class PatientSerializer(serializers.ModelSerializer):
         model = Patient
         fields = ('patient_id', 'first_name','last_name','email','password','addressLine1','addressLine2','city','state','zipCode','phone_number')
 
-
 class PatientLoginSerializer(serializers.Serializer):
-    
     email = serializers.EmailField()
     password = serializers.CharField()
 
@@ -40,7 +38,6 @@ class PatientLoginSerializer(serializers.Serializer):
         # Optionally add the patient instance to the validated data if you need it later
         data['patient_id'] = patient.patient_id
         return data
-    
 
 class PatientCreditCardSerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,6 +58,26 @@ class PatientCreditCardSerializer(serializers.ModelSerializer):
         representation['card_number'] = decrypted_card_number
         return representation
     
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    validEmail = serializers.BooleanField()
+
+    def validate(self, data):
+        try:
+            patient = Patient.objects.get(email=data.get("email"))
+            data["validEmail"] = True
+        except Patient.DoesNotExist:
+            try:
+                doctor = Doctor.objects.get(email=data.get("email"))
+                data["validEmail"] = True
+            except Doctor.DoesNotExist:
+                try:
+                    admin = AdminTable.objects.get(email=data.get("email"))
+                    data["validEmail"] = True
+                except:
+                    data["validEmail"] = False
+        return data
+
 class DoctorLoginSerializer(serializers.Serializer):
     
     email = serializers.EmailField()
@@ -84,12 +101,19 @@ class AppointmentSerializer(serializers.ModelSerializer):
     PatientName = serializers.SerializerMethodField()
     Location = serializers.SerializerMethodField()
     DateTime = serializers.SerializerMethodField()
+    DoctorName = serializers.SerializerMethodField()
+    SpecialityType = serializers.SerializerMethodField()
+    Address = serializers.SerializerMethodField()
+    DateOnly = serializers.SerializerMethodField()
+    TimeOnly = serializers.SerializerMethodField()
     # Assuming you will handle PatientMedicalInformation through a separate mechanism
     # since it might involve fetching or displaying more detailed records
 
     class Meta:
         model = Appointments
-        fields = ('appointment_id', 'PatientName', 'DateTime', 'Location', 'patient_rec_id')
+        fields = ('appointment_id', 'PatientName', 'DateTime', 'Location', 'patient_rec_id','patient_id',
+                  'speciality_id','facility_id', 'DoctorName', 'SpecialityType', 'Address', 'start_time', 'end_time', 'date',
+                  'DateOnly', 'TimeOnly', 'doctor_id', 'schedule_id')
 
     def get_PatientName(self, obj):
         return f"{obj.patient_id.first_name} {obj.patient_id.last_name}"
@@ -108,6 +132,39 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     # Concatenating the formatted date with the formatted start and end times.
         return f"{appointment_date} {start_time} - {end_time}"
+    
+    def get_DoctorName(self, obj):
+        return f"{obj.doctor_id.first_name} {obj.doctor_id.last_name}"
+    
+    def get_SpecialityType(self, obj):
+        return obj.speciality_id.name
+    
+    def get_Address(self, obj):
+        return f"{obj.facility_id.addressLine1} {obj.facility_id.city} {obj.facility_id.state}, {obj.facility_id.zipCode}"
+    
+    def get_DateOnly(self, obj):
+        appointment_date = obj.date.strftime("%m/%d/%Y")  # Correctly formats the date
+
+        return f"{appointment_date}"
+
+    def get_TimeOnly(self, obj):
+        start_time = obj.start_time.strftime("%I:%M %p")
+        end_time = obj.end_time.strftime("%I:%M %p")
+
+        return f"{start_time} - {end_time}"
+    
+    def to_internal_value(self, data):
+        time_range = data.get('start_time', '')
+        start, end = [datetime.datetime.strptime(t.strip(), '%I:%M %p').time() for t in time_range.split('-')]
+        data['start_time'] = start
+        data['end_time'] = end
+        return super().to_internal_value(data)
+
+    def validate_date(self, value):
+        # You can include date validation here if needed
+        if value < datetime.datetime.now().date():
+            raise serializers.ValidationError("Date cannot be in the past.")
+        return value
 
 class DocScheduleSerializer(serializers.ModelSerializer):
     facility_name = serializers.SerializerMethodField()
@@ -179,7 +236,7 @@ class AdminLoginSerializer(serializers.Serializer):
         try:
             admin = AdminTable.objects.get(email=data.get("email"), is_active = True)
             print("Admin found: ", admin.email)
-            if data.get("password") != admin.password:
+            if not check_password(data.get("password"), admin.password):
                 raise serializers.ValidationError("Invalid login credentials")
         except AdminTable.DoesNotExist:
             raise serializers.ValidationError("Invalid login credentials")
@@ -187,8 +244,90 @@ class AdminLoginSerializer(serializers.Serializer):
         # Optionally add the patient instance to the validated data if you need it later
         data['admin_id'] = admin.admin_id
         return data
- 
     
+class PatientPreferenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientPreference
+        fields = ('patient_id', 'doctor_pref_id', 'facility_pref_id')
+
+class AllDoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ('doctor_id', 'first_name', 'last_name', 'speciality_id', 'email', 'password', 'phone_number', 'is_active')
+## here i update the address => addressLine1
+class AllFacilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facility
+        fields = ('facility_id', 'name', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'rooms_no', 'phone_number', 'is_active')
+
+# add doctor schedule to the database(handle repeated adding cases)
+# to distinguish from another DocSchedule Serializer
+class DocScheduleSerializerAdd(serializers.ModelSerializer):
+    doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
+    facility_id = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all(), many=True)
+    speciality_id = serializers.PrimaryKeyRelatedField(queryset=Speciality.objects.all(), many=True)
+
+    class Meta:
+        model = Doc_schedule
+        fields = '__all__'
+
+    def create(self, validated_data):
+        # Extract facilities and specialties to handle them after instance creation
+        facilities = validated_data.pop('facility_id', [])
+        specialties = validated_data.pop('speciality_id', [])
+        instance, created = Doc_schedule.objects.update_or_create(
+            doctor_id=validated_data.get('doctor_id'),
+            defaults=validated_data
+        )
+        # Handling ManyToMany fields
+        if facilities:
+            instance.facility_id.set(facilities)
+        if specialties:
+            instance.speciality_id.set(specialties)
+        return instance
+
+    def update(self, instance, validated_data):
+        instance.days_visiting = validated_data.get('days_visiting', instance.days_visiting)
+        instance.visiting_hours_start = validated_data.get('visiting_hours_start', instance.visiting_hours_start)
+        instance.visiting_hours_end = validated_data.get('visiting_hours_end', instance.visiting_hours_end)
+        facilities = validated_data.get('facility_id')
+        specialties = validated_data.get('speciality_id')
+        if facilities:
+            instance.facility_id.set(facilities)
+        if specialties:
+            instance.speciality_id.set(specialties)
+        instance.save()
+        return instance
+    
+# handle the doctor_schedule facility delete
+class FacilityUnlinkSerializer(serializers.Serializer):
+    doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
+    facility_id = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all())
+
+    def save(self):
+        doctor_id = self.validated_data['doctor_id']
+        facility_id = self.validated_data['facility_id']
+        
+        # Directly manipulating the through table
+        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+        for schedule in schedules:
+            schedule.facility_id.remove(facility_id)  # This removes the relationship not the facility itself
+
+# handle the doctor_schedule speciality delete
+class SpecialtyUnlinkSerializer(serializers.Serializer):
+    doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
+    speciality_id = serializers.PrimaryKeyRelatedField(queryset=Speciality.objects.all())
+
+    def save(self):
+        doctor_id = self.validated_data['doctor_id']
+        speciality_id = self.validated_data['speciality_id']
+        
+        # Get all schedules for the given doctor
+        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+        for schedule in schedules:
+            # Remove the specialty from the schedule
+            schedule.speciality_id.remove(speciality_id)
+
 class FacilitySerializer(serializers.ModelSerializer):
     speciality_id = serializers.PrimaryKeyRelatedField(
         queryset=Speciality.objects.all(),
@@ -492,44 +631,6 @@ class AvailableDoctorsSerializer(serializers.Serializer):
 
         return available_slots
     
-class AllDoctorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Doctor
-        fields = ('doctor_id', 'first_name', 'last_name', 'speciality_id', 'email', 'password', 'phone_number', 'is_active')
-## here i update the address => addressLine1
-class AllFacilitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Facility
-        fields = ('facility_id', 'name', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'rooms_no', 'phone_number', 'is_active')
-
-    
-class DocScheduleSerializerFilter(serializers.ModelSerializer):
-    doctor = AllDoctorSerializer(source='doctor_id', read_only=True)
-    facility = AllFacilitySerializer(source='facility_id', many=True, read_only=True)
-    speciality = SpecialitySerializer(source='speciality_id', many=True, read_only=True)
-
-    class Meta:
-        model = Doc_schedule
-        fields = ('schedule_id', 'doctor', 'facility', 'speciality', 'days_visiting', 'visiting_hours_start', 'visiting_hours_end')
-
-class AppointmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Appointments
-        fields = ['appointment_id','patient_id', 'facility_id', 'doctor_id', 'speciality_id', 'schedule_id', 'patient_rec_id', 'start_time', 'end_time', 'date']
-
-    def to_internal_value(self, data):
-        time_range = data.get('start_time', '')
-        start, end = [datetime.datetime.strptime(t.strip(), '%I:%M %p').time() for t in time_range.split('-')]
-        data['start_time'] = start
-        data['end_time'] = end
-        return super().to_internal_value(data)
-
-    def validate_date(self, value):
-        # You can include date validation here if needed
-        if value < datetime.datetime.now().date():
-            raise serializers.ValidationError("Date cannot be in the past.")
-        return value
-    
 class AvailableSlotsSerializer(serializers.Serializer):
     speciality_id = serializers.IntegerField(required=False, allow_null=True)
     facility_id = serializers.IntegerField(required=False, allow_null=True)
@@ -675,6 +776,41 @@ class AvailableSlotsSerializer(serializers.Serializer):
             current_time += datetime.timedelta(minutes=duration + 10)  # Proceed to the next potential time slot
 
         return available_slots
+
+class ManageRoomsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ManageRooms
+        fields = ['room_id', 'facility_id', 'unavailable_room', 'date']
+    
+class PatientMedicalRecSerialier(serializers.ModelSerializer):
+    class Meta:
+        model = Patient_record
+        fields = '__all__'
+
+# to handle the doctor schedule filter
+class DocScheduleSerializerFilter(serializers.ModelSerializer):
+    doctor = AllDoctorSerializer(source='doctor_id', read_only=True)
+    facility = AllFacilitySerializer(source='facility_id', many=True, read_only=True)
+    speciality = SpecialitySerializer(source='speciality_id', many=True, read_only=True)
+
+    class Meta:
+        model = Doc_schedule
+        fields = ('schedule_id', 'doctor', 'facility', 'speciality', 'days_visiting', 'visiting_hours_start', 'visiting_hours_end')
+
+class AppointmentSerializer2(serializers.ModelSerializer):
+    name = serializers.CharField(source='facility_id.name')
+    addressLine1 = serializers.CharField(source='facility_id.addressLine1')
+    city = serializers.CharField(source='facility_id.city')
+    state = serializers.CharField(source='facility_id.state')
+    zipCode = serializers.IntegerField(source='facility_id.zipCode')
+    first_name = serializers.CharField(source='patient_id.first_name')
+    last_name = serializers.CharField(source='patient_id.last_name')
+    patient_id = serializers.CharField(source='patient_id.patient_id')
+    
+    class Meta:
+        model = Appointments
+        fields = ('start_time', 'end_time', 'name', 'addressLine1',
+                  'city', 'state', 'zipCode', 'first_name', 'last_name', 'patient_id')
     
 
 class SlotRecommendationSerializer(serializers.Serializer):

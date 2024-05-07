@@ -381,6 +381,58 @@ const createTimeSlots = (data) => {
 
   }
 
+  // close the confirmation page
+  const handleCloseClick = () => {
+    setShowConfirm(false);
+    setSelectedSchedule(null);
+    setSelectedTimeSlot("");
+    
+  };
+
+  /* the recommendation pop-up page 
+   * current logic:
+   * when a timeslot is selected, fill the tiemSlot from backend 
+   * if the timeSlot is null, which means there is no time slot available
+   * we give the patient an alternative option
+   * we will search the timeSlot in the backend using
+   * Specialty, Date, TimeLength...
+   * still needs discussion
+   */
+
+  const [showRecommendation, setShowRecommendation] = useState(false);
+  
+  const timeRecommend = {
+    date: "April 1, 2024",
+    timeSlot: "10:00 AM - 10:15 AM",
+    doctor: "Dr. Abigail Map",
+    facilityObj: {
+      name: "GWU",
+      addressLine1: "2041 Georgia Ave NW",
+      addressLine2: "Washington D.C. 20060",
+    }
+  };
+
+
+  const handleDeclineRecommendation = () =>{
+    setShowRecommendation(false);
+  }
+
+  /* When accept current recommendation,
+   * post it to the Appointment for the patient
+   * close the current pop-up page
+   * I did not write a confirm page here
+   * So i clean the data here 
+   */
+  const handleAcceptRecommendation = () =>{
+    console.log(timeRecommend);
+    setShowRecommendation(false);
+    // if u have a confirm page, clean the data in the confirm page
+    setSelectedSchedule(null);
+    setTimeLength(null);
+    setSelectedTimeSlot("");
+
+  }
+
   return (
     <div className={styles["main-container"]}>
       <div className={styles["top-bar"]}>
