@@ -189,7 +189,7 @@ input, select, textarea, button {
     background: #ffffff;
     border: 1px solid #e7e7ed;
     z-index: 17;
-    overflow: hidden;
+    overflow: auto;
     border-radius: 4px;
   }
   .header {
@@ -2639,6 +2639,7 @@ input, select, textarea, button {
   left: -1px;
   background: #ffffff;
   z-index: 98;
+  overflow: auto;
 }
 .group-9-rooms {
   position: relative;
@@ -2894,6 +2895,7 @@ input, select, textarea, button {
   left: -1px;
   background: #ffffff;
   z-index: 119;
+  overflow: auto;
 }
 .group-16-rooms {
   position: relative;

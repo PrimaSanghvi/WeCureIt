@@ -79,7 +79,7 @@
               .catch(error => {
                   console.error('Error submitting form:', error);
               });
-              // window.location.href = "/AddDoctors"
+              window.location.reload();
       }
       
         
