@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './UserEditProfile.module.css';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { renderMatches, useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
@@ -9,7 +9,6 @@ import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 export const UserEditProfile = () => {
   const { patientId } = useParams();
 
-  console.log("This is a line written to the console.");
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,12 +20,12 @@ export const UserEditProfile = () => {
   const [zipCode, setZipCode] = useState('');
   //set several new state to handle control submit when invalid password input
   const [password, setPassword] = useState('');
+  const [originalPass, setOrigPass] = useState('');
   const [reenteredPassword, setReenteredPassword] = useState('');
   // eslint-disable-next-line
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   // eslint-disable-next-line
-  const [isFormValid, setIsFormValid] = useState(true);
 
 
   const [emailError, setEmailError] = useState('');
@@ -79,22 +78,19 @@ export const UserEditProfile = () => {
   
   const validatePassword = () => {
     let isValid = true; // Assume the form is valid unless proven otherwise
-    if (!password) {
-      setPasswordError("Password is required.");
-      isValid = false;
-    } else {
-      setPasswordError("");
-    }
-    if (!reenteredPassword) {
-      setConfirmPasswordError("Re-entering the password is required.");
-      isValid = false;
-    } else if (password !== reenteredPassword) {
-      setConfirmPasswordError("Passwords do not match.");
-      isValid = false;
+
+    if (password.length != 0) {
+      if (password !== reenteredPassword) {
+        setConfirmPasswordError("Passwords do not match.");
+        isValid = false;
+      } else {
+        setConfirmPasswordError("");
+      }
     } else {
       setConfirmPasswordError("");
+      setPasswordError("");
     }
-    setIsFormValid(isValid);
+
     return isValid;
   };
 
@@ -106,21 +102,37 @@ export const UserEditProfile = () => {
       // Here you can handle the form submission, such as sending the data to your backend
       const phone_number = "1234567890";
           
-      const formData = {
+      let formData = {};
+      if (password.length != 0) {
+        formData = {
+            first_name,
+            last_name,
+            email,
+            password,
+            addressLine1,
+            addressLine2,
+            city,
+            state,
+            zipCode,
+            phone_number, // Include static phone number in the form data
+        };
+      } else {
+        formData = {
           first_name,
           last_name,
           email,
-          password,
+          originalPass,
           addressLine1,
           addressLine2,
           city,
           state,
           zipCode,
           phone_number, // Include static phone number in the form data
-      };
+        };
+      }
   
-      console.log("userData:", userData); // Debugging log
-      console.log("formData:", formData); // Debugging log
+      // console.log("userData:", userData); // Debugging log
+      // console.log("formData:", formData); // Debugging log
       
       const normalizeUserData = {
         ...userData,
@@ -129,17 +141,17 @@ export const UserEditProfile = () => {
       };
       delete normalizeUserData.patient_id; // Remove patient_id from comparison
       
-      const hasChanges = Object.keys(formData).some(key => 
-        formData[key] !== normalizeUserData[key]
-      );
-      if (!hasChanges) {
+    const hasChanges = Object.keys(formData).some(key => 
+      formData[key] !== normalizeUserData[key]
+    );
+    if (!hasChanges) {
         // No changes detected, set an error message and exit the function
         setUpdateError('No changes detected, nothing to update.');
         return;
       }
       axios.patch(`http://127.0.0.1:8000/api/patientRegister/${patientId}/`, formData)
       .then(response => {
-          console.log('Patient updated successfully!', response.data);
+          // console.log('Patient updated successfully!', response.data);
           navigate(`/patientHomepage/${patientId}`,{ state: { message: "Details Updated Successfully!" } });
         })
         .catch(error => {
@@ -167,7 +179,8 @@ export const UserEditProfile = () => {
           setCity(data.city === null ? '' : data.city); // Explicit check for null
           setState(data.state === null ? '' : data.state); // Explicit check for null
           setZipCode(data.zipCode === null? '' : data.zipCode);
-          setPassword(data.password === null? '' : data.password)
+          setOrigPass(data.password === null? '' : data.password);
+          // setPassword(data.password === null? '' : data.password)
           // Additional fields as necessary
         } else {
           console.error("Failed to fetch data with status:", response.status);
@@ -181,7 +194,7 @@ export const UserEditProfile = () => {
   }, [patientId]);
 
   useEffect(() => {
-    console.log(userData); // This will log userData when it updates
+    // console.log(userData); // This will log userData when it updates
   }, [userData]);
 
   const handleClick = () => {
@@ -192,13 +205,13 @@ export const UserEditProfile = () => {
   const editpayment = () => {
     //change the code to the real page of edit payment 
     window.location.href = `/editPayment/${patientId}`;
-    console.log("transfer to edit payment")
+    // console.log("transfer to edit payment")
   };
     
   const editsavedpreference = () =>{
     //change the code to redirect to the real page of edit saved preference
     window.location.href = `/editPreference/${patientId}`;
-    console.log("transfer to edit preference")
+    // console.log("transfer to edit preference")
   }
 
   return (
