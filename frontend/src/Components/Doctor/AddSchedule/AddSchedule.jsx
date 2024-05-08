@@ -10,6 +10,7 @@ import 'react-dual-listbox/lib/react-dual-listbox.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useParams , useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function CustomNoRowsOverlay() {
   return (
@@ -56,6 +57,36 @@ function AddSchedule() {
   // eslint-disable-next-line
   const [filteredData, setFilteredData] = useState([]);
 
+  const [options, setOptions] = useState([]);
+  const [options2, setOptions2] = useState([]);
+
+  useEffect(() => {
+    // Fetch specialties
+    fetch("http://127.0.0.1:8000/api/specialties/")
+      .then(response => response.json())
+      .then(data => {
+        const formattedOptions = data.map(item => ({
+          id: item.speciality_id,
+          value: item.name, // Assuming the identifier is 'id'
+          label: item.name // Assuming the display name is 'name'
+        }));
+        setOptions(formattedOptions);
+      })
+      .catch(error => console.error("Error fetching specialties data: ", error));
+
+    // Fetch facilities
+    fetch("http://127.0.0.1:8000/api/facilities/")
+      .then(response => response.json())
+      .then(data => {
+        const formattedOptions = data.map(item => ({
+          id: item.facility_id,
+          value: item.name, // Assuming the identifier is 'id'
+          label: item.name // Assuming the display name is 'name'
+        }));
+        setOptions2(formattedOptions);
+      })
+      .catch(error => console.error("Error fetching facilities data: ", error));
+  }, []);
   useEffect(() => {
     // Update filtered data whenever selectedFromDate or selectedToDate or selectedDays changes
     filterData();
@@ -95,10 +126,61 @@ function AddSchedule() {
     setSelectedSpecialties(newSpecialties);
   };
   const handleConfirmFacilitiesSpecialties = () => {
-    console.log('Selected Facilities:', selectedFacilities);
-    console.log('Selected Specialties:', selectedSpecialties);
-    // Add your logic to handle the confirmation of facilities and specialties here
+    
+    const selectedFacilityIds = options2.filter(option => {
+      const isMatch = selectedFacilities.some(selectedFacility => {
+          const match = selectedFacility.trim().toLowerCase() === option.label.trim().toLowerCase();
+          console.log(`Comparing Facility: ${selectedFacility.trim().toLowerCase()} to ${option.label.trim().toLowerCase()} - Match: ${match}`);
+          return match;
+      });
+      return isMatch;
+  }).map(option => option.id);
+  
+  const selectedSpecialtyIds = options.filter(option => {
+      const isMatch = selectedSpecialties.some(selectedSpecialty => {
+          const match = selectedSpecialty.trim().toLowerCase() === option.label.trim().toLowerCase();
+          console.log(`Comparing Specialty: ${selectedSpecialty.trim().toLowerCase()} to ${option.label.trim().toLowerCase()} - Match: ${match}`);
+          return match;
+      });
+      return isMatch;
+  }).map(option => option.id);
+  console.log("the facility id is", selectedFacilityIds);
+  console.log("the specialty id is", selectedSpecialtyIds);
+  addFacilitiesToDoctorSchedule(doctorId, selectedFacilityIds);
+  addSpecialtiesToDoctorSchedule(doctorId, selectedSpecialtyIds);
   };
+
+// Function to add facilities to a doctor's schedule
+const addFacilitiesToDoctorSchedule = (doctorId, facilityIds) => {
+  axios.post(`http://127.0.0.1:8000/api/doctorSchedule/addfacility/`, {
+    doctor_id: doctorId,
+    facility_id: facilityIds
+  })
+  .then(response => {
+    console.log('Facilities added successfully:', response.data);
+    // handle success (update UI, show confirmation, etc.)
+  })
+  .catch(error => {
+    console.error('Error adding facilities:', error);
+    // handle error (show error message, etc.)
+  });
+};
+
+// Function to add specialties to a doctor's schedule
+const addSpecialtiesToDoctorSchedule = (doctorId, specialtyIds) => {
+  axios.post(`http://127.0.0.1:8000/api/doctorSchedule/addspecialty/`, {
+    doctor_id: doctorId,
+    speciality_id: specialtyIds
+  })
+  .then(response => {
+    console.log('Specialties added successfully:', response.data);
+    // handle success (update UI, show confirmation, etc.)
+  })
+  .catch(error => {
+    console.error('Error adding specialties:', error);
+    // handle error (show error message, etc.)
+  });
+};
 
   const handleTimeChange = (day, time, isStartTime) => {
     if (isStartTime) {
@@ -107,6 +189,8 @@ function AddSchedule() {
       setSelectedEndTime({ ...selectedEndTime, [day]: time });
     }
   };
+
+  
 
   const handleConfirm = () => {
     const selectedDayData = selectedDays.map(day => ({
@@ -117,11 +201,38 @@ function AddSchedule() {
       toDate: selectedToDate,
     }));
     setRowData(prevRowData => [...prevRowData, ...selectedDayData]);
-    console.log('Selected Days Data:', selectedDayData);
-    clearSelections();
-  };
-  
+    const doctorSchedule = selectedDayData.map(data =>({
+      "doctor_id": doctorId,
+      "days_visiting": data.day,   
+      "visiting_hours_start": data.startTime,
+      "visiting_hours_end": data.endTime
+    }));
+    console.log('data to post', doctorSchedule);
+   // Function to send POST request for each schedule entry
+   const sendSchedule = async (schedule) => {
+    try {
+        const response = await axios.post('http://localhost:8000/api/doctorSchedule/addtime/', schedule);
+        console.log('Success:', response.data);
+        return response.data; // Return data for further processing if needed
+    } catch (error) {
+        console.error('Error posting schedule:', error);
+        throw error; // Rethrow to handle in bulk later
+    }
+};
 
+// Use Promise.all to manage multiple requests
+Promise.all(doctorSchedule.map(schedule => sendSchedule(schedule)))
+    .then(results => {
+        console.log('All schedules processed:', results);
+        // Here you could update state or UI to reflect successful submission
+    })
+    .catch(error => {
+        console.error('An error occurred with one of the schedule submissions:', error);
+        // Handle error, possibly retry failed requests or notify user
+    });
+    
+};
+   
   const clearSelections = () => {
     setSelectedDays([]);
     setSelectedTime({});
@@ -131,9 +242,80 @@ function AddSchedule() {
     console.log('Selections cleared');
   };
 
-  const removeRow = (rowData) => {
+  const removeRow = async(rowData) => {
     setRowData(prevRowData => prevRowData.filter(row => row !== rowData));
+    const requestUrl = 'http://localhost:8000/api/doctorSchedule/removetime/'; // Your API endpoint URL
+    const requestBody = {
+      doctor_id: doctorId,  // Ensure `doctorId` is available in the scope or pass it as needed
+      day_to_remove: rowData.day
+    };
+    try {
+      const response = await axios.delete(requestUrl, { data: requestBody });
+      console.log('Row deleted successfully', response.data);
+      // Optionally update rowData state to remove the row from the grid
+      setRowData(currentRowData => currentRowData.filter(row => row.day !== rowData.day));
+    } catch (error) {
+      console.error('Failed to delete row', error);
+      // Handle errors appropriately
+    }
   };
+
+  const removeRowFacility = (facilityData) => {
+    // Find the ID using the facility name
+    const facility = options2.find(option => option.label === facilityData.facility);
+    
+    if (facility) {
+      axios.delete(`http://127.0.0.1:8000/api/doctorSchedule/removefacility/`, {
+        data: {
+          doctor_id: doctorId,  // Assume the doctor_id is known or retrieved from state/context
+          facility_id: facility.id
+        }
+      })
+      .then(response => {
+        console.log('Facility removed successfully', response.data);
+        setSelectedFacilities(currentFacilities => 
+          currentFacilities.filter(item => item !== facilityData.facility)
+        );
+        // Update the UI here, e.g., removing the facility from the list shown in the grid
+      })
+      .catch(error => {
+        console.error('Failed to remove facility', error);
+        // Handle errors here, e.g., showing an error message to the user
+      });
+    } else {
+      console.error('Facility not found in options');
+      // Handle the case where the facility ID could not be found
+    }
+  };
+
+  const removeRowSpecialty = (specialtyData) => {
+    // Find the ID using the facility name
+    const specialty = options.find(option => option.label === specialtyData.speciality);
+    console.log("the selected spe is", specialty);
+    if (specialty) {
+      axios.delete(`http://127.0.0.1:8000/api/doctorSchedule/removeSpecialty/`, {
+        data: {
+          doctor_id: doctorId,  // Assume the doctor_id is known or retrieved from state/context
+          speciality_id: specialty.id
+        }
+      })
+      .then(response => {
+        console.log('Facility removed successfully', response.data);
+        // Update the UI here, e.g., removing the facility from the list shown in the grid
+        setSelectedSpecialties(currentSpecialties =>
+          currentSpecialties.filter(item => item !== specialtyData.speciality)
+        );
+      })
+      .catch(error => {
+        console.error('Failed to remove facility', error);
+        // Handle errors here, e.g., showing an error message to the user
+      });
+    } else {
+      console.error('Facility not found in options');
+      // Handle the case where the facility ID could not be found
+    }
+  };
+
 
   const getRowStyle = (params) => {
     return params.node.rowIndex % 2 === 0 ? { background: 'white' } : { background: '#eeeeff' };
@@ -167,18 +349,7 @@ function AddSchedule() {
     },
   ];
 
-  const options = [
-    { value: 'cardiology', label: 'Cardiology' },
-    { value: 'pediatrics', label: 'Pediatrics' },
-    { value: 'psychiatry', label: 'Psychiatry' },
-    { value: 'internal_medicine', label: 'Internal Medicine' },
-    { value: 'obgyn', label: 'Obstetrics and Gynecology (OB/GYN)' },
-  ];
-
-  const options2 = [
-    { value: 'gwu', label: 'George Washington University' },
-    { value: 'holycross', label: 'Holy Cross Hospital' },
-  ];
+  
 
   const navigate = useNavigate();
   const { doctorId } = useParams(); 
@@ -360,13 +531,13 @@ function AddSchedule() {
             <AgGridReact
               rowData={selectedFacilities.map(facility => ({ facility }))} // Separate data for facilities
               columnDefs={[
-                { headerName: 'Facility', field: 'facility', headerClass: `${styles['custom-header']}` },
+                { headerName: 'Facilities', field: 'facility', headerClass: `${styles['custom-header']}` },
                 {
                   headerName: 'Remove',
                   field: 'remove',
                   headerClass: `${styles['custom-header']}`,
                   cellRenderer: (params) => {
-                    return <button onClick={() => removeRow(params.data)} className={styles['removebutton']}>Remove</button>;
+                    return <button onClick={() => removeRowFacility(params.data)} className={styles['removebutton']}>Remove</button>;
                   }
                 },
               ]}
@@ -389,7 +560,7 @@ function AddSchedule() {
                   field: 'remove',
                   headerClass: `${styles['custom-header']}`,
                   cellRenderer: (params) => {
-                    return <button onClick={() => removeRow(params.data)} className={styles['removebutton']}>Remove</button>;
+                    return <button onClick={() => removeRowSpecialty(params.data)} className={styles['removebutton']}>Remove</button>;
                   }
                 },
               ]}

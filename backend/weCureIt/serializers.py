@@ -262,71 +262,48 @@ class AllFacilitySerializer(serializers.ModelSerializer):
 
 # add doctor schedule to the database(handle repeated adding cases)
 # to distinguish from another DocSchedule Serializer
-class DocScheduleSerializerAdd(serializers.ModelSerializer):
-    doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
-    facility_id = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all(), many=True)
-    speciality_id = serializers.PrimaryKeyRelatedField(queryset=Speciality.objects.all(), many=True)
+# class DocScheduleSerializerAdd(serializers.ModelSerializer):
+#     class Meta:
+#         model = Doc_schedule
+#         fields = '__all__'
 
-    class Meta:
-        model = Doc_schedule
-        fields = '__all__'
-
-    def create(self, validated_data):
-        # Extract facilities and specialties to handle them after instance creation
-        facilities = validated_data.pop('facility_id', [])
-        specialties = validated_data.pop('speciality_id', [])
-        instance, created = Doc_schedule.objects.update_or_create(
-            doctor_id=validated_data.get('doctor_id'),
-            defaults=validated_data
-        )
-        # Handling ManyToMany fields
-        if facilities:
-            instance.facility_id.set(facilities)
-        if specialties:
-            instance.speciality_id.set(specialties)
-        return instance
-
-    def update(self, instance, validated_data):
-        instance.days_visiting = validated_data.get('days_visiting', instance.days_visiting)
-        instance.visiting_hours_start = validated_data.get('visiting_hours_start', instance.visiting_hours_start)
-        instance.visiting_hours_end = validated_data.get('visiting_hours_end', instance.visiting_hours_end)
-        facilities = validated_data.get('facility_id')
-        specialties = validated_data.get('speciality_id')
-        if facilities:
-            instance.facility_id.set(facilities)
-        if specialties:
-            instance.speciality_id.set(specialties)
-        instance.save()
-        return instance
+#     def create(self, validated_data):
+#         facility_ids = validated_data.pop('facility_id')
+#         speciality_ids = validated_data.pop('speciality_id')
+#         schedule = Doc_schedule.objects.create(**validated_data)
+        
+#         schedule.facility_id.set(facility_ids)
+#         schedule.speciality_id.set(speciality_ids)
+#         return schedule
     
-# handle the doctor_schedule facility delete
-class FacilityUnlinkSerializer(serializers.Serializer):
-    doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
-    facility_id = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all())
+# # handle the doctor_schedule facility delete
+# class FacilityUnlinkSerializer(serializers.Serializer):
+#     doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
+#     facility_id = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all())
 
-    def save(self):
-        doctor_id = self.validated_data['doctor_id']
-        facility_id = self.validated_data['facility_id']
+#     def save(self):
+#         doctor_id = self.validated_data['doctor_id']
+#         facility_id = self.validated_data['facility_id']
         
-        # Directly manipulating the through table
-        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
-        for schedule in schedules:
-            schedule.facility_id.remove(facility_id)  # This removes the relationship not the facility itself
+#         # Directly manipulating the through table
+#         schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+#         for schedule in schedules:
+#             schedule.facility_id.remove(facility_id)  # This removes the relationship not the facility itself
 
-# handle the doctor_schedule speciality delete
-class SpecialtyUnlinkSerializer(serializers.Serializer):
-    doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
-    speciality_id = serializers.PrimaryKeyRelatedField(queryset=Speciality.objects.all())
+# # handle the doctor_schedule speciality delete
+# class SpecialtyUnlinkSerializer(serializers.Serializer):
+#     doctor_id = serializers.PrimaryKeyRelatedField(queryset=Doctor.objects.all())
+#     speciality_id = serializers.PrimaryKeyRelatedField(queryset=Speciality.objects.all())
 
-    def save(self):
-        doctor_id = self.validated_data['doctor_id']
-        speciality_id = self.validated_data['speciality_id']
+#     def save(self):
+#         doctor_id = self.validated_data['doctor_id']
+#         speciality_id = self.validated_data['speciality_id']
         
-        # Get all schedules for the given doctor
-        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
-        for schedule in schedules:
-            # Remove the specialty from the schedule
-            schedule.speciality_id.remove(speciality_id)
+#         # Get all schedules for the given doctor
+#         schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+#         for schedule in schedules:
+#             # Remove the specialty from the schedule
+#             schedule.speciality_id.remove(speciality_id)
 
 class FacilitySerializer(serializers.ModelSerializer):
     speciality_id = serializers.PrimaryKeyRelatedField(
@@ -357,6 +334,23 @@ class FacilitySerializer(serializers.ModelSerializer):
         # Update many-to-many fields
         instance.speciality_id.set(specialties)
         return instance
+
+# serializer to handle the doctor add schedules
+class DocScheduleSerializerAdd(serializers.ModelSerializer):
+    facility_id = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Facility.objects.all(),
+        required=False  # Make these fields optional
+    )
+    speciality_id = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Speciality.objects.all(),
+        required=False  # Make these fields optional
+    )
+    class Meta:
+        model = Doc_schedule
+        fields = '__all__'
+
 
 class AvailableDoctorsSerializer(serializers.Serializer):
     speciality_id = serializers.IntegerField(required=False, allow_null=True)
