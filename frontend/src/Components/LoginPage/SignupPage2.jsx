@@ -109,7 +109,7 @@ export default function Main() {
                     });
 
                     // Handle any post-submission logic here, like redirecting to another page
-                    navigate('/', { state: { message: 'Account created Successfully! Please Login to the system.' } });
+                    navigate('/login', { state: { message: 'Account created Successfully! Please Login to the system.' } });
                 })
                 .catch(error => {
                     console.error('Error submitting form:', error);

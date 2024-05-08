@@ -27,8 +27,11 @@ class Patient(models.Model):
         super().save(*args, **kwargs)
 
 class PatientCreditCard(models.Model):
+    patient_credit_id = models.BigAutoField(auto_created = True,
+                  primary_key = True,
+                  serialize = False)
     patient_id = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    card_number = models.CharField(max_length=255, primary_key = True)
+    card_number = models.CharField(max_length=255)
     card_holder_name =  models.CharField(max_length=100)
     cvv =  models.IntegerField()
     addressLine1 = models.CharField(max_length=254)

@@ -5,11 +5,12 @@ import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import clickedEditSVG from '../../../src/assets/edit.svg';
-import unclickedEditSVG from '../../../src/assets/edit-1.svg'
+import unclickedEditSVG from '../../../src/assets/edit-1.svg';
+import { useNavigate } from 'react-router-dom';
 
 export const UserEditPayment = () => {
   const { patientId } = useParams();
-
+  const navigate = useNavigate();
   // Data from DB
   const [card_number, setCardNumber] = useState('');
   const [card_holder_name, setCardHolderName] = useState('');
@@ -151,10 +152,11 @@ export const UserEditPayment = () => {
             expiry_date
         };
 
-        console.log(cardDetails);
+        console.log(JSON.stringify(cardDetails));
         axios.patch(`http://127.0.0.1:8000/api/patientCardDetails/${patientId}/`, cardDetails)
         .then(response => {
             console.log('Form submitted successfully!', response.data);
+            navigate(`/patientHomepage/${patientId}`,{ state: { message: "Details Updated Successfully!" } });
         })
         .catch (error => {
             console.error('Error submitting form:', error);

@@ -104,8 +104,7 @@ export default function UserAppointment() {
       .then((response) => response.json())
       .then((data) => setSchedules(data))
       .catch((error) => console.error("Error fetching data: ", error));
-    // console.log(facilities);
-    // console.log(scheduleList);
+
   };
 
   // now look up the facility obj for every facility_name field and map the text field to the obj.
@@ -121,9 +120,9 @@ export default function UserAppointment() {
     return updatedList1;
   }
 
-  //console.log("schedules", schedules)
+ 
   const scheduleList = replaceFacilityNameWithObject(schedules, facilities);
-  // console.log(scheduleList)
+
   // when clicking on a specific row, add that row to the selected schedule.
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   // judge if there should be a pop up page
@@ -177,8 +176,7 @@ const createTimeSlots = (data) => {
   const handleChangeTimeLength =  async (event) => {
   const timeLengthValue = event.target.value.split(" ")[0];
   setTimeLengthValue(timeLengthValue);
-    setTimeLength(event.target.value);
-    //console.log(selectedSchedule);
+  setTimeLength(event.target.value);
     const scheduleInfo = {
        date : formattedDate,
        appointment_length : timeLengthValue
@@ -199,13 +197,8 @@ const createTimeSlots = (data) => {
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/available-appointment/', scheduleInfo);     
-       // Assuming the response data has the schedule info
-      console.log(response.data)
-
       setAvailableTimeSlot(createTimeSlots(response.data));
     
-      
-
     } catch (error) {
       console.error("Error fetching schedule for selected date:", error);
 
@@ -213,7 +206,6 @@ const createTimeSlots = (data) => {
  
   };
  
-
 
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const handleTimeSlotChange = (event) => {
@@ -223,8 +215,6 @@ const createTimeSlots = (data) => {
    
   const [showConfirm, setShowConfirm] = useState(false);
   const[recDoctorID,setRecDoctorID ] = useState("");
-  // const[recDate, setRecDate] = useState("");
-  // const[recTimeSlot, setRecTimeSlot] = useState("");
   const[recFacilityID, setRecFacilityID] = useState("");
   const[docName, setDocName] = useState("");
   const[facilityName, setFacilityName] = useState("");
@@ -325,7 +315,6 @@ const createTimeSlots = (data) => {
     navigate(`/patientHomepage/${patientId}`);
   }
 
-  
   const handleDeclineRecommendation = async() =>{
     setShowRecommendation(false);
    
@@ -353,12 +342,6 @@ const createTimeSlots = (data) => {
 
   }
 
-  /* When accept current recommendation,
-   * post it to the Appointment for the patient
-   * close the current pop-up page
-   * I did not write a confirm page here
-   * So i clean the data here 
-   */
   const[recShowConfirm, setRecShowConfirm] = useState(false);
   const handleAcceptRecommendation = async() =>{
     setShowRecommendation(false);
@@ -388,29 +371,6 @@ const createTimeSlots = (data) => {
    }
 
   }
-
-
-  /* the recommendation pop-up page 
-   * current logic:
-   * when a timeslot is selected, fill the tiemSlot from backend 
-   * if the timeSlot is null, which means there is no time slot available
-   * we give the patient an alternative option
-   * we will search the timeSlot in the backend using
-   * Specialty, Date, TimeLength...
-   * still needs discussion
-   */
-
-  // eslint-disable-next-line
-  const timeRecommend = {
-    date: "April 1, 2024",
-    timeSlot: "10:00 AM - 10:15 AM",
-    doctor: "Dr. Abigail Map",
-    facilityObj: {
-      name: "GWU",
-      addressLine1: "2041 Georgia Ave NW",
-      addressLine2: "Washington D.C. 20060",
-    }
-  };
 
   return (
     <div  className={styles['main-container']}>

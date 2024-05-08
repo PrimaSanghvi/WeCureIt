@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-5*9ccck!c+(yr_39@iefn!2@hudc1ukpqs3g)v-f0&&%24cbpe"
+SECRET_KEY = "django-insecure-728k0bs%91o$^sp%aa_ji@2fmtwpdk7r1na#*$%l2+%)7tnpo3"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,14 +79,14 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'WeCureItDB',
-        'USER': 'laurenhahn',
-        'PASSWORD': '54321',
-        'HOST': '127.0.0.1', 
-        'PORT': '5432',
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'NAME': 'WeCureItDB',
+       'USER': 'postgres',
+       'PASSWORD': '4399',
+       'HOST': 'localhost',
+       'PORT': '5432',
+   }
 }
 
 # Password validation
