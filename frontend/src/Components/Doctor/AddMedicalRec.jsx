@@ -18,6 +18,7 @@ export default function Main() {
   const [respiratory_rate, setInputrespiratoryrate] = useState("");
   const [current_medications, setInputmedicine] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  // eslint-disable-next-line
   const [warning, setWarning] = useState('');
   // the appintmentinfo may get by the review patient info page which is not
   //implemented yet, you can change to the real data once you get the info by that review patient info page

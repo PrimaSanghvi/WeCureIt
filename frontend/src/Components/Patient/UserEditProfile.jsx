@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './UserEditProfile.module.css';
 import axios from 'axios';
-import { renderMatches, useParams } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
@@ -79,7 +79,7 @@ export const UserEditProfile = () => {
   const validatePassword = () => {
     let isValid = true; // Assume the form is valid unless proven otherwise
 
-    if (password.length != 0) {
+    if (password.length !== 0) {
       if (password !== reenteredPassword) {
         setConfirmPasswordError("Passwords do not match.");
         isValid = false;
@@ -103,7 +103,7 @@ export const UserEditProfile = () => {
       const phone_number = "1234567890";
           
       let formData = {};
-      if (password.length != 0) {
+      if (password.length !== 0) {
         formData = {
             first_name,
             last_name,

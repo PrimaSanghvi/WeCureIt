@@ -233,6 +233,7 @@ Promise.all(doctorSchedule.map(schedule => sendSchedule(schedule)))
     
 };
    
+  // eslint-disable-next-line
   const clearSelections = () => {
     setSelectedDays([]);
     setSelectedTime({});
