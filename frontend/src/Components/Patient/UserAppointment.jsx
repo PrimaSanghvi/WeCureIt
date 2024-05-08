@@ -19,7 +19,9 @@ export default function UserAppointment() {
   const [selectedDate, setSelectedDate] = useState("");
 
   const[selectedDoctorId, setSelectedDoctorId] = useState();
+  // eslint-disable-next-line
   const[selectedFacilityId, setSelectedFacilityId] = useState();
+  // eslint-disable-next-line
   const[selectedSpecialityId, setSelectedSpecialityId] = useState();
 
   const[selectedScheduleDoctorId, setSelectedScheduleDoctorId] = useState();
@@ -313,8 +315,6 @@ const createTimeSlots = (data) => {
     navigate(`/patientHomepage/${patientId}`);
   }
 
-
-  
   const handleDeclineRecommendation = async() =>{
     setShowRecommendation(false);
    

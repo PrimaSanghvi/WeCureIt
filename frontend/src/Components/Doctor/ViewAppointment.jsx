@@ -2,20 +2,27 @@ import React, {useState, useEffect} from "react";
 import styles from "./ViewAppointment.module.css";
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import logo from '../../assets/images/Logo.png';
 
 export default function Main() {
   let navigate = useNavigate();
-  const transferDoctorAddSchedule = () =>{
-    //change to real add/edit appointment page
-    navigate('/addschedule');
-  }
+  // const transferDoctorAddSchedule = () =>{
+  //   //change to real add/edit appointment page
+  //   navigate('/addschedule');
+  // }
   const [selectedDate, setSelectedDate] = useState(new Date());
   let newDate = new Date()
+  // eslint-disable-next-line
   let date = newDate.getDate();
+  // eslint-disable-next-line
   let year = newDate.getFullYear();
   const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const monthname = ['January','February','March','April','May','June','July','August','September','October','November','December']
+  // eslint-disable-next-line
   const actualmonth = monthname[newDate.getMonth()]
+  // eslint-disable-next-line
   const weekDayName = weekDays[newDate.getDay()];
  
 
@@ -46,39 +53,15 @@ export default function Main() {
   };
 
   const [data, setData] = useState([
-    {
-      id: 1,
-      start_time: '10:30:00',
-      end_time: '10:45:00',
-      name: 'GWU',
-      addressLine1: '900 23rd St NW',  
-      city: 'D.C',
-      state: 'Washington',
-      zipCode: '20037',
-      first_name: 'Nancy',
-      last_name: 'Smith',
-      patient_id: '2',
-    },
-    {
-      id: 2,
-      start_time: '11:00:00',
-      end_time: '11:30:00',
-      name: 'GWU',
-      addressLine1: '900 23rd St NW',  
-      city: 'D.C',
-      state: 'Washington',
-      zipCode: '20037',
-      first_name: 'Cyrus',
-      last_name: 'Harmon',
-      patient_id: '1',
-    }
   ]);
   // doctor_id is needed 
   // date is required
 
   const params = useParams();
   const doctorId = params.doctorId;
+  // eslint-disable-next-line
   const [error, setError] = useState('');
+  // eslint-disable-next-line
   const [loading, setLoading] = useState(true);
   // console.log(selectedDate);
   // When you call .toISOString() on a Date object, 
@@ -102,35 +85,41 @@ export default function Main() {
     fetchData();
 }, [doctorId, dateFormated]);
 
-
+  // eslint-disable-next-line
   const handleMedicalInfo = (id) =>{
     navigate(`/doctorHomepage/${id}/medical_info/`);
   };
+
+  const navigateToSchedule = () => {
+    navigate(`/doctorHomepage/${doctorId}/addschedule`);
+  };
+  const navigateHome = () => {
+    navigate(`/doctorHomepage/${doctorId}`);
+  };
+
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["top-bar-background"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["company-name-icon"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["medical-cross"]}>
-              <div className={styles["group"]}>
-                <div className={styles["vector"]} />
-              </div>
-            </div>
-          </div>
-          <div className={styles["profile"]}>
-            <div className={styles["unsplash-ctagwpbqg"]} />
-          </div>
-          <div className={styles["tabs"]}>
-            <span className={styles["view-add-schedule"]} onClick={transferDoctorAddSchedule}>View/Add Schedule</span>
-            <span className={styles["modify-schedule"]}>View Appointments</span>
-          </div>
+    <div className={styles['main-container']}>
+    <div className='section'>
+      <div className={styles['topBar']}>
+        <img src={logo} alt="WeCureIt" className={styles['logo']} />
+        <span className={styles['logoTitle']}>WeCureIT</span>
+        <div className={styles['tabs']}>
+          <button className={styles['tab1']} onClick={navigateHome}>Home Page</button>
+          <button className={styles['tab2']} onClick={navigateToSchedule}>View/Add Schedule</button>
         </div>
-        </div>
+        <div  className='profile'>
+                <div className='dropdown'>
+                      <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                      <div className='dropdown-content'>
+                        <a href="/">Logout</a>
+                      </div>
+                    </div>
+                    </div>
+                    
       </div>
+    </div>
       <div className={styles["frame-1"]}>
-        <span className={styles["today-march"]}>Today, {actualmonth} {date}, {year}</span>
+        <span className={styles["today-march"]}>Selected Day:  {monthname[selectedDate.getMonth()]} {selectedDate.getDate()}, {selectedDate.getFullYear()}</span>
         <div className={styles["flex-row-f"]}>
           
           {weekDates.map((date) => (

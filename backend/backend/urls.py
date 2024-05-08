@@ -49,34 +49,46 @@ urlpatterns = [
     ###### add the doctor schedule, add the schedule repeatedly for the same doctor will only update according data
     # POST request body: {
     #     "doctor_id": 1,
-    #     "days_visiting": "Monday, Wednesday, Thursday, Friday",
-    #     "facility_id": [1, 2],
+    #     "days_visiting": "Monday",   
     #     "visiting_hours_start": "09:00",
-    #     "visiting_hours_end": "17:00",
+    #     "visiting_hours_end": "17:00"
+    # }
+    path('api/doctorSchedule/addtime/', views.AddTimeView.as_view(), name = 'add_DoctorSchedule'),
+
+    # POST request body: {
+    #     "doctor_id": 1,
+    #     "facility_id": [1, 2]
+    # }
+    path('api/doctorSchedule/addfacility/', views.AddFacilityView.as_view(), name = 'add_DoctorScheduleFacility'),
+
+    # POST request body: {
+    #     "doctor_id": 1,
     #     "speciality_id": [1, 2]
     # }
-    path('api/doctorSchedule/add/', views.DocScheduleCreateAPI.as_view(), name = 'add_DoctorSchedule'),
+    path('api/doctorSchedule/addspecialty/', views.AddSpecialtyView.as_view(), name = 'add_DoctorScheduleSpecialty'),
 
-    ###### remove day, this api will update the charField in the doc_schedule table
-    # POST request body: {
+    ###### remove day for a doctor
+    # DELETE request body: {
     #     "doctor_id": 1,
     #     "day_to_remove": "Monday"
     # }
-    path('api/doctorSchedule/deleteDay/', views.UpdateScheduleDaysAPI.as_view(), name='delete_DoctorSchedule_day'),
+    path('api/doctorSchedule/removetime/', views.DeleteTimeView.as_view(), name = 'delete_DoctorSchedule'),
 
     ###### remove Facility 
     # DELETE request body: {
     #     "doctor_id": 1,
     #     "facility_id": 2
     # }
-    path('api/doctorSchedule/deleteFacility/', views.UnlinkFacilityAPIView.as_view(), name='remove_facility'),
+    path('api/doctorSchedule/removefacility/', views.RemoveFacilityView.as_view(), name = 'delete_DoctorScheduleFacility'),
 
     ###### remove Specialty
     # DELETE request body: {
     #     "doctor_id": 1,
     #     "speciality_id": 2
     # }
-    path('api/doctorSchedule/deleteSpeciality/', views.UnlinkSpecialtyAPIView.as_view(), name = 'remove_speciality'),
+    path('api/doctorSchedule/removeSpecialty/', views.RemoveSpecialtyView.as_view(), name = 'delete_DoctorScheduleSpecialty'),
+
+    
     path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
     path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
     path('api/facilities/update/<int:pk>/',views.FacilityUpdateView.as_view(), name='facility-update'),
