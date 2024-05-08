@@ -94,7 +94,7 @@
             doctorToRemove.is_active = false;
             console.log(doctorToRemove)
             // Send a PUT request to update the doctor's is_active status
-            await axios.put(`http://127.0.0.1:8000/api/removedoctor/${doctorToRemove.doctor_id}/`, doctorToRemove);
+            await axios.patch(`http://127.0.0.1:8000/api/removedoctor/${doctorToRemove.doctor_id}/`, doctorToRemove);
             // If the request is successful, update the doctor list in the state
             const updatedDoctorList = doctorlist.filter(doctor => doctor !== doctorToRemove);
             setDoctorList(updatedDoctorList);

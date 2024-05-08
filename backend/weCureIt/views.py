@@ -170,6 +170,38 @@ class DoctorInfoView(viewsets.ModelViewSet):
     serializer_class = DoctorInfoSerializer
     queryset = Doctor.objects.all()
 
+# class DoctorInactiveView(APIView):
+#     def get(self, request, pk):
+#         try: 
+#             doctor = Doctor.objects.get(pk=pk)
+#             serializer = DoctorInfoSerializer(doctor)
+#             return Response(serializer.data)
+#         except Doctor.DoesNotExist:
+#             return Response(status=status.HTTP_404_NOT_FOUND)
+
+#     def put(self, request, pk):
+#         try: 
+#             # Retrieve the doctor object
+#             doctor = Doctor.objects.get(pk=pk)
+            
+#             # Update the is_active field based on the data from the request
+#             doctor.is_active = request.data.get('is_active', False)  # Assuming is_active is a boolean field
+
+#             # Instantiate the serializer with the updated doctor object and data
+#             serializer = DoctorInfoSerializer(doctor, data=request.data)
+
+#             # Validate the serializer data
+#             if serializer.is_valid():
+#                 # Save the updated doctor object
+#                 serializer.save()
+#                 return Response(serializer.data)
+#             else:
+#                 # Return errors if the data is not valid
+#                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+#         except Doctor.DoesNotExist:
+#             return Response(status=status.HTTP_404_NOT_FOUND)
+
 class DoctorInactiveView(APIView):
     def get(self, request, pk):
         try: 
@@ -177,35 +209,26 @@ class DoctorInactiveView(APIView):
             serializer = DoctorInfoSerializer(doctor)
             return Response(serializer.data)
         except Doctor.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, request, pk):
+    def patch(self, request, pk):
         try: 
-            # Retrieve the doctor object
             doctor = Doctor.objects.get(pk=pk)
-            
-            # Update the is_active field based on the data from the request
-            doctor.is_active = request.data.get('is_active', False)  # Assuming is_active is a boolean field
-
-            # Instantiate the serializer with the updated doctor object and data
-            serializer = DoctorInfoSerializer(doctor, data=request.data)
-
-            # Validate the serializer data
-            if serializer.is_valid():
-                # Save the updated doctor object
-                serializer.save()
-                return Response(serializer.data)
-            else:
-                # Return errors if the data is not valid
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
         except Doctor.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        # Update specific fields based on the request; primarily the is_active status
+        serializer = DoctorInfoSerializer(doctor, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 class AdminLoginView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = AdminLoginSerializer(data=request.data)
-        
+        print(serializer)
         if serializer.is_valid():
             print(serializer.validated_data)
             # Authentication successful

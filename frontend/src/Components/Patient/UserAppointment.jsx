@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import styles from "./UserAppointment.module.css";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserAppointment() {
   const { patientId } = useParams();
@@ -99,8 +102,7 @@ export default function UserAppointment() {
       .then((response) => response.json())
       .then((data) => setSchedules(data))
       .catch((error) => console.error("Error fetching data: ", error));
-    // console.log(facilities);
-    // console.log(scheduleList);
+
   };
 
   // now look up the facility obj for every facility_name field and map the text field to the obj.
@@ -116,9 +118,9 @@ export default function UserAppointment() {
     return updatedList1;
   }
 
-  //console.log("schedules", schedules)
+ 
   const scheduleList = replaceFacilityNameWithObject(schedules, facilities);
-  // console.log(scheduleList)
+
   // when clicking on a specific row, add that row to the selected schedule.
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   // judge if there should be a pop up page
@@ -172,8 +174,7 @@ const createTimeSlots = (data) => {
   const handleChangeTimeLength =  async (event) => {
   const timeLengthValue = event.target.value.split(" ")[0];
   setTimeLengthValue(timeLengthValue);
-    setTimeLength(event.target.value);
-    //console.log(selectedSchedule);
+  setTimeLength(event.target.value);
     const scheduleInfo = {
        date : formattedDate,
        appointment_length : timeLengthValue
@@ -194,13 +195,8 @@ const createTimeSlots = (data) => {
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/available-appointment/', scheduleInfo);     
-       // Assuming the response data has the schedule info
-      console.log(response.data)
-
       setAvailableTimeSlot(createTimeSlots(response.data));
     
-      
-
     } catch (error) {
       console.error("Error fetching schedule for selected date:", error);
 
@@ -208,7 +204,6 @@ const createTimeSlots = (data) => {
  
   };
  
-
 
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const handleTimeSlotChange = (event) => {
@@ -218,8 +213,6 @@ const createTimeSlots = (data) => {
    
   const [showConfirm, setShowConfirm] = useState(false);
   const[recDoctorID,setRecDoctorID ] = useState("");
-  // const[recDate, setRecDate] = useState("");
-  // const[recTimeSlot, setRecTimeSlot] = useState("");
   const[recFacilityID, setRecFacilityID] = useState("");
   const[docName, setDocName] = useState("");
   const[facilityName, setFacilityName] = useState("");
@@ -315,6 +308,10 @@ const createTimeSlots = (data) => {
   };
   const [showRecommendation, setShowRecommendation] = useState(false);
   
+  const navigate = useNavigate();
+  const navigateHome = () => {
+    navigate(`/patientHomepage/${patientId}`);
+  }
 
 
   
@@ -345,12 +342,6 @@ const createTimeSlots = (data) => {
 
   }
 
-  /* When accept current recommendation,
-   * post it to the Appointment for the patient
-   * close the current pop-up page
-   * I did not write a confirm page here
-   * So i clean the data here 
-   */
   const[recShowConfirm, setRecShowConfirm] = useState(false);
   const handleAcceptRecommendation = async() =>{
     setShowRecommendation(false);
@@ -381,67 +372,34 @@ const createTimeSlots = (data) => {
 
   }
 
-  // close the confirmation page
-  const handleCloseClick = () => {
-    setShowConfirm(false);
-    setSelectedSchedule(null);
-    setSelectedTimeSlot("");
-    
-  };
-
-  /* the recommendation pop-up page 
-   * current logic:
-   * when a timeslot is selected, fill the tiemSlot from backend 
-   * if the timeSlot is null, which means there is no time slot available
-   * we give the patient an alternative option
-   * we will search the timeSlot in the backend using
-   * Specialty, Date, TimeLength...
-   * still needs discussion
-   */
-
-  const [showRecommendation, setShowRecommendation] = useState(false);
-  
-  const timeRecommend = {
-    date: "April 1, 2024",
-    timeSlot: "10:00 AM - 10:15 AM",
-    doctor: "Dr. Abigail Map",
-    facilityObj: {
-      name: "GWU",
-      addressLine1: "2041 Georgia Ave NW",
-      addressLine2: "Washington D.C. 20060",
-    }
-  };
-
-
-  const handleDeclineRecommendation = () =>{
-    setShowRecommendation(false);
-  }
-
-  /* When accept current recommendation,
-   * post it to the Appointment for the patient
-   * close the current pop-up page
-   * I did not write a confirm page here
-   * So i clean the data here 
-   */
-  const handleAcceptRecommendation = () =>{
-    console.log(timeRecommend);
-    setShowRecommendation(false);
-    // if u have a confirm page, clean the data in the confirm page
-    setSelectedSchedule(null);
-    setTimeLength(null);
-    setSelectedTimeSlot("");
-
-  }
-
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-        <div className={styles["frame"]}>
-          <div className={styles["main-container2"]}>
-            <span className={styles["we-cure-it"]}>WeCureIt</span>
-            <div className={styles["vector-cross"]} />
-          </div>
+    <div  className={styles['main-container']}>
+    <div  className={styles['top-bar']}>
+     
+      <div  className={styles['frame']}>
+       
+      <div className={styles['main-container2']}>
+        <span className={styles['we-cure-it']}>WeCureIt</span>
+        <div className={styles['vector99']} />
+      </div>
+        <div  className={styles['create-appointment-button']}>
+          <button  className={styles['create-appointment-btn']} >
+            <div  className={styles['frame-1']}>
+              <span onClick={navigateHome}>
+                Home Page
+              </span>
+            </div>
+          </button>
         </div>
+        <div  className={styles['profile']}>
+                       <div className={styles['dropdown']}>
+                        <FontAwesomeIcon icon={faUserCircle} size="3x" style={{ marginTop: '-6px' }}/>
+                         <div className={styles['dropdown-content']}>
+                          <a href="/">Logout</a>
+                         </div>
+                       </div>
+                    </div>
+      </div>
       </div>
 
       <span className={styles["schedule-appointment"]}>

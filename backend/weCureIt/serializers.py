@@ -4,18 +4,11 @@ from django.contrib.auth.hashers import check_password
 from django.db.models import Q
 import datetime
 from django.db.models import Sum
-from cryptography.fernet import Fernet
-import os
-from cryptography.fernet import Fernet
+import configparser
+import base64
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 
 from cryptography.fernet import Fernet
-
-
-# Generate a key for encryption and decryption
-key = Fernet.generate_key()
-cipher = Fernet(key)
-
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -38,26 +31,40 @@ class PatientLoginSerializer(serializers.Serializer):
         # Optionally add the patient instance to the validated data if you need it later
         data['patient_id'] = patient.patient_id
         return data
-
+    
 class PatientCreditCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientCreditCard
-        fields = ('patient_id','card_number', 'card_holder_name', 'cvv','addressLine1','addressLine2','city','state','zipCode', 'expiry_date')
+        fields = ('patient_id', 'card_number', 'card_holder_name', 'cvv', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'expiry_date')
+    def get_cipher(self):
+        # Load configuration inside method to ensure it's fresh per request
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+        key = config['Encryption']['KEY']
+        return Fernet(key)
 
     def create(self, validated_data):
-        # Encrypt and encode the card number
-        card_number = validated_data['card_number'].encode()  # Ensure it's bytes
-        encrypted_card_number = cipher.encrypt(card_number)
-        validated_data['card_number'] = urlsafe_b64encode(encrypted_card_number).decode()  # Store as a string
+        cipher = self.get_cipher()
+        encrypted_card_number = cipher.encrypt(validated_data['card_number'].encode())
+        validated_data['card_number'] = base64.urlsafe_b64encode(encrypted_card_number).decode()
         return super().create(validated_data)
 
+    def update(self, instance, validated_data):
+        cipher = self.get_cipher()
+        if 'card_number' in validated_data:
+            print("here")
+            encrypted_card_number = cipher.encrypt(validated_data['card_number'].encode())
+            validated_data['card_number'] = base64.urlsafe_b64encode(encrypted_card_number).decode()
+        return super().update(instance, validated_data)
+
     def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        encrypted_card_number = urlsafe_b64decode(representation['card_number'].encode())  # Decode from base64 to bytes
-        decrypted_card_number = cipher.decrypt(encrypted_card_number).decode()  # Decrypt and convert bytes to string
-        representation['card_number'] = decrypted_card_number
-        return representation
-    
+        cipher = self.get_cipher()
+        data = super().to_representation(instance)
+        encrypted_card_number = base64.urlsafe_b64decode(data['card_number'].encode())
+        decrypted_card_number = cipher.decrypt(encrypted_card_number).decode()
+        data['card_number'] = decrypted_card_number
+        return data
+        
 class EmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
     validEmail = serializers.BooleanField()
@@ -89,7 +96,7 @@ class DoctorLoginSerializer(serializers.Serializer):
             print("Doctor found: ", doctor.email)
             if not check_password(data.get("password"), doctor.password):
                 raise serializers.ValidationError("Invalid login credentials")
-        except Patient.DoesNotExist:
+        except Doctor.DoesNotExist:
             raise serializers.ValidationError("Invalid login credentials")      
         
         # Optionally add the patient instance to the validated data if you need it later
@@ -235,11 +242,16 @@ class AdminLoginSerializer(serializers.Serializer):
     def validate(self, data):
         try:
             admin = AdminTable.objects.get(email=data.get("email"), is_active = True)
-            print("Admin found: ", admin.email)
-            if not check_password(data.get("password"), admin.password):
+            # print("Admin found: ", admin.email)
+            if data.get("password") != admin.password:
                 raise serializers.ValidationError("Invalid login credentials")
         except AdminTable.DoesNotExist:
             raise serializers.ValidationError("Invalid login credentials")
+        
+        #     if not check_password(data.get("password"), admin.password):
+        #         raise serializers.ValidationError("Invalid login credentials")
+        # except AdminTable.DoesNotExist:
+        #     raise serializers.ValidationError("Invalid login credentials")
         
         # Optionally add the patient instance to the validated data if you need it later
         data['admin_id'] = admin.admin_id
@@ -749,7 +761,10 @@ class AvailableSlotsSerializer(serializers.Serializer):
         end_datetime = datetime.datetime.combine(date, work_end)
 
         total_rooms = Facility.objects.get(facility_id=facility_id).rooms_no
-        unavailable_rooms = ManageRooms.objects.filter(facility_id=facility_id, date=date).aggregate(sum_unavailable_rooms=Sum('unvailable_room'))['sum_unavailable_rooms'] or 0
+        manage_rooms_entries = ManageRooms.objects.filter(facility_id=facility_id, date=date)
+        unavailable_rooms = sum(len(entry.unavailable_room) for entry in manage_rooms_entries)
+
+        # unavailable_rooms = ManageRooms.objects.filter(facility_id=facility_id, date=date).aggregate(sum_unavailable_rooms=Sum('unavailable_room'))['sum_unavailable_rooms'] or 0
         available_rooms = total_rooms - unavailable_rooms
 
         current_time = start_datetime
