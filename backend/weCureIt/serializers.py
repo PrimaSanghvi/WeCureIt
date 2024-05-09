@@ -362,280 +362,6 @@ class DocScheduleSerializerAdd(serializers.ModelSerializer):
     class Meta:
         model = Doc_schedule
         fields = '__all__'
-
-
-class AvailableDoctorsSerializer(serializers.Serializer):
-    speciality_id = serializers.IntegerField(required=False, allow_null=True)
-    facility_id = serializers.IntegerField(required=False, allow_null=True)
-    doctor_id = serializers.IntegerField(required=False, allow_null=True)
-    date = serializers.DateField(format="%d/%m/%Y", input_formats=["%d/%m/%Y"])
-    appointment_length = serializers.ChoiceField(choices=[15, 30, 60])
-
-    def get_available_doctors(self):
-        date = self.validated_data.get('date')
-        weekday = date.strftime("%A").lower()
-        appointment_length = int(self.validated_data.get('appointment_length'))
-
-        # Start building the query
-        query = Q(days_visiting__icontains=weekday)
-
-        # Specialty-based doctor filtering
-        if 'speciality_id' in self.validated_data:
-            specialty_id = self.validated_data['speciality_id']
-            doctor_ids = Doc_schedule.objects.filter(
-                speciality_id=specialty_id
-            ).values_list('doctor_id', flat=True)
-            query &= Q(doctor_id__in=doctor_ids)
-
-
-        if 'doctor_id' in self.validated_data:
-            doctor_id = self.validated_data['doctor_id']
-            doctor_ids = Doc_schedule.objects.filter(
-                doctor_id=doctor_id
-            ).values_list('doctor_id', flat=True)
-            query &= Q(doctor_id=self.validated_data['doctor_id'])
-
-        if 'facility_id' in self.validated_data:
-            facility_id = self.validated_data['facility_id']
-            doctor_ids = Doc_schedule.objects.filter(
-                facility_id=facility_id
-            ).values_list('doctor_id', flat=True)
-            query &= Q(doctor_id__in=doctor_ids)
-
-        any_appointments_booked = False
-        # Fetch schedules that match the dynamic query
-        schedules = Doc_schedule.objects.filter(query).distinct()
-        available_doctors = []
-       
-
-        for schedule in schedules:
-            work_start = schedule.visiting_hours_start
-            work_end = schedule.visiting_hours_end
-            if 'speciality_id' in self.validated_data and 'facility_id' not in self.validated_data and 'doctor_id' not in self.validated_data:
-                    speciality_id = self.validated_data['speciality_id']
-                    facilities = schedule.facility_id.filter(
-                    is_active=True, 
-                    speciality_id=speciality_id  # Ensure facility is linked to the specified specialty
-                    )
-    
-                    for facility in facilities:
-                        if Appointments.objects.filter(
-                        doctor_id=schedule.doctor_id_id,
-                        facility_id=facility.facility_id,
-                        date=date
-        ).exists() :
-                            any_appointments_booked = True
-                            break
-
-                        if any_appointments_booked:
-                            break
-                        
-                    for facility in facilities:
-                        appointments = Appointments.objects.filter(
-                        doctor_id=schedule.doctor_id_id,
-                        facility_id=facility.facility_id,
-                        date=date
-        )
-                        slots = self.calculate_time_slots(date, facility.facility_id, work_start, work_end,  appointments, appointment_length)
-                        #slots = self.calculate_time_slots(date, facility.facility_id, schedule.doctor_id_id, appointments, appointment_length)
-                        print("doctor_id_id", schedule.doctor_id_id)
-                        if any_appointments_booked:
-                            if appointments.exists():
-                                added_doctor_ids = set()
-                                for appointment in appointments:
-                                    doctor_id = appointment.doctor_id_id
-                                    if doctor_id not in added_doctor_ids and doctor_id == schedule.doctor_id.doctor_id:
-                                        added_doctor_ids.add(doctor_id)
-                                        available_doctors.append({
-                    'doctor_id': schedule.doctor_id.doctor_id,
-                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
-                    'facility_id': facility.facility_id,
-                    'facility_name': facility.name,
-                    'speciality_ids': self.validated_data.get('speciality_id'),
-                    'available_slots': slots
-                    })
-                        else:   
-                                available_doctors.append({
-                    'doctor_id': schedule.doctor_id.doctor_id,
-                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
-                    'facility_id': facility.facility_id,
-                    'facility_name': facility.name,
-                    'speciality_ids': self.validated_data.get('speciality_id'),
-                    'available_slots': slots
-                    })
-
-            if 'facility_id' in self.validated_data:
-                if 'speciality_id' in self.validated_data:
-                    print("check")
-                    facilities = Facility.objects.filter(facility_id=self.validated_data['facility_id'],speciality_id = self.validated_data['speciality_id'], is_active=True)  
-                    specialty_ids = [self.validated_data.get('speciality_id')]               
-                elif 'doctor_id' in self.validated_data :
-                    facilities = schedule.facility_id.filter(facility_id=self.validated_data['facility_id'],is_active=True)
-                    specialty_ids = list(schedule.speciality_id.values_list('speciality_id', flat=True))  
-                else: 
-                    facilities = Facility.objects.filter(facility_id=self.validated_data['facility_id'], is_active=True)
-                    specialty_ids = list(schedule.speciality_id.values_list('speciality_id', flat=True))
-                for facility in facilities:
-                    if Appointments.objects.filter(
-                    doctor_id=self.validated_data.get('doctor_id') if self.validated_data.get('doctor_id') else schedule.doctor_id_id,
-                    facility_id=self.validated_data.get('facility_id'),
-                    date=date
-                ).exists() :
-                        any_appointments_booked = True
-                        break
-
-                    if any_appointments_booked:
-                        break
-
-                    
-                for facility in facilities:
-                        appointments = Appointments.objects.filter(
-                    doctor_id=self.validated_data.get('doctor_id') if self.validated_data.get('doctor_id') else schedule.doctor_id_id,
-                    facility_id=self.validated_data.get('facility_id'),
-                    date=date
-                )
-                        slots = self.calculate_time_slots(date, facility.facility_id, work_start, work_end, appointments, appointment_length)
-                        # slots = self.calculate_time_slots(date, self.validated_data.get('facility_id'), schedule.doctor_id_id, appointments, appointment_length)
-                        if any_appointments_booked:
-                            if appointments.exists():
-                                added_doctor_ids = set()
-                                for appointment in appointments:
-                                    doctor_id = appointment.doctor_id_id
-                                    if doctor_id not in added_doctor_ids and doctor_id == schedule.doctor_id.doctor_id:
-                                        added_doctor_ids.add(doctor_id)
-                                        available_doctors.append({
-                    'doctor_id': schedule.doctor_id.doctor_id,
-                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
-                    'facility_id': facility.facility_id,
-                    'facility_name': facility.name,
-                    'speciality_ids': specialty_ids,
-                    'available_slots': slots
-                })
-                                    elif doctor_id not in added_doctor_ids :
-
-                                        available_doctors.append({
-                    'doctor_id': schedule.doctor_id.doctor_id,
-                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
-                    'facility_id': facility.facility_id,
-                    'facility_name': facility.name,
-                    'speciality_ids': specialty_ids,
-                    'available_slots': slots
-                })
-                        else:
-                            available_doctors.append({
-                    'doctor_id': schedule.doctor_id.doctor_id,
-                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
-                    'facility_id': facility.facility_id,
-                    'facility_name': facility.name,
-                    'speciality_ids': specialty_ids,
-                    'available_slots': slots
-                })
-                    
-                    
-            if 'doctor_id' in self.validated_data and'facility_id' not in  self.validated_data:
-                if 'speciality_id' in self.validated_data:
-                    print("last condition")
-                    facilities = schedule.facility_id.filter(is_active=True, speciality_id = self.validated_data['speciality_id'])  
-                    specialty_ids = self.validated_data.get('speciality_id')
-                else : 
-                    facilities = schedule.facility_id.filter(is_active=True)
-                    specialty_ids = list(schedule.speciality_id.values_list('speciality_id', flat=True))
-                    
-
-                for facility in facilities:
-                    if Appointments.objects.filter(
-                    doctor_id=doctor_id,  # Ensure this uses the specific doctor_id
-                    facility_id=facility.facility_id,
-                    date=date   
-                ).exists():
-                              
-                        any_appointments_booked = True
-                        break
-
-                    if any_appointments_booked:
-                        break
-
-                for facility in facilities:
-                        appointments = Appointments.objects.filter(
-                    doctor_id=doctor_id,  # Ensure this uses the specific doctor_id
-                    facility_id=facility.facility_id,
-                    date=date    
-                )     
-                        slots = self.calculate_time_slots(date, facility.facility_id, work_start, work_end, appointments, appointment_length) 
-                        # slots = self.calculate_time_slots(date, facility.facility_id, doctor_id, appointments, appointment_length)
-                        if any_appointments_booked:
-                            if appointments.exists():
-                                added_doctor_ids = set() 
-                                for appointment in appointments:
-                                    doctor_id = appointment.doctor_id_id
-                                    if doctor_id not in added_doctor_ids and doctor_id == schedule.doctor_id.doctor_id:
-                                        added_doctor_ids.add(doctor_id)
-                                        available_doctors = [] 
-                                available_doctors.append({
-                    'doctor_id': schedule.doctor_id.doctor_id,
-                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
-                    'facility_id': facility.facility_id,
-                    'facility_name': facility.name,
-                    'speciality_ids': specialty_ids,
-                    'available_slots': slots
-                })
-                            
-                            
-                        else:
-                            
-                            available_doctors.append({
-                    'doctor_id': doctor_id,
-                    'doctor_name': f"{schedule.doctor_id.first_name} {schedule.doctor_id.last_name}",
-                    'facility_id': facility.facility_id,
-                    'facility_name': facility.name,
-                    'speciality_ids': specialty_ids,
-                    'available_slots': slots
-                })
-            
-        return available_doctors
-
-
-    def calculate_time_slots(self, date, facility_id, work_start, work_end, appointments, duration):
-        # work_start = datetime.time(9, 0)
-        # work_end = datetime.time(17, 0)
-        start_datetime = datetime.datetime.combine(date, work_start)
-        end_datetime = datetime.datetime.combine(date, work_end)
-
-        total_rooms = Facility.objects.get(facility_id=facility_id).rooms_no
-        unavailable_rooms = ManageRooms.objects.filter(facility_id=facility_id, date=date).aggregate(sum_unavailable_rooms=Sum('unvailable_room'))['sum_unavailable_rooms'] or 0
-        available_rooms = total_rooms - unavailable_rooms
-
-        current_time = start_datetime
-        available_slots = []
-
-        # while current_time + datetime.timedelta(minutes=duration) <= end_datetime:
-        #     end_time = current_time + datetime.timedelta(minutes=duration)
-        #     if not any(app.start_time <= current_time.time() < app.end_time or app.start_time < end_time.time() <= app.end_time for app in appointments):
-        #         available_slots.append({'start': current_time.time().strftime('%H:%M'), 'end': end_time.time().strftime('%H:%M')})
-        #     current_time += datetime.timedelta(minutes=duration + 10)  # Assuming a 10-minute buffer between appointments
-
-        # return available_slots
-        while current_time + datetime.timedelta(minutes=duration) <= end_datetime:
-            end_time = current_time + datetime.timedelta(minutes=duration)
-            next_start_time = current_time + datetime.timedelta(minutes=duration + 10)  # Include buffer
-
-            # Check for overlapping appointments
-            overlapping_appointments = Appointments.objects.filter(
-                facility_id=facility_id,
-                date=date,
-                start_time__lt=end_time.time(),
-                end_time__gt=current_time.time()
-            ).count()
-
-            # Check for room availability and no overlapping appointments
-            if overlapping_appointments < available_rooms and not any(
-                app.start_time <= current_time.time() < app.end_time or 
-                app.start_time < end_time.time() <= app.end_time for app in appointments):
-                available_slots.append({'start': current_time.time().strftime('%H:%M'), 'end': end_time.time().strftime('%H:%M')})
-
-            current_time += datetime.timedelta(minutes=duration + 10)  # Proceed to the next potential time slot
-
-        return available_slots
     
 class AvailableSlotsSerializer(serializers.Serializer):
     speciality_id = serializers.IntegerField(required=False, allow_null=True)
@@ -712,6 +438,7 @@ class AvailableSlotsSerializer(serializers.Serializer):
                     facility_id=self.validated_data.get('facility_id'),
                     date=date
                 )
+                        print(appointments.values())
                         slots = self.calculate_time_slots(date, facility.facility_id, work_start, work_end, appointments, appointment_length)
                         if any_appointments_booked:
                             if appointments.exists():
@@ -748,46 +475,234 @@ class AvailableSlotsSerializer(serializers.Serializer):
                     'available_slots': slots
                 })
         return available_doctors
-                    
-                    
+    
+
     def calculate_time_slots(self, date, facility_id, work_start, work_end, appointments, duration):
         start_datetime = datetime.datetime.combine(date, work_start)
         end_datetime = datetime.datetime.combine(date, work_end)
 
         total_rooms = Facility.objects.get(facility_id=facility_id).rooms_no
         manage_rooms_entries = ManageRooms.objects.filter(facility_id=facility_id, date=date)
-        # unavailable_rooms = sum(len(entry.unavailable_room) for entry in manage_rooms_entries)
-
         total_unavailable_rooms = sum(len(entry.unavailable_room) for entry in manage_rooms_entries if entry.unavailable_room)
         available_rooms = total_rooms - total_unavailable_rooms
 
-        # unavailable_rooms = ManageRooms.objects.filter(facility_id=facility_id, date=date).aggregate(sum_unavailable_rooms=Sum('unavailable_room'))['sum_unavailable_rooms'] or 0
-        # available_rooms = total_rooms - unavailable_rooms
-
         current_time = start_datetime
         available_slots = []
+        work_time_accumulated = datetime.timedelta()
+        last_work_end = start_datetime
+
+        sorted_appointments = sorted(appointments, key=lambda x: x.start_time)
+
+        print("Initial conditions set. Processing appointments now...")
+        for app in sorted_appointments:
+            app_start = datetime.datetime.combine(date, app.start_time)
+            app_end = datetime.datetime.combine(date, app.end_time)
+
+            # Checking the gap and adding working time
+            if app_start > last_work_end:
+                gap = app_start - last_work_end
+                if gap >= datetime.timedelta(minutes=30):
+                    print(f"Resetting work time. Sufficient gap found from {last_work_end.strftime('%H:%M')} to {app_start.strftime('%H:%M')}")
+                    work_time_accumulated = datetime.timedelta()  # reset if there's a sufficient break
+                else:
+                    work_time_accumulated += gap
+            work_time_accumulated += (app_end - app_start)
+
+            print(f"Processed appointment from {app_start.strftime('%H:%M')} to {app_end.strftime('%H:%M')}. Accumulated work time: {work_time_accumulated}")
+            last_work_end = app_end
+
+            # Schedule a break if needed
+            if work_time_accumulated >= datetime.timedelta(hours=4):
+                next_available_time = last_work_end + datetime.timedelta(minutes=30)
+                print(f"Mandatory break scheduled after {last_work_end.strftime('%H:%M')} for 30 minutes.")
+                work_time_accumulated = datetime.timedelta()  # reset accumulated work time
+                last_work_end = next_available_time
+                current_time = max(current_time, next_available_time)  # Adjust current time after the break
+
+        # Adjust current time for the gap and continue generating slots
+        current_time = max(current_time, last_work_end + datetime.timedelta(minutes=10))
+        print("Starting slot generation...")
 
         while current_time + datetime.timedelta(minutes=duration) <= end_datetime:
             end_time = current_time + datetime.timedelta(minutes=duration)
-            next_start_time = current_time + datetime.timedelta(minutes=duration + 10)  # Include buffer
+            next_start_time = current_time + datetime.timedelta(minutes=duration + 10)  # buffer
 
-            # Check for overlapping appointments
-            overlapping_appointments = Appointments.objects.filter(
-                facility_id=facility_id,
-                date=date,
-                start_time__lt=end_time.time(),
-                end_time__gt=current_time.time()
-            ).count()
+            # Print current slot being checked for debugging
+            print(f"Checking slot: {current_time.strftime('%H:%M')} - {end_time.strftime('%H:%M')}")
 
-            # Check for room availability and no overlapping appointments
-            if overlapping_appointments < available_rooms and not any(
-                app.start_time <= current_time.time() < app.end_time or 
-                app.start_time < end_time.time() <= app.end_time for app in appointments):
-                available_slots.append({'start': current_time.time().strftime('%H:%M'), 'end': end_time.time().strftime('%H:%M')})
+            # Check if adding this slot would exceed the 4-hour work rule
+            if work_time_accumulated + (end_time - current_time) > datetime.timedelta(hours=4):
+                print("Slot exceeds 4 hours work rule. Scheduling break.")
+                current_time = last_work_end + datetime.timedelta(minutes=30)
+                work_time_accumulated = datetime.timedelta()
+                continue
 
-            current_time += datetime.timedelta(minutes=duration + 10)  # Proceed to the next potential time slot
+            overlapping = False
+            for app in sorted_appointments:
+                app_start = datetime.datetime.combine(date, app.start_time)
+                app_end = datetime.datetime.combine(date, app.end_time)
+
+                # Debug existing appointments
+                print(f"Existing appointment: {app_start.strftime('%H:%M')} - {app_end.strftime('%H:%M')}")
+
+                # Check overlap
+                if (app_start < end_time and app_end > current_time):
+                    overlapping = True
+                    print("Overlap found")
+                    break
+
+            if not overlapping and available_rooms > 0:
+                available_slots.append({'start': current_time.strftime('%H:%M'), 'end': end_time.strftime('%H:%M')})
+                print("Slot added")
+            else:
+                print("No slot added due to overlap or no available rooms")
+
+            current_time = next_start_time
 
         return available_slots
+    
+    # def calculate_time_slots(self, date, facility_id, work_start, work_end, appointments, duration):
+        
+    #     start_datetime = datetime.datetime.combine(date, work_start)
+    #     end_datetime = datetime.datetime.combine(date, work_end)
+
+    #     total_rooms = Facility.objects.get(facility_id=facility_id).rooms_no
+    #     manage_rooms_entries = ManageRooms.objects.filter(facility_id=facility_id, date=date)
+    #     total_unavailable_rooms = sum(len(entry.unavailable_room) for entry in manage_rooms_entries if entry.unavailable_room)
+    #     available_rooms = total_rooms - total_unavailable_rooms
+
+    #     current_time = start_datetime
+    #     available_slots = []
+    #     work_time_accumulated = datetime.timedelta()
+    #     last_work_end = start_datetime
+
+    #     sorted_appointments = sorted(appointments, key=lambda x: x.start_time)
+
+    #     print("Initial conditions set. Processing appointments now...")
+    #     for app in sorted_appointments:
+    #         app_start = datetime.datetime.combine(date, app.start_time)
+    #         app_end = datetime.datetime.combine(date, app.end_time)
+
+    #         # Checking the gap and adding working time
+    #         if app_start > last_work_end:
+    #             gap = app_start - last_work_end
+    #             if gap >= datetime.timedelta(minutes=30):
+    #                 print(f"Resetting work time. Sufficient gap found from {last_work_end.strftime('%H:%M')} to {app_start.strftime('%H:%M')}")
+    #                 work_time_accumulated = datetime.timedelta()  # reset if there's a sufficient break
+    #             else:
+    #                 work_time_accumulated += gap
+    #         work_time_accumulated += (app_end - app_start)
+
+    #         print(f"Processed appointment from {app_start.strftime('%H:%M')} to {app_end.strftime('%H:%M')}. Accumulated work time: {work_time_accumulated}")
+    #         last_work_end = app_end
+
+    #         # Schedule a break if needed
+    #         if work_time_accumulated >= datetime.timedelta(hours=4):
+    #             next_available_time = last_work_end + datetime.timedelta(minutes=30)
+    #             print(f"Mandatory break scheduled after {last_work_end.strftime('%H:%M')} for 30 minutes.")
+    #             work_time_accumulated = datetime.timedelta()  # reset accumulated work time
+    #             last_work_end = next_available_time
+    #             current_time = max(current_time, next_available_time)  # Adjust current time after the break
+
+    #     # Adjust current time for the gap and continue generating slots
+    #     current_time = max(current_time, last_work_end + datetime.timedelta(minutes=10))
+    #     print("Starting slot generation...")
+
+
+
+
+
+    #     while current_time + datetime.timedelta(minutes=duration) <= end_datetime:
+    #         end_time = current_time + datetime.timedelta(minutes=duration)
+    #         next_start_time = current_time + datetime.timedelta(minutes=duration + 10)  # buffer
+
+    #         # Print current slot being checked for debugging
+    #         print(f"Checking slot: {current_time.strftime('%H:%M')} - {end_time.strftime('%H:%M')}")
+
+    #         overlapping = False
+    #         for app in sorted_appointments:
+    #             app_start = datetime.datetime.combine(date, app.start_time)
+    #             app_end = datetime.datetime.combine(date, app.end_time)
+
+    #             # Debug existing appointments
+    #             print(f"Existing appointment: {app_start.strftime('%H:%M')} - {app_end.strftime('%H:%M')}")
+
+    #             # Check overlap
+    #             if (app_start < end_time and app_end > current_time):
+    #                 overlapping = True
+    #                 print("Overlap found")
+    #                 break
+
+    #         if not overlapping and available_rooms > 0:
+    #             available_slots.append({'start': current_time.strftime('%H:%M'), 'end': end_time.strftime('%H:%M')})
+    #             print("Slot added")
+    #         else:
+    #             print("No slot added due to overlap or no available rooms")
+
+    #         current_time = next_start_time
+
+
+    #     return available_slots
+
+    # def calculate_time_slots(self, date, facility_id, work_start, work_end, appointments, duration):
+    #     start_datetime = datetime.datetime.combine(date, work_start)
+    #     end_datetime = datetime.datetime.combine(date, work_end)
+
+    #     total_rooms = Facility.objects.get(facility_id=facility_id).rooms_no
+    #     manage_rooms_entries = ManageRooms.objects.filter(facility_id=facility_id, date=date)
+    #     total_unavailable_rooms = sum(len(entry.unavailable_room) for entry in manage_rooms_entries if entry.unavailable_room)
+    #     available_rooms = total_rooms - total_unavailable_rooms
+
+    #     current_time = start_datetime
+    #     available_slots = []
+    #     work_time_accumulated = datetime.timedelta()
+    #     last_work_end = start_datetime
+
+    #     sorted_appointments = sorted(appointments, key=lambda x: x.start_time)
+
+    #     for app in sorted_appointments:
+    #         appointment_start = datetime.datetime.combine(date, app.start_time)
+    #         appointment_end = datetime.datetime.combine(date, app.end_time)
+
+    #         # Checking for a gap and accumulating work time
+    #         if appointment_start > last_work_end:  # there's a gap
+    #             gap = appointment_start - last_work_end
+    #             if gap >= datetime.timedelta(minutes=30):  # A gap of 30 minutes resets accumulated work time
+    #                 work_time_accumulated = datetime.timedelta()
+    #             else:
+    #                 work_time_accumulated += gap + (appointment_end - appointment_start)
+    #         else:
+    #             work_time_accumulated += appointment_end - last_work_end
+
+    #         last_work_end = appointment_end
+
+    #         # Schedule a break if needed
+    #         if work_time_accumulated >= datetime.timedelta(hours=4):
+    #             break_time = max(datetime.timedelta(minutes=30), datetime.timedelta(hours=4) - work_time_accumulated)
+    #             next_available_time = last_work_end + break_time
+    #             work_time_accumulated = datetime.timedelta()  # Reset work time after a break
+    #             current_time = max(current_time, next_available_time)  # Adjust current time after the break
+
+    #     # Generate time slots considering breaks and existing appointments
+    #     while current_time + datetime.timedelta(minutes=duration) <= end_datetime:
+    #         end_time = current_time + datetime.timedelta(minutes=duration)
+    #         next_start_time = current_time + datetime.timedelta(minutes=duration + 10)  # Include buffer
+
+    #         # Ensure no overlapping appointments
+    #         if available_rooms > 0 and not any(
+    #             (app.start_time <= current_time.time() < app.end_time) or (app.start_time < end_time.time() <= app.end_time)
+    #             for app in sorted_appointments
+    #         ):
+                
+    #             available_slots.append({'start': current_time.time().strftime('%H:%M'), 'end': end_time.time().strftime('%H:%M')})
+
+    #         current_time = next_start_time  # Move to next potential slot
+
+    #     return available_slots
+
+
+                    
+
 
 class ManageRoomsSerializer(serializers.ModelSerializer):
     class Meta:

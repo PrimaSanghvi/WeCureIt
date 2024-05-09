@@ -45,6 +45,9 @@ export default function UserAppointment() {
       .then((data) => setFacilities(data))
       .catch((error) => console.error("Error fetching data: ", error));
   }, []);
+
+  
+
   const handleChangeSpecilty = (event) => {
     const index = event.target.selectedIndex;
     const specialityId = event.target.options[index].getAttribute('data-id');
@@ -161,7 +164,9 @@ const createTimeSlots = (data) => {
       const endTime = formatTime12Hour(slot.end);
       return `${startTime} - ${endTime}`;
   });
+  console.log(slots);
   return slots;
+
 };
   // the time length for the user to choose
   const [timeLengthValue, setTimeLengthValue] = useState(); 
@@ -715,7 +720,7 @@ const createTimeSlots = (data) => {
               <br />
               {facilityName}
               <br />
-            {facilityAdd1}  {facilityAdd2} {facilityCity} {facilityState} {facilityZipCode}
+            {facilityAdd1} {facilityCity} {facilityState} {facilityZipCode}
             <br/>
               was successfully reserved! <br />
             </span>
