@@ -119,8 +119,8 @@ def run():
                              days_visiting = "Wednesday",
                              visiting_hours_start = "10:30",
                              visiting_hours_end = "17:30",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docASched2.save()
     docASched2.speciality_id.add(spCardio)
