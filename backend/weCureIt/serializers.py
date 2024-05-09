@@ -364,6 +364,21 @@ class DocScheduleSerializerAdd(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ScheduleForDoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doc_schedule
+        fields = '__all__'
+
+class FacilityForDoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facility
+        fields = '__all__'
+
+class SpecialityForDoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Speciality
+        fields = '__all__'
+
 class AvailableDoctorsSerializer(serializers.Serializer):
     speciality_id = serializers.IntegerField(required=False, allow_null=True)
     facility_id = serializers.IntegerField(required=False, allow_null=True)

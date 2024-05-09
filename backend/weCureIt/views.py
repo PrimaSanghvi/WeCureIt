@@ -346,7 +346,43 @@ class DoctorSpecialtiesList(APIView):
         return Response(serializer.data)
         
         
+class SchedulesForDoctor(APIView):
+    def get(self, request):
+        doctor_id = request.query_params.get('doctor_id')
+        if not doctor_id:
+            return Response({"error": "Doctor ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+        serializer = ScheduleForDoctorSerializer(schedules, many=True)
+        return Response(serializer.data)
+
+class FacilityForDoctor(APIView):
+    def get(self, request):
+        doctor_id = request.query_params.get('doctor_id')
+        if not doctor_id:
+            return Response({"error": "Doctor ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Find all schedule_ids associated with this doctor
+        schedule_ids = Doc_schedule.objects.filter(doctor_id=doctor_id).values_list('schedule_id', flat=True)
+        
+        # Get all facilities linked to these schedules
+        facilities = Facility.objects.filter(doc_schedule__in=schedule_ids).distinct()
+        serializer = FacilitySerializer(facilities, many=True)
+        return Response(serializer.data)
+
+class SpecialtyForDoctor(APIView):
+    def get(self, request):
+        doctor_id = request.query_params.get('doctor_id')
+        if not doctor_id:
+            return Response({"error": "Doctor ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Find all schedule_ids associated with this doctor
+        schedule_ids = Doc_schedule.objects.filter(doctor_id=doctor_id).values_list('schedule_id', flat=True)
+
+        # Get all specialties linked to these schedules
+        specialties = Speciality.objects.filter(doc_schedule__in=schedule_ids).distinct()
+        serializer = SpecialitySerializer(specialties, many=True)
+        return Response(serializer.data)
 
 class FacilityListView(APIView):
     def get(self, request, format=None):
