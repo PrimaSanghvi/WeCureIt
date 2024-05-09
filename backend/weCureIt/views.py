@@ -328,6 +328,24 @@ class RemoveSpecialtyView(APIView):
             schedule.speciality_id.remove(speciality_id)
         return Response({'status': 'specialty removed from all schedules'}, status=status.HTTP_200_OK)
 
+# get all the specialties for a doctor
+class DoctorSpecialtiesList(APIView):
+    def get(self, request, format=None):
+        doctor_id = request.query_params.get('doctor_id')
+        if not doctor_id:
+            return Response({'error': 'Doctor ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            doctor = Doctor.objects.get(pk=doctor_id)
+        except Doctor.DoesNotExist:
+            return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize the specialities associated with the doctor
+        specialties = doctor.speciality_id.all()
+        serializer = SpecialitySerializer(specialties, many=True)
+        return Response(serializer.data)
+        
+        
 
 
 class FacilityListView(APIView):

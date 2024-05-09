@@ -88,6 +88,14 @@ urlpatterns = [
     # }
     path('api/doctorSchedule/removeSpecialty/', views.RemoveSpecialtyView.as_view(), name = 'delete_DoctorScheduleSpecialty'),
 
+
+    ##### find all the specialties the doctor is implementing
+    # GET request body
+    # {
+    #     "doctor_id": 1,
+    # }
+    path('api/speicaltiesForDoctor/', views.DoctorSpecialtiesList.as_view(), name = 'doctor-specialties'),
+
     
     path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
     path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
