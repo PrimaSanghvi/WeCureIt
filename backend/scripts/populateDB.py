@@ -298,7 +298,7 @@ def run():
     # Past:
     startTime = datetime.time(10, 0, 0)
     endTime = datetime.time(11, 0, 0)
-    appDate = datetime.date(2024, 4, 25)
+    appDate = datetime.date(2024, 5, 1)
     patientAppAFuture = Appointments(patient_id = patientA,
                                facility_id = facA,
                                doctor_id = docA,
@@ -329,7 +329,7 @@ def run():
     appDate = datetime.date(2024, 5, 10)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
-                               doctor_id = docB,
+                               doctor_id = docA,
                                speciality_id = spDentist,
                                schedule_id = docBSched,
                                start_time = startTime,
