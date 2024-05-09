@@ -9,6 +9,10 @@
 # 3. python3 manage.py runscript populateDB
 from weCureIt.models import Doctor, ManageRooms, Facility, AdminTable, Speciality, Patient, PatientCreditCard, PatientPreference, Doc_schedule, Patient_record, Appointments
 import datetime
+from cryptography.fernet import Fernet 
+import configparser
+import base64
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 
 def run():
     ############## SPECIALTY: ##############
@@ -108,8 +112,8 @@ def run():
                              days_visiting = "Monday",
                              visiting_hours_start = "10:30",
                              visiting_hours_end = "17:30",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docASched.save()
     docASched.speciality_id.add(spCardio)
@@ -119,8 +123,8 @@ def run():
                              days_visiting = "Wednesday",
                              visiting_hours_start = "10:30",
                              visiting_hours_end = "17:30",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docASched2.save()
     docASched2.speciality_id.add(spCardio)
@@ -130,8 +134,8 @@ def run():
                              days_visiting = "Friday",
                              visiting_hours_start = "10:30",
                              visiting_hours_end = "17:30",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docASched3.save()
     docASched3.speciality_id.add(spCardio)
@@ -141,8 +145,8 @@ def run():
                              days_visiting = "Tuesday",
                              visiting_hours_start = "9:00",
                              visiting_hours_end = "17:00",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docBSched.save()
     docBSched.speciality_id.add(spCardio, spOBGY, spPediatrics)
@@ -152,8 +156,8 @@ def run():
                              days_visiting = "Thursday",
                              visiting_hours_start = "9:00",
                              visiting_hours_end = "17:00",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docBSched2.save()
     docBSched2.speciality_id.add(spCardio, spOBGY, spPediatrics)
@@ -163,8 +167,8 @@ def run():
                              days_visiting = "Monday",
                              visiting_hours_start = "9:30",
                              visiting_hours_end = "17:30",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docCSched.save()
     docCSched.speciality_id.add(spOBGY, spPediatrics)
@@ -221,8 +225,14 @@ def run():
     patientC.save()
 
     # Patient Credit Card:
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    key = config['Encryption']['KEY']
+    f = Fernet(key)
+    ec = f.encrypt("4230556564069228".encode())
+    encryptedCard = base64.urlsafe_b64encode(ec).decode()
     patientCreditA = PatientCreditCard(patient_id = patientA,
-                                       card_number = "4230556564069228",
+                                       card_number = encryptedCard,
                                        card_holder_name = "Isa",
                                        cvv = 111,
                                        addressLine1 = "1163 Goldcliff Circle",
@@ -232,8 +242,10 @@ def run():
                                        expiry_date = "11/25")
     patientCreditA.save()
 
+    ec = f.encrypt("7054223079877113".encode())
+    encryptedCard = base64.urlsafe_b64encode(ec).decode()
     patientCreditB = PatientCreditCard(patient_id = patientB,
-                                       card_number = "7054223079877113",
+                                       card_number = encryptedCard,
                                        card_holder_name = "Nia",
                                        cvv = 111,
                                        addressLine1 = "3936 Hickory Lane",
@@ -243,8 +255,10 @@ def run():
                                        expiry_date = "02/26")
     patientCreditB.save()
 
+    ec = f.encrypt("3230531592444268".encode())
+    encryptedCard = base64.urlsafe_b64encode(ec).decode()
     patientCreditC = PatientCreditCard(patient_id = patientC,
-                                       card_number = "3230531592444268",
+                                       card_number = encryptedCard,
                                        card_holder_name = "Sabrina",
                                        cvv = 111,
                                        addressLine1 = "3150 Massachusetts Avenue",
@@ -298,7 +312,7 @@ def run():
     # Past:
     startTime = datetime.time(10, 0, 0)
     endTime = datetime.time(11, 0, 0)
-    appDate = datetime.date(2024, 4, 25)
+    appDate = datetime.date(2024, 5, 1)
     patientAppAFuture = Appointments(patient_id = patientA,
                                facility_id = facA,
                                doctor_id = docA,
@@ -311,7 +325,7 @@ def run():
     patientAppAFuture.save()
 
     # Today:
-    appDate = datetime.date(2024, 5, 8)
+    appDate = datetime.date(2024, 5, 9)
     patientAToday = Appointments(patient_id = patientA,
                                facility_id = facB,
                                doctor_id = docB,
@@ -329,7 +343,7 @@ def run():
     appDate = datetime.date(2024, 5, 10)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
-                               doctor_id = docB,
+                               doctor_id = docA,
                                speciality_id = spDentist,
                                schedule_id = docBSched,
                                start_time = startTime,

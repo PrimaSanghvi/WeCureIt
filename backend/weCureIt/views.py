@@ -122,7 +122,7 @@ class DoctorScheduleView(APIView):
             return Response({'error': 'Invalid date format'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Get doctor's schedule for the selected day
-        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id, days_visiting__iexact=day_of_week)
+        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id, days_visiting__iexact=day_of_week, from_date__lte=selected_date, to_date__gte=selected_date)
         if not schedules.exists():
             return Response({'message': 'No schedule found for this day.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -276,28 +276,72 @@ class AddTimeView(APIView):
     def post(self, request, format=None):
         serializer = DocScheduleSerializerAdd(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            new_schedule = serializer.save()
+            doctor_id = new_schedule.doctor_id.doctor_id
 
+            existing_schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+            all_facilities = Facility.objects.filter(doc_schedule__in=existing_schedules).distinct()
+            all_specialties = Speciality.objects.filter(doc_schedule__in=existing_schedules).distinct()
+
+            new_schedule.facility_id.set(all_facilities)
+            new_schedule.speciality_id.set(all_specialties)
+
+            # Refresh the serializer instance with updated data
+            updated_serializer = DocScheduleSerializerAdd(new_schedule)
+            return Response(updated_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 # View to add facilities
 class AddFacilityView(APIView):
-    def post(self, request, format=None):
-        doctor_id = request.data.get('doctor_id')
-        facility_ids = request.data.get('facility_id')
-        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
-        for schedule in schedules:
-            schedule.facility_id.set(facility_ids)
-        return Response({"status": "facilities updated"}, status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        serializer = FacilityAddSerializer(data=request.data)
+        if serializer.is_valid():
+            doctor_id = serializer.validated_data['doctor_id']
+            facility_id = serializer.validated_data['facility_id']
+
+            # Fetch the facility instance
+            facility = get_object_or_404(Facility, pk=facility_id)
+
+            # Fetch all schedules for the specified doctor
+            schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+            
+            if not schedules:
+                return Response({'error': 'No schedules found for this doctor.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Add the facility to each schedule
+            for schedule in schedules:
+                schedule.facility_id.add(facility)
+            
+            return Response({'message': 'Facility added to all schedules successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 # View to add specialties
 class AddSpecialtyView(APIView):
-    def post(self, request, format=None):
-        doctor_id = request.data.get('doctor_id')
-        speciality_ids = request.data.get('speciality_id')
-        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
-        for schedule in schedules:
-            schedule.speciality_id.set(speciality_ids)
-        return Response({"status": "specialties updated"}, status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        serializer = SpecialtyAddSerializer(data=request.data)
+        if serializer.is_valid():
+            doctor_id = serializer.validated_data['doctor_id']
+            speciality_id = serializer.validated_data['speciality_id']
+
+            # Fetch the specialty instance
+            speciality = get_object_or_404(Speciality, pk=speciality_id)
+
+            # Fetch all schedules for the specified doctor
+            schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+            
+            if not schedules.exists():
+                return Response({'error': 'No schedules found for this doctor.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Add the specialty to each schedule
+            for schedule in schedules:
+                schedule.speciality_id.add(speciality)
+            
+            return Response({'message': 'Specialty added to all schedules successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 # View to delete time schedule
 class DeleteTimeView(APIView):
@@ -346,7 +390,43 @@ class DoctorSpecialtiesList(APIView):
         return Response(serializer.data)
         
         
+class SchedulesForDoctor(APIView):
+    def get(self, request):
+        doctor_id = request.query_params.get('doctor_id')
+        if not doctor_id:
+            return Response({"error": "Doctor ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id)
+        serializer = ScheduleForDoctorSerializer(schedules, many=True)
+        return Response(serializer.data)
+
+class FacilityForDoctor(APIView):
+    def get(self, request):
+        doctor_id = request.query_params.get('doctor_id')
+        if not doctor_id:
+            return Response({"error": "Doctor ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Find all schedule_ids associated with this doctor
+        schedule_ids = Doc_schedule.objects.filter(doctor_id=doctor_id).values_list('schedule_id', flat=True)
+        
+        # Get all facilities linked to these schedules
+        facilities = Facility.objects.filter(doc_schedule__in=schedule_ids).distinct()
+        serializer = FacilitySerializer(facilities, many=True)
+        return Response(serializer.data)
+
+class SpecialtyForDoctor(APIView):
+    def get(self, request):
+        doctor_id = request.query_params.get('doctor_id')
+        if not doctor_id:
+            return Response({"error": "Doctor ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Find all schedule_ids associated with this doctor
+        schedule_ids = Doc_schedule.objects.filter(doctor_id=doctor_id).values_list('schedule_id', flat=True)
+
+        # Get all specialties linked to these schedules
+        specialties = Speciality.objects.filter(doc_schedule__in=schedule_ids).distinct()
+        serializer = SpecialitySerializer(specialties, many=True)
+        return Response(serializer.data)
 
 class FacilityListView(APIView):
     def get(self, request, format=None):

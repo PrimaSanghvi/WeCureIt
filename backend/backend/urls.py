@@ -51,19 +51,21 @@ urlpatterns = [
     #     "doctor_id": 1,
     #     "days_visiting": "Monday",   
     #     "visiting_hours_start": "09:00",
-    #     "visiting_hours_end": "17:00"
+    #     "visiting_hours_end": "17:00",
+    #      "to_date": '2024-07-01',
+    #      "from_date": '2024-07-29'
     # }
     path('api/doctorSchedule/addtime/', views.AddTimeView.as_view(), name = 'add_DoctorSchedule'),
 
     # POST request body: {
     #     "doctor_id": 1,
-    #     "facility_id": [1, 2]
+    #     "facility_id": 1
     # }
     path('api/doctorSchedule/addfacility/', views.AddFacilityView.as_view(), name = 'add_DoctorScheduleFacility'),
 
     # POST request body: {
     #     "doctor_id": 1,
-    #     "speciality_id": [1, 2]
+    #     "speciality_id": 1
     # }
     path('api/doctorSchedule/addspecialty/', views.AddSpecialtyView.as_view(), name = 'add_DoctorScheduleSpecialty'),
 
@@ -88,14 +90,16 @@ urlpatterns = [
     # }
     path('api/doctorSchedule/removeSpecialty/', views.RemoveSpecialtyView.as_view(), name = 'delete_DoctorScheduleSpecialty'),
 
-
-    ##### find all the specialties the doctor is implementing
-    # GET request body
-    # {
-    #     "doctor_id": 1,
-    # }
     path('api/speicaltiesForDoctor/', views.DoctorSpecialtiesList.as_view(), name = 'doctor-specialties'),
 
+    path('api/doctorSchedules/', views.SchedulesForDoctor.as_view(), name = 'schedules-for-doctors'),
+
+    path('api/doctorFacility/', views.FacilityForDoctor.as_view(), name = 'facilities-for-doctors'),
+
+    path('api/doctorSpecialty/', views.SpecialtyForDoctor.as_view(), name = 'specialties-for-doctors'),
+
+
+   
     
     path('api/facilities/', views.FacilityListView.as_view(), name='facility-list'),
     path('api/facilities/create/', views.FacilityCreateView.as_view(), name='facility-create'),
@@ -112,9 +116,7 @@ urlpatterns = [
     path('api/facilityinfo/<int:pk>/', views.FacilityDetail.as_view(), name='doctor-info'),
     path('api/specialtyinfo/<int:pk>/', views.SpecialtyDetail.as_view(), name='doctor-info'),
     path('api/patientmedicalcreate/', views.PatientRecCreateView.as_view(), name='doctor-info'),
-    ###### get doc schedule List
-    # GET request
-    # 
+   
     path('api/findAvailableSchedule/', views.DocScheduleListView.as_view(), name='search_available_schedule'),
     path('api/patientUpcomingAppointment/<int:patient_id>/', views.PatientUpcomingAppointmentsView.as_view(), name='patient_upcoming_appointment'),
     path('api/patientPastAppointment/<int:patient_id>/', views.PatientPastAppointmentsView.as_view(), name='patient_past_appointment'),

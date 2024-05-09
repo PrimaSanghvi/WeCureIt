@@ -203,6 +203,7 @@ const createTimeSlots = (data) => {
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/available-appointment/', scheduleInfo);     
       setAvailableTimeSlot(createTimeSlots(response.data));
+      console.log(timeSlots);
     
     } catch (error) {
       console.error("Error fetching schedule for selected date:", error);
@@ -528,7 +529,8 @@ const createTimeSlots = (data) => {
             </div>
           </div>
 
-          {scheduleList.map((schedule, index) => (
+          {scheduleList.length > 0 ? scheduleList.map((schedule, index) => {
+            return (
             <div
               className={styles[`${index % 2 === 0 ? "row" : "row-2b"}`]}
               onClick={() => handleScheduleClick(schedule)}
@@ -572,7 +574,16 @@ const createTimeSlots = (data) => {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          }) : (
+            <div className={styles["noApp1"]}>
+            <div className={styles["noApp2"]}>
+              <div className={styles["noApp3"]}>
+                <span className={styles["date-text"]}>No Appointments Available. Please use the filter options.</span>
+              </div>
+            </div>
+          </div>
+          )}
         </div>
       </div>
       {showPopup && selectedSchedule && (
@@ -598,9 +609,9 @@ const createTimeSlots = (data) => {
                   Please select an appointment length first.
                 </span>
               ) : (
-                <>
+                <div className={styles["timeSlotChoice"]}>
                   {timeSlots.map((timeSlot, index) => (
-                    <label key={index}>
+                    <label key={index} >
                       <input
                         type="radio"
                         value={timeSlot}
@@ -608,9 +619,10 @@ const createTimeSlots = (data) => {
                         onChange={handleTimeSlotChange}
                       />
                       {timeSlot}
+                      <br/>
                     </label>
                   ))}
-                </>
+                </div>
               )}
             </div>
           </div>

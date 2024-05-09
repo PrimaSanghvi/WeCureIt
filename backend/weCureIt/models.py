@@ -93,8 +93,8 @@ class Doc_schedule(models.Model):
     visiting_hours_start = models.TimeField(null=True)
     visiting_hours_end = models.TimeField(null=True)
     speciality_id = models.ManyToManyField(Speciality)
-    to_date = models.DateField()
-    from_date = models.DateField()
+    to_date = models.DateField()  
+    from_date = models.DateField() 
 
 
 class Patient_record(models.Model):

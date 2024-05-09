@@ -264,7 +264,7 @@
                   </div>
                 </div>
               </div>
-              {doctorlist.map((doctor,index)=>{
+              {doctorlist.length > 0 ? doctorlist.map((doctor,index)=>{
                 const backgroundColors = ['white', '#eeeeff']; // Add more colors as needed
 
                 // Select a background color based on the index
@@ -292,7 +292,9 @@
                       </div>
                       </div></>
                   );
-                })}
+                }) : (
+                  <div className = {styles["no-facilities-message"]}>No Doctors Found</div>
+                )}
               
             </div>
           </div>
