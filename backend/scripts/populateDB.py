@@ -107,7 +107,7 @@ def run():
     docASched = Doc_schedule(doctor_id = docA,
                              days_visiting = "Monday",
                              visiting_hours_start = "10:30",
-                             visiting_hours_end = "5:30",
+                             visiting_hours_end = "17:30",
                              to_date = "2024-05-01",
                              from_date = "2024-05-25"
                              )
@@ -118,7 +118,7 @@ def run():
     docASched2 = Doc_schedule(doctor_id = docA,
                              days_visiting = "Wednesday",
                              visiting_hours_start = "10:30",
-                             visiting_hours_end = "5:30",
+                             visiting_hours_end = "17:30",
                              to_date = "2024-05-01",
                              from_date = "2024-05-25"
                              )
@@ -129,7 +129,7 @@ def run():
     docASched3 = Doc_schedule(doctor_id = docA,
                              days_visiting = "Friday",
                              visiting_hours_start = "10:30",
-                             visiting_hours_end = "5:30",
+                             visiting_hours_end = "17:30",
                              to_date = "2024-05-01",
                              from_date = "2024-05-25"
                              )
@@ -140,7 +140,7 @@ def run():
     docBSched = Doc_schedule(doctor_id = docB,
                              days_visiting = "Tuesday",
                              visiting_hours_start = "9:00",
-                             visiting_hours_end = "4:00",
+                             visiting_hours_end = "17:00",
                              to_date = "2024-05-01",
                              from_date = "2024-05-25"
                              )
@@ -151,7 +151,7 @@ def run():
     docBSched2 = Doc_schedule(doctor_id = docB,
                              days_visiting = "Thursday",
                              visiting_hours_start = "9:00",
-                             visiting_hours_end = "4:00",
+                             visiting_hours_end = "17:00",
                              to_date = "2024-05-01",
                              from_date = "2024-05-25"
                              )
@@ -162,7 +162,7 @@ def run():
     docCSched = Doc_schedule(doctor_id = docC,
                              days_visiting = "Monday",
                              visiting_hours_start = "9:30",
-                             visiting_hours_end = "4:30",
+                             visiting_hours_end = "17:30",
                              to_date = "2024-05-01",
                              from_date = "2024-05-25"
                              )

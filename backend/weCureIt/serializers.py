@@ -756,10 +756,13 @@ class AvailableSlotsSerializer(serializers.Serializer):
 
         total_rooms = Facility.objects.get(facility_id=facility_id).rooms_no
         manage_rooms_entries = ManageRooms.objects.filter(facility_id=facility_id, date=date)
-        unavailable_rooms = sum(len(entry.unavailable_room) for entry in manage_rooms_entries)
+        # unavailable_rooms = sum(len(entry.unavailable_room) for entry in manage_rooms_entries)
+
+        total_unavailable_rooms = sum(len(entry.unavailable_room) for entry in manage_rooms_entries if entry.unavailable_room)
+        available_rooms = total_rooms - total_unavailable_rooms
 
         # unavailable_rooms = ManageRooms.objects.filter(facility_id=facility_id, date=date).aggregate(sum_unavailable_rooms=Sum('unavailable_room'))['sum_unavailable_rooms'] or 0
-        available_rooms = total_rooms - unavailable_rooms
+        # available_rooms = total_rooms - unavailable_rooms
 
         current_time = start_datetime
         available_slots = []
