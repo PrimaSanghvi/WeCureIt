@@ -198,6 +198,7 @@ const createTimeSlots = (data) => {
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/available-appointment/', scheduleInfo);     
       setAvailableTimeSlot(createTimeSlots(response.data));
+      console.log(timeSlots);
     
     } catch (error) {
       console.error("Error fetching schedule for selected date:", error);
@@ -603,9 +604,9 @@ const createTimeSlots = (data) => {
                   Please select an appointment length first.
                 </span>
               ) : (
-                <>
+                <div className={styles["timeSlotChoice"]}>
                   {timeSlots.map((timeSlot, index) => (
-                    <label key={index}>
+                    <label key={index} >
                       <input
                         type="radio"
                         value={timeSlot}
@@ -613,9 +614,10 @@ const createTimeSlots = (data) => {
                         onChange={handleTimeSlotChange}
                       />
                       {timeSlot}
+                      <br/>
                     </label>
                   ))}
-                </>
+                </div>
               )}
             </div>
           </div>

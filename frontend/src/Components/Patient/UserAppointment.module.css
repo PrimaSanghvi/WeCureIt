@@ -1940,6 +1940,7 @@ box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   top: 104px;
   left: 553px;
   z-index: 17;
+  overflow: auto;
 }
 .time-2 {
   flex-shrink: 0;
@@ -1954,6 +1955,7 @@ box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   text-align: left;
   white-space: nowrap;
   z-index: 18;
+  overflow: auto;
 }
 .form-3 {
   display: flex;
@@ -1966,13 +1968,12 @@ box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   gap: 8px;
   position: relative;
   min-width: 0;
-  height: 232px;
   padding: 30px 12px 10px 12px;
   background: #ffffff;
   border: 1px solid #9d9d9d;
-  z-index: 19;
+  /* z-index: 19; */
   border-radius: 8px;
-  overflow-y: auto;
+  overflow: auto;
 }
 .select-appointment-length {
   flex-shrink: 0;
@@ -1987,6 +1988,11 @@ box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
   text-align: left;
   white-space: nowrap;
   z-index: 20;
+}
+.timeSlotChoice {
+  overflow-y: auto;
+  width: 340px;
+  height: 300px;
 }
 .facility-pop {
   display: flex;
