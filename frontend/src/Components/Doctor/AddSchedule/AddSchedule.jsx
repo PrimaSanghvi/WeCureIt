@@ -339,6 +339,8 @@ function AddSchedule() {
       .then(response => console.log("Delete response:", response))
       .catch(error => console.error("Delete error:", error));
     });
+
+    window.location.reload();
   };
 
   
@@ -352,8 +354,8 @@ function AddSchedule() {
   };
 
   const handleConfirm = () => {
-    console.log("debug this shit", initSelectedFacilities);
-    console.log("debug this", selectedFacilities);
+    // console.log("debug this shit", initSelectedFacilities);
+    // console.log("debug this", selectedFacilities);
     const selectedDayData = selectedDays.map((day) => ({
       day,
       startTime: selectedTime[day] || "",
@@ -391,6 +393,7 @@ function AddSchedule() {
       .then((results) => {
         console.log("All schedules processed:", results);
         // Here you could update state or UI to reflect successful submission
+        window.location.reload();
       })
       .catch((error) => {
         console.error(
@@ -425,6 +428,7 @@ function AddSchedule() {
       setRowData((currentRowData) =>
         currentRowData.filter((row) => row.day !== rowData.day)
       );
+      window.location.reload();
     } catch (error) {
       console.error("Failed to delete row", error);
       // Handle errors appropriately
@@ -451,6 +455,7 @@ function AddSchedule() {
             currentFacilities.filter((item) => item !== facilityData.facility)
           );
           // Update the UI here, e.g., removing the facility from the list shown in the grid
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Failed to remove facility", error);
@@ -477,13 +482,14 @@ function AddSchedule() {
           },
         })
         .then((response) => {
-          console.log("Facility removed successfully", response.data);
+          console.log("Specialty removed successfully", response.data);
           // Update the UI here, e.g., removing the facility from the list shown in the grid
           setSelectedSpecialties((currentSpecialties) =>
             currentSpecialties.filter(
               (item) => item !== specialtyData.speciality
             )
           );
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Failed to remove facility", error);
