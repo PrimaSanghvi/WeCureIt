@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_extensions",
+    # "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -81,13 +81,14 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': 'WeCureItDB',
+       'NAME': 'wecuredata',
        'USER': 'postgres',
-       'PASSWORD': 'Rutpatel@03',
+       'PASSWORD': 'Zhd123456@',
        'HOST': '127.0.0.1',
        'PORT': '5432',
    }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

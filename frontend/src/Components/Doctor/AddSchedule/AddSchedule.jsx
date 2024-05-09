@@ -60,10 +60,12 @@ function AddSchedule() {
 
   const [options, setOptions] = useState([]);
   const [options2, setOptions2] = useState([]);
+  const {doctorId} = useParams();
+  const specialtyUrl = `http://127.0.0.1:8000/api/speicaltiesForDoctor/?doctor_id=${doctorId}`
 
   useEffect(() => {
     // Fetch specialties
-    fetch("http://127.0.0.1:8000/api/specialties/")
+    fetch(specialtyUrl)
       .then(response => response.json())
       .then(data => {
         const formattedOptions = data.map(item => ({
@@ -354,7 +356,7 @@ Promise.all(doctorSchedule.map(schedule => sendSchedule(schedule)))
   
 
   const navigate = useNavigate();
-  const { doctorId } = useParams(); 
+  // const { doctorId } = useParams(); 
   const navigateToAppiontments = () => {
     navigate(`/doctorHomepage/${doctorId}/viewappointment`);
   };
