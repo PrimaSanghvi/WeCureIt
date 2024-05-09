@@ -9,6 +9,10 @@
 # 3. python3 manage.py runscript populateDB
 from weCureIt.models import Doctor, ManageRooms, Facility, AdminTable, Speciality, Patient, PatientCreditCard, PatientPreference, Doc_schedule, Patient_record, Appointments
 import datetime
+from cryptography.fernet import Fernet 
+import configparser
+import base64
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 
 def run():
     ############## SPECIALTY: ##############
@@ -221,8 +225,14 @@ def run():
     patientC.save()
 
     # Patient Credit Card:
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    key = config['Encryption']['KEY']
+    f = Fernet(key)
+    ec = f.encrypt("4230556564069228".encode())
+    encryptedCard = base64.urlsafe_b64encode(ec).decode()
     patientCreditA = PatientCreditCard(patient_id = patientA,
-                                       card_number = "4230556564069228",
+                                       card_number = encryptedCard,
                                        card_holder_name = "Isa",
                                        cvv = 111,
                                        addressLine1 = "1163 Goldcliff Circle",
@@ -232,8 +242,10 @@ def run():
                                        expiry_date = "11/25")
     patientCreditA.save()
 
+    ec = f.encrypt("7054223079877113".encode())
+    encryptedCard = base64.urlsafe_b64encode(ec).decode()
     patientCreditB = PatientCreditCard(patient_id = patientB,
-                                       card_number = "7054223079877113",
+                                       card_number = encryptedCard,
                                        card_holder_name = "Nia",
                                        cvv = 111,
                                        addressLine1 = "3936 Hickory Lane",
@@ -243,8 +255,10 @@ def run():
                                        expiry_date = "02/26")
     patientCreditB.save()
 
+    ec = f.encrypt("3230531592444268".encode())
+    encryptedCard = base64.urlsafe_b64encode(ec).decode()
     patientCreditC = PatientCreditCard(patient_id = patientC,
-                                       card_number = "3230531592444268",
+                                       card_number = encryptedCard,
                                        card_holder_name = "Sabrina",
                                        cvv = 111,
                                        addressLine1 = "3150 Massachusetts Avenue",

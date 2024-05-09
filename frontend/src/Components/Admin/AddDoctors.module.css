@@ -1815,3 +1815,14 @@ input, select, textarea, button {
   content: '\f007'; 
   margin-right: 8px;
 }
+
+.no-facilities-message {
+  font-weight: bold;
+  text-align: center;
+  margin: 0; /* Remove margin if you want the text exactly in the center of the div */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}

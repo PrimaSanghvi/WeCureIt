@@ -243,15 +243,15 @@ class AdminLoginSerializer(serializers.Serializer):
         try:
             admin = AdminTable.objects.get(email=data.get("email"), is_active = True)
             # print("Admin found: ", admin.email)
-            if data.get("password") != admin.password:
-                raise serializers.ValidationError("Invalid login credentials")
-        except AdminTable.DoesNotExist:
-            raise serializers.ValidationError("Invalid login credentials")
-        
-        #     if not check_password(data.get("password"), admin.password):
+        #     if data.get("password") != admin.password:
         #         raise serializers.ValidationError("Invalid login credentials")
         # except AdminTable.DoesNotExist:
         #     raise serializers.ValidationError("Invalid login credentials")
+        
+            if not check_password(data.get("password"), admin.password):
+                raise serializers.ValidationError("Invalid login credentials")
+        except AdminTable.DoesNotExist:
+            raise serializers.ValidationError("Invalid login credentials")
         
         # Optionally add the patient instance to the validated data if you need it later
         data['admin_id'] = admin.admin_id
