@@ -8,7 +8,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
-
+import logo from '../../../src/assets/images/Logo.png';
 
 
 
@@ -32,6 +32,7 @@ export default function Main() {
   const [fs, setfs] = useState("");
   const [fc, setfc] = useState("");
   const [spname, setspname] = useState("");
+  const [doctorId, setDoctorId] = useState("");
 
   const today = new Date();
   let month = today.getMonth() + 1; 
@@ -70,6 +71,8 @@ const formattedDate = `${today.getFullYear()}-${month}-${today.getDate()}`;
           setifshowcreate(true);
           
         } 
+
+        setDoctorId(data3);
         
       } catch (err) {
         setError(err);
@@ -98,14 +101,19 @@ const formattedDate = `${today.getFullYear()}-${month}-${today.getDate()}`;
 
   }
 
+  const navigateHome = () => {
+    navigate(`/doctorHomepage/${doctorId}`);
+  };
+
   return (
-    <div className={styles["main-container"]}>
-      <div className={styles["top-bar"]}>
-       
-        <div  className={styles['frame']}>      
-                    <div className={styles['main-container2']}>
-                      <span className={styles['we-cure-it']}>WeCureIt</span>
-                    <div className={styles['icon']} />
+    <div className='main-container'>
+      <div className='section'>
+          <div className='topBar'>
+            <img src={logo} alt="WeCureIt" className='logo'/>
+            <span className='logoTitle'>WeCureIT</span>
+                    <div>
+                      <button className="tab1" onClick={navigateHome}>Home Page</button>
+                    </div>
                     
                     <div  className={styles['profile']}>
                       <div className={styles['dropdown']}>
@@ -115,7 +123,6 @@ const formattedDate = `${today.getFullYear()}-${month}-${today.getDate()}`;
                         </div>
                       </div>
                     </div>
-                  </div>
                 </div>
       </div>
       <div className={styles["medical-history"]}>
