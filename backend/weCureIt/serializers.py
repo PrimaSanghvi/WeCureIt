@@ -346,19 +346,32 @@ class FacilitySerializer(serializers.ModelSerializer):
         # Update many-to-many fields
         instance.speciality_id.set(specialties)
         return instance
+# handle add facility/specialty for the doctor schdule part
+class FacilityAddSerializer(serializers.Serializer):
+    doctor_id = serializers.IntegerField()
+    facility_id = serializers.IntegerField()
+
+class SpecialtyAddSerializer(serializers.Serializer):
+    doctor_id = serializers.IntegerField()
+    speciality_id = serializers.IntegerField()
 
 # serializer to handle the doctor add schedules
 class DocScheduleSerializerAdd(serializers.ModelSerializer):
     facility_id = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Facility.objects.all(),
-        required=False  # Make these fields optional
+        required=False,  # Ensure this field is optional
+        allow_null=True,  # Allow null values
+        allow_empty=True  # Allow the list to be empty
     )
     speciality_id = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Speciality.objects.all(),
-        required=False  # Make these fields optional
+        required=False,  # Ensure this field is optional
+        allow_null=True,  # Allow null values
+        allow_empty=True  # Allow the list to be empty
     )
+
     class Meta:
         model = Doc_schedule
         fields = '__all__'

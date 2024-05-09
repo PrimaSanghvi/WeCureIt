@@ -51,19 +51,21 @@ urlpatterns = [
     #     "doctor_id": 1,
     #     "days_visiting": "Monday",   
     #     "visiting_hours_start": "09:00",
-    #     "visiting_hours_end": "17:00"
+    #     "visiting_hours_end": "17:00",
+    #      "to_date": '2024-07-01',
+    #      "from_date": '2024-07-29'
     # }
     path('api/doctorSchedule/addtime/', views.AddTimeView.as_view(), name = 'add_DoctorSchedule'),
 
     # POST request body: {
     #     "doctor_id": 1,
-    #     "facility_id": [1, 2]
+    #     "facility_id": 1
     # }
     path('api/doctorSchedule/addfacility/', views.AddFacilityView.as_view(), name = 'add_DoctorScheduleFacility'),
 
     # POST request body: {
     #     "doctor_id": 1,
-    #     "speciality_id": [1, 2]
+    #     "speciality_id": 1
     # }
     path('api/doctorSchedule/addspecialty/', views.AddSpecialtyView.as_view(), name = 'add_DoctorScheduleSpecialty'),
 

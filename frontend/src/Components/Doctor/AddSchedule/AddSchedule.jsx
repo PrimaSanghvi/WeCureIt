@@ -213,9 +213,20 @@ function AddSchedule() {
     setSelectedSpecialties(newSpecialties);
   };
   const handleConfirmFacilitiesSpecialties = () => {
-    const selectedFacilityIds = options2
+    const initfacilitiesTemp = initSelectedFacilities.map(item => item.facility);
+    const initspecialtiesTemp = initSelectedSpecialties.map(item => item.speciality);
+
+    const specialtiesToAdd = selectedSpecialties.filter(s => !initspecialtiesTemp.includes(s));
+    const specialtiesToRemove = initspecialtiesTemp.filter(s => !selectedSpecialties.includes(s));
+
+    // Determine facilities changes
+    const facilitiesToAdd = selectedFacilities.filter(f => !initfacilitiesTemp.includes(f));
+    const facilitiesToRemove = initfacilitiesTemp.filter(f => !selectedFacilities.includes(f));
+
+
+    const selectedFacilityIdsAdd = options2
       .filter((option) => {
-        const isMatch = selectedFacilities.some((selectedFacility) => {
+        const isMatch = facilitiesToAdd.some((selectedFacility) => {
           const match =
             selectedFacility.trim().toLowerCase() ===
             option.label.trim().toLowerCase();
@@ -232,9 +243,28 @@ function AddSchedule() {
       })
       .map((option) => option.id);
 
-    const selectedSpecialtyIds = options
+      const selectedFacilityIdsDelete = options2
       .filter((option) => {
-        const isMatch = selectedSpecialties.some((selectedSpecialty) => {
+        const isMatch = facilitiesToRemove.some((selectedFacility) => {
+          const match =
+            selectedFacility.trim().toLowerCase() ===
+            option.label.trim().toLowerCase();
+          console.log(
+            `Comparing Facility: ${selectedFacility
+              .trim()
+              .toLowerCase()} to ${option.label
+              .trim()
+              .toLowerCase()} - Match: ${match}`
+          );
+          return match;
+        });
+        return isMatch;
+      })
+      .map((option) => option.id);
+
+    const selectedSpecialtyIdsAdd = options
+      .filter((option) => {
+        const isMatch = specialtiesToAdd.some((selectedSpecialty) => {
           const match =
             selectedSpecialty.trim().toLowerCase() ===
             option.label.trim().toLowerCase();
@@ -250,45 +280,68 @@ function AddSchedule() {
         return isMatch;
       })
       .map((option) => option.id);
-    console.log("the facility id is", selectedFacilityIds);
-    console.log("the specialty id is", selectedSpecialtyIds);
-    addFacilitiesToDoctorSchedule(doctorId, selectedFacilityIds);
-    addSpecialtiesToDoctorSchedule(doctorId, selectedSpecialtyIds);
+
+      const selectedSpecialtyIdsDelete = options
+      .filter((option) => {
+        const isMatch = specialtiesToRemove.some((selectedSpecialty) => {
+          const match =
+            selectedSpecialty.trim().toLowerCase() ===
+            option.label.trim().toLowerCase();
+          console.log(
+            `Comparing Specialty: ${selectedSpecialty
+              .trim()
+              .toLowerCase()} to ${option.label
+              .trim()
+              .toLowerCase()} - Match: ${match}`
+          );
+          return match;
+        });
+        return isMatch;
+      })
+      .map((option) => option.id);
+    console.log("the facility id to add is", selectedFacilityIdsAdd);
+    console.log("the specialty id to add is", selectedSpecialtyIdsAdd);
+
+    selectedFacilityIdsAdd.forEach(facility =>{
+      axios.post(`http://127.0.0.1:8000/api/doctorSchedule/addfacility/`,{
+        doctor_id: doctorId,
+        facility_id: facility,
+      });
+    });
+    selectedSpecialtyIdsAdd.forEach(specialty =>{
+      axios.post(`http://127.0.0.1:8000/api/doctorSchedule/addspecialty/`,{
+        doctor_id: doctorId,
+        speciality_id: specialty,
+      });
+    });
+    // addSpecialtiesToDoctorSchedule(doctorId, selectedSpecialtyIdsAdd);
+
+    console.log("the facility id to remove is", selectedFacilityIdsDelete);
+    console.log("the specialty id to remove is", selectedSpecialtyIdsDelete);
+    selectedFacilityIdsDelete.forEach(facility => {
+      axios.delete(`http://127.0.0.1:8000/api/doctorSchedule/removefacility/`, {
+        data: {
+          doctor_id: doctorId,
+          facility_id: facility
+        }
+      })
+      .then(response => console.log("Delete response:", response))
+      .catch(error => console.error("Delete error:", error));
+    });
+    // Delete the specialties not selected
+    selectedSpecialtyIdsDelete.forEach(specialty => {
+      axios.delete(`http://127.0.0.1:8000/api/doctorSchedule/removeSpecialty/`, {
+        data: {
+          doctor_id: doctorId,
+          speciality_id: specialty
+        }
+      })
+      .then(response => console.log("Delete response:", response))
+      .catch(error => console.error("Delete error:", error));
+    });
   };
 
-  // Function to add facilities to a doctor's schedule
-  const addFacilitiesToDoctorSchedule = (doctorId, facilityIds) => {
-    axios
-      .post(`http://127.0.0.1:8000/api/doctorSchedule/addfacility/`, {
-        doctor_id: doctorId,
-        facility_id: facilityIds,
-      })
-      .then((response) => {
-        console.log("Facilities added successfully:", response.data);
-        // handle success (update UI, show confirmation, etc.)
-      })
-      .catch((error) => {
-        console.error("Error adding facilities:", error);
-        // handle error (show error message, etc.)
-      });
-  };
-
-  // Function to add specialties to a doctor's schedule
-  const addSpecialtiesToDoctorSchedule = (doctorId, specialtyIds) => {
-    axios
-      .post(`http://127.0.0.1:8000/api/doctorSchedule/addspecialty/`, {
-        doctor_id: doctorId,
-        speciality_id: specialtyIds,
-      })
-      .then((response) => {
-        console.log("Specialties added successfully:", response.data);
-        // handle success (update UI, show confirmation, etc.)
-      })
-      .catch((error) => {
-        console.error("Error adding specialties:", error);
-        // handle error (show error message, etc.)
-      });
-  };
+  
 
   const handleTimeChange = (day, time, isStartTime) => {
     if (isStartTime) {
