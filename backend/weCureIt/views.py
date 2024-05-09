@@ -122,7 +122,7 @@ class DoctorScheduleView(APIView):
             return Response({'error': 'Invalid date format'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Get doctor's schedule for the selected day
-        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id, days_visiting__iexact=day_of_week)
+        schedules = Doc_schedule.objects.filter(doctor_id=doctor_id, days_visiting__iexact=day_of_week, from_date__lte=selected_date, to_date__gte=selected_date)
         if not schedules.exists():
             return Response({'message': 'No schedule found for this day.'}, status=status.HTTP_404_NOT_FOUND)
 

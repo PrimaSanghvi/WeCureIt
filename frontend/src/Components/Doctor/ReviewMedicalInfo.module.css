@@ -1427,3 +1427,29 @@ button {
 }
 
 
+.tab1{
+  position: relative;
+  justify-content: center;
+  height: 103px;
+  margin-left: 450px;
+  border-width: 0px;
+}
+.tab1:hover{
+  position: relative;
+  justify-content: center;
+  height: 103px;
+  margin-left: 450px;
+  border-width: 0px 0px 10px 0px;
+}
+
+.tab1{
+  justify-content: center;
+  position: relative;
+  color: #1a1a1a;
+  font-family: Noto Sans, var(--default-font-family);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
+  white-space: nowrap;
+}

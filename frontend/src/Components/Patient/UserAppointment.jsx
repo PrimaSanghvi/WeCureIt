@@ -523,7 +523,8 @@ const createTimeSlots = (data) => {
             </div>
           </div>
 
-          {scheduleList.map((schedule, index) => (
+          {scheduleList.length > 0 ? scheduleList.map((schedule, index) => {
+            return (
             <div
               className={styles[`${index % 2 === 0 ? "row" : "row-2b"}`]}
               onClick={() => handleScheduleClick(schedule)}
@@ -567,7 +568,16 @@ const createTimeSlots = (data) => {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          }) : (
+            <div className={styles["noApp1"]}>
+            <div className={styles["noApp2"]}>
+              <div className={styles["noApp3"]}>
+                <span className={styles["date-text"]}>No Appointments Available. Please use the filter options.</span>
+              </div>
+            </div>
+          </div>
+          )}
         </div>
       </div>
       {showPopup && selectedSchedule && (
