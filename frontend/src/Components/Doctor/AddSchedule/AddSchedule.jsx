@@ -7,6 +7,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import DualListBox from 'react-dual-listbox';
 import 'react-dual-listbox/lib/react-dual-listbox.css';
+import 'font-awesome/css/font-awesome.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { useParams , useNavigate } from 'react-router-dom';
@@ -485,7 +486,8 @@ Promise.all(doctorSchedule.map(schedule => sendSchedule(schedule)))
                     className={styles['listbox']}
                     options={options} preserveSelectOrder
                     selected={selectedSpecialties} // Update to selectedSpecialties
-                    onChange={handleSpecialtiesChange} />
+                    onChange={handleSpecialtiesChange} 
+                    />
                 </div>
               </div>
               <div className={styles['box-2']}>
@@ -501,7 +503,8 @@ Promise.all(doctorSchedule.map(schedule => sendSchedule(schedule)))
                     className={styles['listbox2']}
                     options={options2} preserveSelectOrder
                     selected={selectedFacilities} // Update to selectedFacilities
-                    onChange={(newValue) => setSelectedFacilities(newValue)} />
+                    onChange={(newValue) => setSelectedFacilities(newValue)} 
+                    />
                 </div>
               </div>
               <button className={styles['button5']} onClick={handleConfirmFacilitiesSpecialties}><label>Confirm</label></button>
