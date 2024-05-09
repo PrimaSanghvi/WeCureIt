@@ -108,8 +108,8 @@ def run():
                              days_visiting = "Monday",
                              visiting_hours_start = "10:30",
                              visiting_hours_end = "17:30",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docASched.save()
     docASched.speciality_id.add(spCardio)
@@ -130,8 +130,8 @@ def run():
                              days_visiting = "Friday",
                              visiting_hours_start = "10:30",
                              visiting_hours_end = "17:30",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docASched3.save()
     docASched3.speciality_id.add(spCardio)
@@ -141,8 +141,8 @@ def run():
                              days_visiting = "Tuesday",
                              visiting_hours_start = "9:00",
                              visiting_hours_end = "17:00",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docBSched.save()
     docBSched.speciality_id.add(spCardio, spOBGY, spPediatrics)
@@ -152,8 +152,8 @@ def run():
                              days_visiting = "Thursday",
                              visiting_hours_start = "9:00",
                              visiting_hours_end = "17:00",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docBSched2.save()
     docBSched2.speciality_id.add(spCardio, spOBGY, spPediatrics)
@@ -163,8 +163,8 @@ def run():
                              days_visiting = "Monday",
                              visiting_hours_start = "9:30",
                              visiting_hours_end = "17:30",
-                             to_date = "2024-05-01",
-                             from_date = "2024-05-25"
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
                              )
     docCSched.save()
     docCSched.speciality_id.add(spOBGY, spPediatrics)
@@ -311,7 +311,7 @@ def run():
     patientAppAFuture.save()
 
     # Today:
-    appDate = datetime.date(2024, 5, 8)
+    appDate = datetime.date(2024, 5, 9)
     patientAToday = Appointments(patient_id = patientA,
                                facility_id = facB,
                                doctor_id = docB,
