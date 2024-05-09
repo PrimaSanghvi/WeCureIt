@@ -369,7 +369,7 @@ useEffect(() => {
           <br />
         </>
       )}
-      <button className="viewSchdl" onClick={() => window.location.href = "./LoginPage"}>
+      <button className="viewSchdl" onClick={navigateToAddschedule}>
         <label className="text-15">View Schedule</label>
       </button>
     </>

@@ -13,13 +13,22 @@ import datetime
 def run():
     ############## SPECIALTY: ##############
     # Specialty Types:
-    specialities = ["Cardiology", "Dentist"]
+    specialities = ["Cardiology", "Dentist", "Pediatrics", "Psychiatry", "Obstetrics & Gynaecology"]
 
     spCardio = Speciality(name = specialities[0])
     spCardio.save()
 
     spDentist = Speciality(name = specialities[1])
     spDentist.save()
+
+    spPediatrics = Speciality(name = specialities[2])
+    spPediatrics.save()
+
+    spPsychiatry = Speciality(name = specialities[3])
+    spPsychiatry.save()
+
+    spOBGY = Speciality(name = specialities[4])
+    spOBGY.save()
     
     ############## FACILITY: ##############
     # Facility:
@@ -32,9 +41,10 @@ def run():
                     phone_number = "2027154000",
                     is_active = True)
     facA.save()
+    facA.speciality_id.add(spCardio, spDentist, spOBGY, spPediatrics, spPsychiatry)
     facARoom = ManageRooms(unavailable_room = [1, 3, 5],
                                facility_id = facA,
-                               date = "2024-04-24")
+                               date = "2024-05-11")
     facARoom.save()
 
     facB = Facility(name = "Holy Cross Hospital", 
@@ -46,9 +56,10 @@ def run():
                     phone_number = "3017547000",
                     is_active = True)
     facB.save()
+    facB.speciality_id.add(spCardio, spOBGY, spPediatrics)
     facBRoom = ManageRooms(unavailable_room = [2, 3],
                                facility_id = facB,
-                               date = "2024-04-24")
+                               date = "2024-05-07")
     facBRoom.save()
 
 
@@ -59,8 +70,9 @@ def run():
                     zipCode = 20010,
                     rooms_no = 4,
                     phone_number = "2028777000",
-                    is_active = False)
+                    is_active = True)
     facC.save()
+    facC.speciality_id.add(spCardio, spDentist, spOBGY, spPediatrics, spPsychiatry)
 
     ############## DOCTOR: ##############
     # Doctor Users:
@@ -71,7 +83,7 @@ def run():
                   phone_number = 1111111111,
                   is_active = True)
     docA.save()
-    docA.speciality_id.add(spCardio)
+    docA.speciality_id.add(spCardio, spPediatrics)
 
     docB = Doctor(first_name = "Tia",
                   last_name = "McKnight",
@@ -80,35 +92,87 @@ def run():
                   phone_number = 1111111111,
                   is_active = True)
     docB.save()
-    docB.speciality_id.add(spCardio, spDentist)
+    docB.speciality_id.add(spCardio, spDentist, spPediatrics, spPsychiatry, spOBGY)
 
     docC = Doctor(first_name = "Gordon",
                   last_name = "Ortiz",
                   email = "GORTIZ@GMAIL.COM",
                   password = "111",
                   phone_number = 1111111111,
-                  is_active = False)
+                  is_active = True)
     docC.save()
-    docC.speciality_id.add(spDentist)
+    docC.speciality_id.add(spOBGY, spPediatrics)
 
     # Doctor Schedule:
     docASched = Doc_schedule(doctor_id = docA,
-                             days_visiting = "M"
+                             days_visiting = "Monday",
+                             visiting_hours_start = "10:30",
+                             visiting_hours_end = "5:30",
+                             to_date = "2024-05-01",
+                             from_date = "2024-05-25"
                              )
     docASched.save()
     docASched.speciality_id.add(spCardio)
     docASched.facility_id.add(facA, facB)
 
+    docASched2 = Doc_schedule(doctor_id = docA,
+                             days_visiting = "Wednesday",
+                             visiting_hours_start = "10:30",
+                             visiting_hours_end = "5:30",
+                             to_date = "2024-05-01",
+                             from_date = "2024-05-25"
+                             )
+    docASched2.save()
+    docASched2.speciality_id.add(spCardio)
+    docASched2.facility_id.add(facA, facB)
+
+    docASched3 = Doc_schedule(doctor_id = docA,
+                             days_visiting = "Friday",
+                             visiting_hours_start = "10:30",
+                             visiting_hours_end = "5:30",
+                             to_date = "2024-05-01",
+                             from_date = "2024-05-25"
+                             )
+    docASched3.save()
+    docASched3.speciality_id.add(spCardio)
+    docASched3.facility_id.add(facA, facB)
+
     docBSched = Doc_schedule(doctor_id = docB,
-                             days_visiting = "M, W, F"
+                             days_visiting = "Tuesday",
+                             visiting_hours_start = "9:00",
+                             visiting_hours_end = "4:00",
+                             to_date = "2024-05-01",
+                             from_date = "2024-05-25"
                              )
     docBSched.save()
-    docBSched.speciality_id.add(spCardio, spDentist)
-    docBSched.facility_id.add(facB)
+    docBSched.speciality_id.add(spCardio, spOBGY, spPediatrics)
+    docBSched.facility_id.add(facB, facC)
+
+    docBSched2 = Doc_schedule(doctor_id = docB,
+                             days_visiting = "Thursday",
+                             visiting_hours_start = "9:00",
+                             visiting_hours_end = "4:00",
+                             to_date = "2024-05-01",
+                             from_date = "2024-05-25"
+                             )
+    docBSched2.save()
+    docBSched2.speciality_id.add(spCardio, spOBGY, spPediatrics)
+    docBSched2.facility_id.add(facB, facC)
+
+    docCSched = Doc_schedule(doctor_id = docC,
+                             days_visiting = "Monday",
+                             visiting_hours_start = "9:30",
+                             visiting_hours_end = "4:30",
+                             to_date = "2024-05-01",
+                             from_date = "2024-05-25"
+                             )
+    docCSched.save()
+    docCSched.speciality_id.add(spOBGY, spPediatrics)
+    docCSched.facility_id.add(facC)
 
     ############## ADMIN: ##############
     # Admin Users:
-    admins = [["Majorie", "Turner", "MTURNER@GMAIL.COM", "12345", True, 1111111111]
+    admins = [["Majorie", "Turner", "MTURNER@GMAIL.COM", "111", True, 1111111111]
             ]
     
     for admin in admins:
@@ -127,67 +191,67 @@ def run():
                        last_name = "Jeana",
                        email = "IJ@GMAIL.COM",
                        password = "111",
-                       addressLine1 = "testing",
+                       addressLine1 = "1163 Goldcliff Circle",
                        city = "Washington",
                        state = "DC",
-                       zipCode = 11111,
-                       phone_number = "1111111111")
+                       zipCode = 20009,
+                       phone_number = "2063428631")
     patientA.save()
 
     patientB = Patient(first_name = "Nia",
                        last_name = "Avi",
                        email = "NAVI@GMAIL.COM",
                        password = "111",
-                       addressLine1 = "testing",
+                       addressLine1 = "3936 Hickory Lane",
                        city = "Washington",
                        state = "DC",
-                       zipCode = 11111,
-                       phone_number = "1111111111")
+                       zipCode = 20009,
+                       phone_number = "2126583916")
     patientB.save()
 
     patientC = Patient(first_name = "Sabrina",
                        last_name = "Porter",
                        email = "SPORTER@GMAIL.COM",
                        password = "111",
-                       addressLine1 = "testing",
+                       addressLine1 = "3150 Massachusetts Avenue",
                        city = "Washington",
                        state = "DC",
-                       zipCode = 11111,
-                       phone_number = "1111111111")
+                       zipCode = 20004,
+                       phone_number = "2341096666")
     patientC.save()
 
     # Patient Credit Card:
     patientCreditA = PatientCreditCard(patient_id = patientA,
-                                       card_number = "111",
+                                       card_number = "4230556564069228",
                                        card_holder_name = "Isa",
                                        cvv = 111,
-                                       addressLine1 = "testing",
+                                       addressLine1 = "1163 Goldcliff Circle",
                                        city = "Washington",
                                        state = "DC", 
-                                       zipCode = 11111,
+                                       zipCode = 20009,
                                        expiry_date = "11/25")
     patientCreditA.save()
 
     patientCreditB = PatientCreditCard(patient_id = patientB,
-                                       card_number = "22221111",
+                                       card_number = "7054223079877113",
                                        card_holder_name = "Nia",
                                        cvv = 111,
-                                       addressLine1 = "testing",
+                                       addressLine1 = "3936 Hickory Lane",
                                        city = "Washington",
                                        state = "DC", 
-                                       zipCode = 11111,
-                                       expiry_date = "11/25")
+                                       zipCode = 20009,
+                                       expiry_date = "02/26")
     patientCreditB.save()
 
     patientCreditC = PatientCreditCard(patient_id = patientC,
-                                       card_number = "22221111",
+                                       card_number = "3230531592444268",
                                        card_holder_name = "Sabrina",
                                        cvv = 111,
-                                       addressLine1 = "testing",
+                                       addressLine1 = "3150 Massachusetts Avenue",
                                        city = "Washington",
                                        state = "DC", 
-                                       zipCode = 11111,
-                                       expiry_date = "11/25")
+                                       zipCode = 20004,
+                                       expiry_date = "11/27")
     patientCreditC.save()
 
     # Patient Preference:
@@ -203,23 +267,38 @@ def run():
     # Patient Record:
     # -- Patient A --
     patientRecA1 = Patient_record(patient_id = patientA,
-                                 doctor_id = docA)
+                                 doctor_id = docA,
+                                 medical_diagnosis = "Healthy",
+                                 diagnosis_date = "2024-04-25",
+                                 symptoms = "Frequent heart pain",
+                                 temperature = "90",
+                                 blood_pressure = "120/80",
+                                 heart_rate = "120",
+                                 respiratory_rate = "20",
+                                 current_medications = "None"
+                                )
+                                 
     patientRecA1.save()
 
-    patientRecA2 = Patient_record(patient_id = patientA,
-                                 doctor_id = docA)
-    patientRecA2.save()
-
-    # -- Patient B --
     patientRecB = Patient_record(patient_id = patientB,
-                                 doctor_id = docB)
+                                 doctor_id = docB,
+                                 medical_diagnosis = "Healthy",
+                                 diagnosis_date = "2024-05-01",
+                                 symptoms = "N/A",
+                                 temperature = "90",
+                                 blood_pressure = "120/80",
+                                 heart_rate = "120",
+                                 respiratory_rate = "20",
+                                 current_medications = "None"
+                                 )
     patientRecB.save()
 
     # Patient Appointments:
     # -- Patient A --
+    # Past:
     startTime = datetime.time(10, 0, 0)
     endTime = datetime.time(11, 0, 0)
-    appDate = datetime.date(2024, 5, 18)
+    appDate = datetime.date(2024, 4, 25)
     patientAppAFuture = Appointments(patient_id = patientA,
                                facility_id = facA,
                                doctor_id = docA,
@@ -231,116 +310,101 @@ def run():
                                date = appDate)
     patientAppAFuture.save()
 
-    appDate = datetime.date(2024, 4, 15)
-    patientAppAPast = Appointments(patient_id = patientA,
-                               facility_id = facA,
-                               doctor_id = docA,
+    # Today:
+    appDate = datetime.date(2024, 5, 8)
+    patientAToday = Appointments(patient_id = patientA,
+                               facility_id = facB,
+                               doctor_id = docB,
                                speciality_id = spCardio,
                                schedule_id = docASched,
-                               patient_rec_id = patientRecA2,
                                start_time = startTime,
                                end_time =endTime,
                                date = appDate)
-    patientAppAPast.save()
+    patientAToday.save()
 
-    # -- Patient B --
-    # Future
+    # # -- Patient B --
+    # Future:
     startTime = datetime.time(9, 0, 0)
     endTime = datetime.time(9, 30, 0)
-    appDate = datetime.date(2024, 5, 3)
+    appDate = datetime.date(2024, 5, 10)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
                                doctor_id = docB,
                                speciality_id = spDentist,
                                schedule_id = docBSched,
-                               patient_rec_id = patientRecB,
                                start_time = startTime,
                                end_time =endTime,
                                date = appDate)
     patientAppBFuture.save()
 
-    startTime = datetime.time(9, 0, 0)
-    endTime = datetime.time(9, 30, 0)
-    appDate = datetime.date(2024, 5, 3)
-    patientAppBFuture = Appointments(patient_id = patientB,
-                               facility_id = facB,
-                               doctor_id = docA,
-                               speciality_id = spDentist,
-                               schedule_id = docBSched,
-                               patient_rec_id = patientRecB,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAppBFuture.save()
+    # startTime = datetime.time(9, 0, 0)
+    # endTime = datetime.time(9, 30, 0)
+    # appDate = datetime.date(2024, 5, 3)
+    # patientAppBFuture = Appointments(patient_id = patientB,
+    #                            facility_id = facB,
+    #                            doctor_id = docA,
+    #                            speciality_id = spDentist,
+    #                            schedule_id = docBSched,
+    #                            patient_rec_id = patientRecB,
+    #                            start_time = startTime,
+    #                            end_time =endTime,
+    #                            date = appDate)
+    # patientAppBFuture.save()
 
-    startTime = datetime.time(16, 0, 0)
-    endTime = datetime.time(16, 30, 0)
-    appDate = datetime.date(2024, 5, 15)
-    patientAppBFuture = Appointments(patient_id = patientB,
-                               facility_id = facB,
-                               doctor_id = docB,
-                               speciality_id = spDentist,
-                               schedule_id = docBSched,
-                               patient_rec_id = patientRecB,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAppBFuture.save()
+    # startTime = datetime.time(16, 0, 0)
+    # endTime = datetime.time(16, 30, 0)
+    # appDate = datetime.date(2024, 5, 15)
+    # patientAppBFuture = Appointments(patient_id = patientB,
+    #                            facility_id = facB,
+    #                            doctor_id = docB,
+    #                            speciality_id = spDentist,
+    #                            schedule_id = docBSched,
+    #                            patient_rec_id = patientRecB,
+    #                            start_time = startTime,
+    #                            end_time =endTime,
+    #                            date = appDate)
+    # patientAppBFuture.save()
 
-    startTime = datetime.time(16, 0, 0)
-    endTime = datetime.time(16, 30, 0)
-    appDate = datetime.date(2024, 4, 25)
-    patientAppBFuture = Appointments(patient_id = patientB,
-                               facility_id = facB,
-                               doctor_id = docB,
-                               speciality_id = spDentist,
-                               schedule_id = docBSched,
-                               patient_rec_id = patientRecB,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAppBFuture.save()
+    # startTime = datetime.time(16, 0, 0)
+    # endTime = datetime.time(16, 30, 0)
+    # appDate = datetime.date(2024, 4, 25)
+    # patientAppBFuture = Appointments(patient_id = patientB,
+    #                            facility_id = facB,
+    #                            doctor_id = docB,
+    #                            speciality_id = spDentist,
+    #                            schedule_id = docBSched,
+    #                            patient_rec_id = patientRecB,
+    #                            start_time = startTime,
+    #                            end_time =endTime,
+    #                            date = appDate)
+    # patientAppBFuture.save()
 
-    # Past
-    startTime = datetime.time(9, 0, 0)
-    endTime = datetime.time(9, 30, 0)
-    appDate = datetime.date(2024, 3, 25)
-    patientAppBFuture = Appointments(patient_id = patientB,
-                               facility_id = facB,
-                               doctor_id = docB,
-                               speciality_id = spDentist,
-                               schedule_id = docBSched,
-                               patient_rec_id = patientRecB,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAppBFuture.save()
+    # # Past:
+    # startTime = datetime.time(9, 0, 0)
+    # endTime = datetime.time(9, 30, 0)
+    # appDate = datetime.date(2024, 3, 25)
+    # patientAppBFuture = Appointments(patient_id = patientB,
+    #                            facility_id = facB,
+    #                            doctor_id = docB,
+    #                            speciality_id = spDentist,
+    #                            schedule_id = docBSched,
+    #                            patient_rec_id = patientRecB,
+    #                            start_time = startTime,
+    #                            end_time =endTime,
+    #                            date = appDate)
+    # patientAppBFuture.save()
 
-    startTime = datetime.time(1, 00, 0)
-    endTime = datetime.time(1, 00, 0)
-    appDate = datetime.date(2024, 4, 25)
-    patientAppBFuture = Appointments(patient_id = patientB,
-                               facility_id = facA,
-                               doctor_id = docA,
-                               speciality_id = spCardio,
-                               schedule_id = docBSched,
-                               patient_rec_id = patientRecB,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAppBFuture.save()
-
-    # Today
-    startTime = datetime.time(9, 0, 0)
-    endTime = datetime.time(9, 15, 0)
-    appDate = datetime.date(2024, 4, 24)
-    patientAppBFuture = Appointments(patient_id = patientB,
-                               facility_id = facB,
-                               doctor_id = docB,
-                               speciality_id = spDentist,
-                               schedule_id = docBSched,
-                               patient_rec_id = patientRecB,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAppBFuture.save()
+    # # Today:
+    # startTime = datetime.time(9, 0, 0)
+    # endTime = datetime.time(9, 15, 0)
+    # appDate = datetime.date(2024, 4, 24)
+    # patientAppBFuture = Appointments(patient_id = patientB,
+    #                            facility_id = facB,
+    #                            doctor_id = docB,
+    #                            speciality_id = spDentist,
+    #                            schedule_id = docBSched,
+    #                            patient_rec_id = patientRecB,
+    #                            start_time = startTime,
+    #                            end_time =endTime,
+    #                            date = appDate)
+    # patientAppBFuture.save()
