@@ -848,6 +848,19 @@ class SlotRecommendationSerializer(serializers.Serializer):
         
         if appointment_exists:
             raise serializers.ValidationError("The slot is not available at the selected facility.")
+        
+        # Ensure the doctor works within the provided slot
+        day_of_week = attrs['date'].strftime('%A').lower()
+        print("doc_schedule does not exists", day_of_week)
+
+        if not Doc_schedule.objects.filter(
+            doctor_id=attrs['doctor_id'],
+            days_visiting__icontains=day_of_week,
+            visiting_hours_start__lte=start_time,
+            visiting_hours_end__gte=end_time
+        ).exists():
+           
+            raise serializers.ValidationError("The doctor does not work during the provided time slot.")
 
         return attrs
 
@@ -878,7 +891,9 @@ class SlotRecommendationSerializer(serializers.Serializer):
                     doc_schedule__facility_id=facility.facility_id,
                     doc_schedule__speciality_id=speciality_id,
                     doc_schedule__days_visiting__icontains=date.strftime("%A").lower(),
-                is_active=True
+                    doc_schedule__visiting_hours_start__lte=start_time,
+                    doc_schedule__visiting_hours_end__gte=end_time,
+                    is_active=True
                 ).distinct()
 
                 for doctor in available_doctors:
@@ -886,10 +901,11 @@ class SlotRecommendationSerializer(serializers.Serializer):
                     if Appointments.objects.filter(
                         doctor_id=doctor.doctor_id,
                         facility_id=facility.facility_id,
-                        date=date   
+                        date=date,
                     ).exists():
                         if not Appointments.objects.filter( start_time__lte=start_time,
                         end_time__gte=end_time).exists() : 
+                            print(start_time, end_time)
                             recommendations.append({
                             'doctor_id': doctor.doctor_id,
                             'doctor_name': f"{doctor.first_name} {doctor.last_name}",
