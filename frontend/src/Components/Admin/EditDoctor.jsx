@@ -123,7 +123,7 @@ const handleRemove = () => {
           first_name,
           last_name,
           email,
-          password,
+          password: '111',
           phone_number,
           is_active,
           speciality_id: specialityIds
