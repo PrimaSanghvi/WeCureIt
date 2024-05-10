@@ -581,6 +581,13 @@ class AvailableSlotsSerializer(serializers.Serializer):
             end_time = current_time + datetime.timedelta(minutes=duration)
             next_start_time = current_time + datetime.timedelta(minutes=duration + 10)  # buffer
 
+            overlapping_appointments = Appointments.objects.filter(
+                facility_id=facility_id,
+                date=date,
+                start_time__lt=end_time.time(),
+                end_time__gt=current_time.time()
+            ).count()
+
             # Print current slot being checked for debugging
             print(f"Checking slot: {current_time.strftime('%H:%M')} - {end_time.strftime('%H:%M')}")
 
@@ -591,7 +598,7 @@ class AvailableSlotsSerializer(serializers.Serializer):
                 work_time_accumulated = datetime.timedelta()
                 continue
 
-            overlapping = False
+            overlapping_t = False
             for app in sorted_appointments:
                 app_start = datetime.datetime.combine(date, app.start_time)
                 app_end = datetime.datetime.combine(date, app.end_time)
@@ -601,11 +608,17 @@ class AvailableSlotsSerializer(serializers.Serializer):
 
                 # Check overlap
                 if (app_start < end_time and app_end > current_time):
-                    overlapping = True
+                    overlapping_t = True
                     print("Overlap found")
                     break
 
-            if not overlapping and available_rooms > 0:
+            # if not overlapping and available_rooms > 0:
+            #     available_slots.append({'start': current_time.strftime('%H:%M'), 'end': end_time.strftime('%H:%M')})
+            #     print("Slot added")
+            # else:
+            #     print("No slot added due to overlap or no available rooms")
+
+            if not overlapping_t and overlapping_appointments < available_rooms:
                 available_slots.append({'start': current_time.strftime('%H:%M'), 'end': end_time.strftime('%H:%M')})
                 print("Slot added")
             else:
