@@ -82,8 +82,8 @@ DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
        'NAME': 'WeCureItDB',
-       'USER': 'postgres',
-       'PASSWORD': '4399',
+       'USER': 'laurenhahn',
+       'PASSWORD': '54321',
        'HOST': 'localhost',
        'PORT': '5432',
    }
