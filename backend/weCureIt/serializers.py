@@ -217,6 +217,12 @@ class DoctorInfoSerializer(serializers.ModelSerializer):
         model = Doctor
         fields = ('doctor_id', 'first_name', 'last_name', 'speciality_id', 'password', 'speciality','phone_number', 'email', 'is_active')
 
+    def validate(self, data):
+        # Ensure that we're not processing inactive doctors
+        if not self.instance.is_active:
+            raise serializers.ValidationError("Cannot process an inactive doctor.")
+        return data
+
     def create(self, validated_data):
         # `speciality` is now directly in validated_data thanks to `source='speciality'`
         specialities = validated_data.pop('speciality', [])
@@ -266,11 +272,24 @@ class AllDoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ('doctor_id', 'first_name', 'last_name', 'speciality_id', 'email', 'password', 'phone_number', 'is_active')
+
+    def to_representation(self, instance):
+        # Optionally exclude inactive doctors from being serialized
+        if not instance.is_active:
+            return None  # or handle as appropriate for your application's needs
+        return super().to_representation(instance)
+    
 ## here i update the address => addressLine1
 class AllFacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
         fields = ('facility_id', 'name', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'rooms_no', 'phone_number', 'is_active', 'start_time', 'end_time')
+
+    def to_representation(self, instance):
+        # Filter only active facilities
+        if not instance.is_active:
+            return None
+        return super().to_representation(instance)
 
 # add doctor schedule to the database(handle repeated adding cases)
 # to distinguish from another DocSchedule Serializer
@@ -328,7 +347,13 @@ class FacilitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Facility
-        fields = ['facility_id', 'name', 'addressLine1', 'addressLine2', 'state','city','zipCode','rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality', 'start_time', 'end_time']
+        fields = ['facility_id', 'name', 'addressLine1', 'addressLine2', 'state','city','zipCode','rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality']
+
+    def validate(self, data):
+        # If updating and instance is inactive, raise a validation error
+        if self.instance and not self.instance.is_active:
+            raise serializers.ValidationError("Cannot modify an inactive facility.")
+        return data
 
     def create(self, validated_data):
         # Extract specialties using the source argument 'speciality'

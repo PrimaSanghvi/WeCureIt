@@ -89,7 +89,7 @@ const handleRemove = () => {
     console.log("transfer to doctor arrangement");
   };
 
-  const [emailError, setEmailError] = useState('');
+  // const [emailError, setEmailError] = useState('');
   const handleSubmit = async(e) =>{
     e.preventDefault();
     const doctor_id = doctor_editing.doctor_id;
@@ -110,14 +110,14 @@ const handleRemove = () => {
     };
 
     // Get all emails to see if the admin can use the email:
-    axios.post(`http://127.0.0.1:8000/api/allEmails/`, payload)
-    .then(response => {
-      console.log('Response data:', response.data);
+    // axios.post(`http://127.0.0.1:8000/api/allEmails/`, payload)
+    // .then(response => {
+    //   console.log('Response data:', response.data);
 
-      // Email taken:
-      if (response.data["validEmail"]) {
-        setEmailError("Email is already taken! Please use a different email.")
-      } else {
+    //   // Email taken:
+    //   if (response.data["validEmail"]) {
+    //     setEmailError("Email is already taken! Please use a different email.")
+    //   } else {
         const updateddoctor = {
           doctor_id,
           first_name,
@@ -132,17 +132,16 @@ const handleRemove = () => {
       
         
         console.log(updateddoctor)
-        axios.put(`http://127.0.0.1:8000/api/removedoctor/${doctor_editing.doctor_id}/`, updateddoctor)
+        axios.patch(`http://127.0.0.1:8000/api/removedoctor/${doctor_editing.doctor_id}/`, updateddoctor)
         .then(response => {
           console.log('Form submitted successfully!', response.data);
+          navigate(`/addDoctors/${adminId}`,{ state: { message: "Details Updated Successfully!" } });
         })
         .catch(error => {
           console.error('Error submitting form:', error);
         });
-
-        setEmailError('');
-      }
-    })
+      // }
+    // )
   };
   
   
@@ -253,7 +252,7 @@ const handleRemove = () => {
         <input className={styles["frame-26"]} placeholder = {email}
          type="text" value ={email} onChange={(e)=>setemail(e.target.value ? e.target.value.toUpperCase() : '')}
         />
-        {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
+        {/* {emailError && <div style={{ color: 'red' }}>{emailError}</div>} */}
       </div>
       <button className={styles["frame-28"]} onClick={handleSubmit}>
         <div className={styles["frame-29"]}>

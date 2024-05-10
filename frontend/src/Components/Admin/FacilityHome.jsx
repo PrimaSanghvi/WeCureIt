@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./FacilityHome.module.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,7 +13,9 @@ export default function FacilityHome() {
   const [specialityList, setspecialitylist] = useState([]);
 
   const navigate = useNavigate();
-  const { adminId } = useParams(); 
+  const { adminId } = useParams();
+  const location = useLocation();
+  const message = location.state?.message;
 
   // Fetch facilities when component mounts
   useEffect(() => {
@@ -410,6 +412,7 @@ export default function FacilityHome() {
       </div>
     </div>
 
+      {message && <div style={{ textAlign: 'center', fontWeight: 'bold', color: 'green', fontSize: '20px' }}>{message}</div>}
       <div className={styles["rectangle"]}>
         <span className={styles["remove-button"]} onClick={handleAddClick}>
           Add Facility

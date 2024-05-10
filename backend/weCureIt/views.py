@@ -161,7 +161,7 @@ class DoctorView(viewsets.ModelViewSet):
 
 class DoctorListView(APIView):
     def get(self, request, format=None):
-        doctor = Doctor.objects.all()
+        doctor = Doctor.objects.filter(is_active=True)
         serializer = DoctorInfoSerializer(doctor, many=True)
         return Response(serializer.data)
 
@@ -430,7 +430,7 @@ class SpecialtyForDoctor(APIView):
 
 class FacilityListView(APIView):
     def get(self, request, format=None):
-        facilities = Facility.objects.all()  
+        facilities = Facility.objects.filter(is_active=True)
         serializer = FacilitySerializer(facilities, many=True)  
         return Response(serializer.data) 
 
@@ -443,7 +443,7 @@ class FacilityCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FacilityUpdateView(APIView):
-    def put(self, request, pk, format=None):
+    def patch(self, request, pk, format=None):
         try:
             facility = Facility.objects.get(pk=pk)
         except Facility.DoesNotExist:
@@ -839,7 +839,7 @@ class DocScheduleListView(generics.ListAPIView):
     
     def get_queryset(self):
         # Initially filter schedules that are associated with active facilities
-        queryset = Doc_schedule.objects.filter(facility_id__is_active=True)
+        queryset = Doc_schedule.objects.filter(facility_id__is_active=True, doctor_id__is_active=True)
         # Retrieve the 'date' query parameter
         date_query = self.request.query_params.get('date', None)
 

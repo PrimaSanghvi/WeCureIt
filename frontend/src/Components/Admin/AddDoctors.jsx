@@ -3,7 +3,7 @@
     import { useEffect,useState } from 'react';
     import axios from 'axios'; 
     import styles from './AddDoctors.module.css';
-    import { useNavigate } from 'react-router-dom';
+    import { useNavigate, useLocation } from 'react-router-dom';
     import { useParams } from 'react-router-dom';
     import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
     import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
@@ -23,6 +23,9 @@
       const [selectedSpecialityIds, setSelectedSpecialityIds] = useState([]);
       const { adminId } = useParams(); 
       const navigate = useNavigate();
+
+      const location = useLocation();
+      const message = location.state?.message;
     
       const handleDisplay = () => {
         console.log(`Selected Specialty: ${selectedspeciality}`);
@@ -91,12 +94,11 @@
                     
                       console.log('Form submitted successfully!', response.data);
                       // Handle any post-submission logic here, like redirecting to another page
-                      
+                      window.location.href = `/addDoctors/${adminId}`;
                   })
                   .catch(error => {
                       console.error('Error submitting form:', error);
                   });
-                  window.location.reload();
             }
           }
         })
@@ -200,6 +202,7 @@
                   </div>
                 </div>
               </div>
+          {message && <div style={{ textAlign: 'center', fontWeight: 'bold', paddingTop: '2%', color: 'green', fontSize: '20px' }}>{message}</div>}
           <div className={styles["line"]}></div>
           <span className={styles["manage-doctor"]}>Manage Doctor</span>
           <span className={styles["add-doctor"]}>Add Doctor</span>

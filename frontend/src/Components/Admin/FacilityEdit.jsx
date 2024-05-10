@@ -111,10 +111,9 @@ export default function FacilityEdit() {
     }
     console.log("update", JSON.stringify(updatedFacility))
     try {
-      const response = await axios.put(`http://127.0.0.1:8000/api/facilities/update/${facility_id}/`, updatedFacility);
+      const response = await axios.patch(`http://127.0.0.1:8000/api/facilities/update/${facility_id}/`, updatedFacility);
       console.log('Update successful!', response.data);
-      
-      window.location.href = `/admin/facility/${adminId}/`
+      navigate(`/admin/facility/${adminId}`,{ state: { message: "Details Updated Successfully!" } });
 
     } catch (error) {
       console.error('Error updating facility:', error);

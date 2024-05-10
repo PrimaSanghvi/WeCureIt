@@ -64,7 +64,7 @@ def run():
                     start_time = "00:00",
                     end_time = "23:00")
     facB.save()
-    facB.speciality_id.add(spCardio, spOBGY, spPediatrics)
+    facB.speciality_id.add(spCardio, spDentist, spOBGY, spPediatrics, spPsychiatry)
     facBRoom = ManageRooms(unavailable_room = [2, 3],
                                facility_id = facB,
                                date = "2024-05-07")
@@ -93,7 +93,7 @@ def run():
                   phone_number = 1111111111,
                   is_active = True)
     docA.save()
-    docA.speciality_id.add(spCardio, spPediatrics)
+    docA.speciality_id.add(spCardio, spOBGY, spPediatrics)
 
     docB = Doctor(first_name = "Tia",
                   last_name = "McKnight",
@@ -117,40 +117,40 @@ def run():
     docASched = Doc_schedule(doctor_id = docA,
                              days_visiting = "Monday",
                              visiting_hours_start = "10:30",
-                             visiting_hours_end = "17:30",
+                             visiting_hours_end = "22:30",
                              from_date = "2024-05-01",
                              to_date = "2024-05-25"
                              )
     docASched.save()
-    docASched.speciality_id.add(spCardio)
+    docASched.speciality_id.add(spCardio, spOBGY, spPediatrics)
     docASched.facility_id.add(facA, facB)
 
     docASched2 = Doc_schedule(doctor_id = docA,
                              days_visiting = "Wednesday",
                              visiting_hours_start = "10:30",
-                             visiting_hours_end = "17:30",
+                             visiting_hours_end = "22:30",
                              from_date = "2024-05-01",
                              to_date = "2024-05-25"
                              )
     docASched2.save()
-    docASched2.speciality_id.add(spCardio)
+    docASched2.speciality_id.add(spCardio, spOBGY, spPediatrics)
     docASched2.facility_id.add(facA, facB)
 
     docASched3 = Doc_schedule(doctor_id = docA,
                              days_visiting = "Friday",
                              visiting_hours_start = "10:30",
-                             visiting_hours_end = "17:30",
+                             visiting_hours_end = "22:30",
                              from_date = "2024-05-01",
                              to_date = "2024-05-25"
                              )
     docASched3.save()
-    docASched3.speciality_id.add(spCardio)
+    docASched3.speciality_id.add(spCardio, spOBGY, spPediatrics)
     docASched3.facility_id.add(facA, facB)
 
     docBSched = Doc_schedule(doctor_id = docB,
                              days_visiting = "Tuesday",
                              visiting_hours_start = "9:00",
-                             visiting_hours_end = "17:00",
+                             visiting_hours_end = "22:00",
                              from_date = "2024-05-01",
                              to_date = "2024-05-25"
                              )
@@ -161,13 +161,35 @@ def run():
     docBSched2 = Doc_schedule(doctor_id = docB,
                              days_visiting = "Thursday",
                              visiting_hours_start = "9:00",
-                             visiting_hours_end = "17:00",
+                             visiting_hours_end = "22:00",
                              from_date = "2024-05-01",
                              to_date = "2024-05-25"
                              )
     docBSched2.save()
     docBSched2.speciality_id.add(spCardio, spOBGY, spPediatrics)
     docBSched2.facility_id.add(facB, facC)
+
+    docBSched3 = Doc_schedule(doctor_id = docB,
+                             days_visiting = "Monday",
+                             visiting_hours_start = "9:00",
+                             visiting_hours_end = "22:00",
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
+                             )
+    docBSched3.save()
+    docBSched3.speciality_id.add(spCardio, spOBGY, spPediatrics)
+    docBSched3.facility_id.add(facA, facB)
+
+    docBSched4 = Doc_schedule(doctor_id = docB,
+                             days_visiting = "Wednesday",
+                             visiting_hours_start = "9:00",
+                             visiting_hours_end = "22:00",
+                             from_date = "2024-05-01",
+                             to_date = "2024-05-25"
+                             )
+    docBSched4.save()
+    docBSched4.speciality_id.add(spCardio, spOBGY, spPediatrics)
+    docBSched4.facility_id.add(facA, facB)
 
     docCSched = Doc_schedule(doctor_id = docC,
                              days_visiting = "Monday",
@@ -289,7 +311,7 @@ def run():
     patientRecA1 = Patient_record(patient_id = patientA,
                                  doctor_id = docA,
                                  medical_diagnosis = "Healthy",
-                                 diagnosis_date = "2024-04-25",
+                                 diagnosis_date = "2024-05-01",
                                  symptoms = "Frequent heart pain",
                                  temperature = "90",
                                  blood_pressure = "120/80",
@@ -300,18 +322,18 @@ def run():
                                  
     patientRecA1.save()
 
-    patientRecB = Patient_record(patient_id = patientB,
-                                 doctor_id = docB,
-                                 medical_diagnosis = "Healthy",
-                                 diagnosis_date = "2024-05-01",
-                                 symptoms = "N/A",
-                                 temperature = "90",
-                                 blood_pressure = "120/80",
-                                 heart_rate = "120",
-                                 respiratory_rate = "20",
-                                 current_medications = "None"
-                                 )
-    patientRecB.save()
+    # patientRecB = Patient_record(patient_id = patientB,
+    #                              doctor_id = docB,
+    #                              medical_diagnosis = "Healthy",
+    #                              diagnosis_date = "2024-05-01",
+    #                              symptoms = "N/A",
+    #                              temperature = "90",
+    #                              blood_pressure = "120/80",
+    #                              heart_rate = "120",
+    #                              respiratory_rate = "20",
+    #                              current_medications = "None"
+    #                              )
+    # patientRecB.save()
 
     # Patient Appointments:
     # -- Patient A --
@@ -323,48 +345,9 @@ def run():
                                facility_id = facA,
                                doctor_id = docA,
                                speciality_id = spCardio,
-                               schedule_id = docASched,
+                               schedule_id = docASched2,
                                patient_rec_id = patientRecA1,
                                start_time = startTime,
                                end_time =endTime,
                                date = appDate)
     patientAppAFuture.save()
-
-    # Today:
-    appDate = datetime.date(2024, 5, 9)
-    patientAToday = Appointments(patient_id = patientA,
-                               facility_id = facB,
-                               doctor_id = docB,
-                               speciality_id = spCardio,
-                               schedule_id = docASched,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAToday.save()
-
-    # # -- Patient B --
-    # Future:
-    startTime = datetime.time(23, 0, 0)
-    endTime = datetime.time(23, 30, 0)
-    appDate = datetime.date(2024, 5, 11)
-    patientAppBFuture = Appointments(patient_id = patientB,
-                               facility_id = facB,
-                               doctor_id = docA,
-                               speciality_id = spPediatrics,
-                               schedule_id = docBSched,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAppBFuture.save()
-
-    # Today:
-    appDate = datetime.date(2024, 5, 9)
-    patientAppBToday = Appointments(patient_id = patientB,
-                               facility_id = facB,
-                               doctor_id = docB,
-                               speciality_id = spDentist,
-                               schedule_id = docBSched,
-                               start_time = startTime,
-                               end_time =endTime,
-                               date = appDate)
-    patientAppBToday.save()

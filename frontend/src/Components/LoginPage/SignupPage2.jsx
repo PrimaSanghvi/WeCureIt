@@ -20,28 +20,28 @@ export default function Main() {
     const [facility_pref_id] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
-    // const [expDateError, setExpDateError] = useState('');
+    const [expDateError, setExpDateError] = useState('');
     const[cardNumError, setCardNumError] = useState('');
     const [isChecked, setIsChecked] = useState(false);
-    // const validateExpDat = () =>
-    // {
-    //     setExpMonth(expMonth.trim());
-    //  const   expYear_new = expYear.trim();
+    const validateExpDat = () =>
+    {
+        setExpMonth(expMonth.trim());
+     const   expYear_new = expYear.trim();
 
-    //     if (expYear_new.length === 4) {
-    //         setExpYear(expYear.substring(2))
-    //     }
+        if (expYear_new.length === 4) {
+            setExpYear(expYear.substring(2))
+        }
 
-    //     const expMonth_new = parseInt(expMonth, 10);
-    //     if (expMonth_new < 1 || expMonth_new > 12) {
-    //         setExpDateError("Invalid expiry month.");
-    //         return false;
-    //     }
-    //     else{
-    //         setExpDateError("")
-    //     }
-    // return true
-    // }
+        const expMonth_new = parseInt(expMonth, 10);
+        if (expMonth_new < 1 || expMonth_new > 12) {
+            setExpDateError("Invalid expiry month.");
+            return false;
+        }
+        else{
+            setExpDateError("")
+        }
+    return true
+    }
 
     const validateCardNumber = () =>
     {
@@ -149,7 +149,6 @@ export default function Main() {
             <div className={styles['group-3']}>
                 <div className={styles['box-3']}>
                     <div className={styles['box-4']}>
-                    {/* {expDateError && <div style={{ color: 'red' }}>{expDateError}</div>} */}
                         <span className={styles['text-3']}>
                             Enter the Following to Create Your Account
                         </span>
@@ -311,6 +310,7 @@ export default function Main() {
                                         type='number'
                                         value={expMonth}
                                         onChange={(e) => setExpMonth(e.target.value)}
+                                        onBlur = {validateExpDat}
                                         placeholder='mm'
                                     />
                                     </div>
@@ -322,11 +322,14 @@ export default function Main() {
                                         type='number'
                                         value={expYear}
                                         onChange={(e) => setExpYear(e.target.value)}
+                                        onBlur = {validateExpDat}
                                         placeholder='yy'
                                     />
                                     </div>
                                 </div>
                             </div>
+                            {expDateError && <div style={{ color: 'red'}}>{expDateError}</div>}
+
                         </div>
                     </div>
                 </div>
