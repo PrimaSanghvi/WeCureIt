@@ -67,6 +67,8 @@ class Facility(models.Model):
     phone_number = models.CharField(max_length=254)
     speciality_id = models.ManyToManyField(Speciality)
     is_active = models.BooleanField(default=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
 
 class Doctor(models.Model):
     doctor_id = models.BigAutoField(auto_created = True,

@@ -166,6 +166,8 @@ export default function FacilityHome() {
   {
     // const specialityIds = selectedSpecialties.map(speciality => speciality.speciality_id);
 
+    let start_time = "00:00"
+    let end_time = "23:00"
     const formData = {
       name,
       phone_number,
@@ -177,6 +179,8 @@ export default function FacilityHome() {
       zipCode,
       speciality_id: selectedSpecialityIds,
       is_active:true,
+      start_time,
+      end_time
     }
    console.log(JSON.stringify(formData));
 
@@ -426,7 +430,7 @@ export default function FacilityHome() {
                     className={styles["input"]}
                     value={name}
                     onChange={(e) => setFacilityName(e.target.value)}
-                    placeholder="facility name"
+                    placeholder="Facility Name"
                     type="text"
                   />
                 </div>
@@ -461,7 +465,7 @@ export default function FacilityHome() {
                     className={styles["input"]}
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    placeholder="City name"
+                    placeholder="City Name"
                     type="text"
                   />
                 </div>
@@ -473,7 +477,7 @@ export default function FacilityHome() {
                     className={styles["input"]}
                     value={state}
                     onChange={(e) => setState(e.target.value)}
-                    placeholder=" State name"
+                    placeholder=" State Name"
                     type="text"
                   />
                 </div>
@@ -485,8 +489,30 @@ export default function FacilityHome() {
                     className={styles["input"]}
                     value={zipCode}
                     onChange={(e) => setZipcode(e.target.value)}
-                    placeholder="Zip code"
+                    placeholder="Zip Code"
                     type="text"
+                  />
+                </div>
+                <div className={styles["frameTime"]}>
+                  <span className={styles["startTime"]}>Start Time</span>
+                </div>
+                <div className={styles["frameTime2"]}>
+                  <input
+                    className={styles["input"]}
+                    placeholder="00:00"
+                    type="text"
+                    readOnly={true}
+                  />
+                </div>
+                <div className={styles["frameTime3"]}>
+                  <span className={styles["endTime"]}>End Time</span>
+                </div>
+                <div className={styles["frameTime4"]}>
+                  <input
+                    className={styles["input"]}
+                    placeholder="23:00"
+                    type="text"
+                    readOnly={true}
                   />
                 </div>
               </div>
@@ -504,7 +530,7 @@ export default function FacilityHome() {
                       className={styles["input"]}
                       value={rooms_no}
                       onChange={(e) => setRoomnumber(e.target.value)}
-                      placeholder="Rooms available"
+                      placeholder="Rooms Available"
                       type="text"
                     />
                   </div>

@@ -270,7 +270,7 @@ class AllDoctorSerializer(serializers.ModelSerializer):
 class AllFacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
-        fields = ('facility_id', 'name', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'rooms_no', 'phone_number', 'is_active')
+        fields = ('facility_id', 'name', 'addressLine1', 'addressLine2', 'city', 'state', 'zipCode', 'rooms_no', 'phone_number', 'is_active', 'start_time', 'end_time')
 
 # add doctor schedule to the database(handle repeated adding cases)
 # to distinguish from another DocSchedule Serializer
@@ -328,7 +328,7 @@ class FacilitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Facility
-        fields = ['facility_id', 'name', 'addressLine1', 'addressLine2', 'state','city','zipCode','rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality']
+        fields = ['facility_id', 'name', 'addressLine1', 'addressLine2', 'state','city','zipCode','rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality', 'start_time', 'end_time']
 
     def create(self, validated_data):
         # Extract specialties using the source argument 'speciality'

@@ -43,7 +43,9 @@ def run():
                     zipCode = 20037,
                     rooms_no = 5,
                     phone_number = "2027154000",
-                    is_active = True)
+                    is_active = True,
+                    start_time = "00:00",
+                    end_time = "23:00")
     facA.save()
     facA.speciality_id.add(spCardio, spDentist, spOBGY, spPediatrics, spPsychiatry)
     facARoom = ManageRooms(unavailable_room = [1, 3, 5],
@@ -58,7 +60,9 @@ def run():
                     zipCode = 20910,
                     rooms_no = 4,
                     phone_number = "3017547000",
-                    is_active = True)
+                    is_active = True,
+                    start_time = "00:00",
+                    end_time = "23:00")
     facB.save()
     facB.speciality_id.add(spCardio, spOBGY, spPediatrics)
     facBRoom = ManageRooms(unavailable_room = [2, 3],
@@ -74,7 +78,9 @@ def run():
                     zipCode = 20010,
                     rooms_no = 4,
                     phone_number = "2028777000",
-                    is_active = True)
+                    is_active = True,
+                    start_time = "00:00",
+                    end_time = "23:00")
     facC.save()
     facC.speciality_id.add(spCardio, spDentist, spOBGY, spPediatrics, spPsychiatry)
 
@@ -310,8 +316,8 @@ def run():
     # Patient Appointments:
     # -- Patient A --
     # Past:
-    startTime = datetime.time(10, 0, 0)
-    endTime = datetime.time(11, 0, 0)
+    startTime = datetime.time(20, 0, 0)
+    endTime = datetime.time(21, 0, 0)
     appDate = datetime.date(2024, 5, 1)
     patientAppAFuture = Appointments(patient_id = patientA,
                                facility_id = facA,
@@ -338,87 +344,27 @@ def run():
 
     # # -- Patient B --
     # Future:
-    startTime = datetime.time(9, 0, 0)
-    endTime = datetime.time(9, 30, 0)
-    appDate = datetime.date(2024, 5, 10)
+    startTime = datetime.time(23, 0, 0)
+    endTime = datetime.time(23, 30, 0)
+    appDate = datetime.date(2024, 5, 11)
     patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facB,
                                doctor_id = docA,
-                               speciality_id = spDentist,
+                               speciality_id = spPediatrics,
                                schedule_id = docBSched,
                                start_time = startTime,
                                end_time =endTime,
                                date = appDate)
     patientAppBFuture.save()
 
-    # startTime = datetime.time(9, 0, 0)
-    # endTime = datetime.time(9, 30, 0)
-    # appDate = datetime.date(2024, 5, 3)
-    # patientAppBFuture = Appointments(patient_id = patientB,
-    #                            facility_id = facB,
-    #                            doctor_id = docA,
-    #                            speciality_id = spDentist,
-    #                            schedule_id = docBSched,
-    #                            patient_rec_id = patientRecB,
-    #                            start_time = startTime,
-    #                            end_time =endTime,
-    #                            date = appDate)
-    # patientAppBFuture.save()
-
-    # startTime = datetime.time(16, 0, 0)
-    # endTime = datetime.time(16, 30, 0)
-    # appDate = datetime.date(2024, 5, 15)
-    # patientAppBFuture = Appointments(patient_id = patientB,
-    #                            facility_id = facB,
-    #                            doctor_id = docB,
-    #                            speciality_id = spDentist,
-    #                            schedule_id = docBSched,
-    #                            patient_rec_id = patientRecB,
-    #                            start_time = startTime,
-    #                            end_time =endTime,
-    #                            date = appDate)
-    # patientAppBFuture.save()
-
-    # startTime = datetime.time(16, 0, 0)
-    # endTime = datetime.time(16, 30, 0)
-    # appDate = datetime.date(2024, 4, 25)
-    # patientAppBFuture = Appointments(patient_id = patientB,
-    #                            facility_id = facB,
-    #                            doctor_id = docB,
-    #                            speciality_id = spDentist,
-    #                            schedule_id = docBSched,
-    #                            patient_rec_id = patientRecB,
-    #                            start_time = startTime,
-    #                            end_time =endTime,
-    #                            date = appDate)
-    # patientAppBFuture.save()
-
-    # # Past:
-    # startTime = datetime.time(9, 0, 0)
-    # endTime = datetime.time(9, 30, 0)
-    # appDate = datetime.date(2024, 3, 25)
-    # patientAppBFuture = Appointments(patient_id = patientB,
-    #                            facility_id = facB,
-    #                            doctor_id = docB,
-    #                            speciality_id = spDentist,
-    #                            schedule_id = docBSched,
-    #                            patient_rec_id = patientRecB,
-    #                            start_time = startTime,
-    #                            end_time =endTime,
-    #                            date = appDate)
-    # patientAppBFuture.save()
-
-    # # Today:
-    # startTime = datetime.time(9, 0, 0)
-    # endTime = datetime.time(9, 15, 0)
-    # appDate = datetime.date(2024, 4, 24)
-    # patientAppBFuture = Appointments(patient_id = patientB,
-    #                            facility_id = facB,
-    #                            doctor_id = docB,
-    #                            speciality_id = spDentist,
-    #                            schedule_id = docBSched,
-    #                            patient_rec_id = patientRecB,
-    #                            start_time = startTime,
-    #                            end_time =endTime,
-    #                            date = appDate)
-    # patientAppBFuture.save()
+    # Today:
+    appDate = datetime.date(2024, 5, 9)
+    patientAppBToday = Appointments(patient_id = patientB,
+                               facility_id = facB,
+                               doctor_id = docB,
+                               speciality_id = spDentist,
+                               schedule_id = docBSched,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBToday.save()
