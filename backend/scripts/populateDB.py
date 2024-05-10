@@ -43,7 +43,9 @@ def run():
                     zipCode = 20037,
                     rooms_no = 5,
                     phone_number = "2027154000",
-                    is_active = True)
+                    is_active = True,
+                    start_time = "00:00",
+                    end_time = "23:00")
     facA.save()
     facA.speciality_id.add(spCardio, spDentist, spOBGY, spPediatrics, spPsychiatry)
     facARoom = ManageRooms(unavailable_room = [1, 3, 5],
@@ -58,7 +60,9 @@ def run():
                     zipCode = 20910,
                     rooms_no = 4,
                     phone_number = "3017547000",
-                    is_active = True)
+                    is_active = True,
+                    start_time = "00:00",
+                    end_time = "23:00")
     facB.save()
     facB.speciality_id.add(spCardio, spOBGY, spPediatrics)
     facBRoom = ManageRooms(unavailable_room = [2, 3],
@@ -74,7 +78,9 @@ def run():
                     zipCode = 20010,
                     rooms_no = 4,
                     phone_number = "2028777000",
-                    is_active = True)
+                    is_active = True,
+                    start_time = "00:00",
+                    end_time = "23:00")
     facC.save()
     facC.speciality_id.add(spCardio, spDentist, spOBGY, spPediatrics, spPsychiatry)
 

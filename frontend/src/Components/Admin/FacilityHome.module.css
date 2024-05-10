@@ -1588,6 +1588,60 @@ input, select, textarea, button {
     white-space: nowrap;
     z-index: 119;
   }
+  .frameTime {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 10px;
+    position: absolute;
+    width: 68px;
+    height: 21px;
+    top: 180px;
+    left: 0px;
+    z-index: 118;
+  }
+  .frameTime3 {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 10px;
+    position: absolute;
+    width: 68px;
+    height: 21px;
+    top: 235px;
+    left: 0px;
+    z-index: 118;
+  }
+  .startTime {
+    flex-shrink: 0;
+    flex-basis: auto;
+    position: relative;
+    height: 21px;
+    color: #000000;
+    font-family: Poppins, var(--default-font-family);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 119;
+  }
+  .endTime {
+    flex-shrink: 0;
+    flex-basis: auto;
+    position: relative;
+    height: 21px;
+    color: #000000;
+    font-family: Poppins, var(--default-font-family);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 119;
+  }
   .frame-16 {
     display: flex;
     align-items: center;
@@ -1599,6 +1653,42 @@ input, select, textarea, button {
     height: 32px;
     top: 134px;
     left: 284px;
+    padding: 10px 0 10px 10px;
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    z-index: 120;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  .frameTime2 {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 10px;
+    position: absolute;
+    width: 121px;
+    height: 32px;
+    top: 200px;
+    left: 0px;
+    padding: 10px 0 10px 10px;
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    z-index: 120;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  .frameTime4 {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 10px;
+    position: absolute;
+    width: 121px;
+    height: 32px;
+    top: 255px;
+    left: 0px;
     padding: 10px 0 10px 10px;
     background: #ffffff;
     border: 1px solid #d9d9d9;
