@@ -378,6 +378,9 @@ const createTimeSlots = (data) => {
 
   }
 
+  const todayDate = new Date();
+  todayDate.setDate(todayDate.getDate() + 1);
+
   return (
     <div  className={styles['main-container']}>
     <div  className={styles['top-bar']}>
@@ -440,6 +443,7 @@ const createTimeSlots = (data) => {
             type="date"
             id="date"
             value={selectedDate}
+            min={todayDate.toISOString().split("T")[0]}
             onChange={handleChangeDate}
           />
         </div>
