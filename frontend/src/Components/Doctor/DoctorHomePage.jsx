@@ -349,7 +349,7 @@ useEffect(() => {
         <br /><br />
       </span>
       <span className='text-12'>
-        {selectedDateSchedule[0].visiting_hours_end} - {selectedDateSchedule[0].visiting_hours_start}
+        {selectedDateSchedule[0].visiting_hours_start} - {selectedDateSchedule[0].visiting_hours_end}
         <br /><br />
       </span>
   {(selectedDateSchedule[0].facility_name || selectedDateSchedule[0].address) && (
