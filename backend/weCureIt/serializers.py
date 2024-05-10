@@ -376,6 +376,7 @@ class DocScheduleSerializerAdd(serializers.ModelSerializer):
         model = Doc_schedule
         fields = '__all__'
 
+
 class ScheduleForDoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doc_schedule

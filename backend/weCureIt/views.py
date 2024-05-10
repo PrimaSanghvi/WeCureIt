@@ -838,9 +838,12 @@ class DocScheduleListView(generics.ListAPIView):
     serializer_class = DocScheduleSerializerFilter
     
     def get_queryset(self):
+        # Initially filter schedules that are associated with active facilities
         queryset = Doc_schedule.objects.filter(facility_id__is_active=True)
+        # Retrieve the 'date' query parameter
         date_query = self.request.query_params.get('date', None)
 
+        # Filter based on doctor's name if provided
         doctor_name = self.request.query_params.get('doctor_name', None)
         if doctor_name:
             first_name, last_name = doctor_name.split()
@@ -848,9 +851,14 @@ class DocScheduleListView(generics.ListAPIView):
                 Q(doctor_id__first_name__icontains=first_name) &
                 Q(doctor_id__last_name__icontains=last_name)
             )
+        
+        # Filter based on the specific date and ensure it falls within the valid date range of the schedule
         if date_query:
-            day_of_week = datetime.strptime(date_query, '%Y-%m-%d').strftime('%A')
-            queryset = queryset.filter(days_visiting__icontains=day_of_week)
+            selected_date = datetime.strptime(date_query, '%Y-%m-%d').date()
+            day_of_week = selected_date.strftime('%A')
+            queryset = queryset.filter(days_visiting__icontains=day_of_week,
+                                       to_date__gte=selected_date, 
+                                       from_date__lte=selected_date)
         
         return queryset
     
