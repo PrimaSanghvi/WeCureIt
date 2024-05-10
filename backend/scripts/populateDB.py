@@ -307,8 +307,8 @@ def run():
     patientPrefC.save()
 
     # Patient Record:
-    # -- Patient A --
-    patientRecA1 = Patient_record(patient_id = patientA,
+    # -- Patient B --
+    patientRecB1 = Patient_record(patient_id = patientB,
                                  doctor_id = docA,
                                  medical_diagnosis = "Healthy",
                                  diagnosis_date = "2024-05-01",
@@ -320,7 +320,7 @@ def run():
                                  current_medications = "None"
                                 )
                                  
-    patientRecA1.save()
+    patientRecB1.save()
 
     # patientRecB = Patient_record(patient_id = patientB,
     #                              doctor_id = docB,
@@ -336,18 +336,44 @@ def run():
     # patientRecB.save()
 
     # Patient Appointments:
-    # -- Patient A --
+    # -- Patient B --
     # Past:
     startTime = datetime.time(20, 0, 0)
     endTime = datetime.time(21, 0, 0)
     appDate = datetime.date(2024, 5, 1)
-    patientAppAFuture = Appointments(patient_id = patientA,
+    patientAppBFuture = Appointments(patient_id = patientB,
                                facility_id = facA,
                                doctor_id = docA,
                                speciality_id = spCardio,
                                schedule_id = docASched2,
-                               patient_rec_id = patientRecA1,
+                               patient_rec_id = patientRecB1,
                                start_time = startTime,
                                end_time =endTime,
                                date = appDate)
-    patientAppAFuture.save()
+    patientAppBFuture.save()
+
+    # Today:
+    startTime = datetime.time(19, 0, 0)
+    endTime = datetime.time(21, 0, 0)
+    appDate = datetime.date(2024, 5, 10)
+    patientAppBToday = Appointments(patient_id = patientB,
+                               facility_id = facA,
+                               doctor_id = docA,
+                               speciality_id = spCardio,
+                               schedule_id = docASched3,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBToday.save()
+
+    startTime = datetime.time(11, 0, 0)
+    endTime = datetime.time(11, 30, 0)
+    patientAppBToday2 = Appointments(patient_id = patientA,
+                               facility_id = facA,
+                               doctor_id = docA,
+                               speciality_id = spCardio,
+                               schedule_id = docASched3,
+                               start_time = startTime,
+                               end_time =endTime,
+                               date = appDate)
+    patientAppBToday2.save()
