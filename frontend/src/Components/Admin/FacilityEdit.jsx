@@ -107,7 +107,9 @@ export default function FacilityEdit() {
       state,
       city,
       zipCode,
-      speciality_id: specialityIds
+      speciality_id: specialityIds,
+      start_time:"00:00",
+      end_time:"23:00"
     }
     console.log("update", JSON.stringify(updatedFacility))
     try {

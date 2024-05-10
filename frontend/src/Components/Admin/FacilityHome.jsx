@@ -168,8 +168,8 @@ export default function FacilityHome() {
   {
     // const specialityIds = selectedSpecialties.map(speciality => speciality.speciality_id);
 
-    let start_time = "00:00"
-    let end_time = "23:00"
+    // let start_time = "00:00"
+    // let end_time = "23:00"
     const formData = {
       name,
       phone_number,
@@ -181,8 +181,8 @@ export default function FacilityHome() {
       zipCode,
       speciality_id: selectedSpecialityIds,
       is_active:true,
-      start_time,
-      end_time
+      start_time:"00:00",
+      end_time:"23:00"
     }
    console.log(JSON.stringify(formData));
 

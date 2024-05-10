@@ -354,7 +354,7 @@ def run():
 
     # Today:
     startTime = datetime.time(19, 0, 0)
-    endTime = datetime.time(21, 0, 0)
+    endTime = datetime.time(19, 30, 0)
     appDate = datetime.date(2024, 5, 10)
     patientAppBToday = Appointments(patient_id = patientB,
                                facility_id = facA,

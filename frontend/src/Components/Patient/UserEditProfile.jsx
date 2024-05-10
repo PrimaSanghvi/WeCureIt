@@ -121,7 +121,7 @@ export const UserEditProfile = () => {
           first_name,
           last_name,
           email,
-          originalPass,
+          password: '111',
           addressLine1,
           addressLine2,
           city,

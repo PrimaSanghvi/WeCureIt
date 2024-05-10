@@ -219,7 +219,7 @@ class DoctorInfoSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         # Ensure that we're not processing inactive doctors
-        if not self.instance.is_active:
+        if self.instance and not self.instance.is_active:
             raise serializers.ValidationError("Cannot process an inactive doctor.")
         return data
 
@@ -347,7 +347,7 @@ class FacilitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Facility
-        fields = ['facility_id', 'name', 'addressLine1', 'addressLine2', 'state','city','zipCode','rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality']
+        fields = ['facility_id', 'name', 'addressLine1', 'addressLine2', 'state','city','zipCode','rooms_no', 'phone_number', 'is_active', 'speciality_id', 'speciality', 'start_time', 'end_time']
 
     def validate(self, data):
         # If updating and instance is inactive, raise a validation error
